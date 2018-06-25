@@ -18,5 +18,3 @@
 package valkyrienwarfare.deprecated_api;
 
 import net.minecraftforge.fml.common.API;
-
-// This file keeps the api version up to latest for all mods!

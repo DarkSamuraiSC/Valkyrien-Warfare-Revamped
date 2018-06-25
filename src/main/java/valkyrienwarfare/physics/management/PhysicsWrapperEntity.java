@@ -16,6 +16,8 @@
 
 package valkyrienwarfare.physics.management;
 
+import javax.annotation.Nullable;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,12 +26,14 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import valkyrienwarfare.ValkyrienWarfareMod;
 import valkyrienwarfare.addon.combat.entity.EntityMountingWeaponBase;
+import valkyrienwarfare.api.IPhysicsEntity;
 import valkyrienwarfare.api.TransformType;
 import valkyrienwarfare.math.Vector;
 import valkyrienwarfare.mod.capability.IAirshipCounterCapability;
@@ -37,14 +41,12 @@ import valkyrienwarfare.mod.physmanagement.interaction.ShipNameUUIDData;
 import valkyrienwarfare.mod.schematics.SchematicReader.Schematic;
 import valkyrienwarfare.physics.collision.polygons.Polygon;
 
-import javax.annotation.Nullable;
-
 /**
  * This entity's only purpose is to use the functionality of sending itself to
  * nearby players, as well as the functionality of automatically loading with
  * the world; all other operations are handled by the PhysicsObject class.
  */
-public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpawnData {
+public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpawnData, IPhysicsEntity {
 
     public static final DataParameter<Boolean> IS_NAME_CUSTOM = EntityDataManager.<Boolean>createKey(Entity.class,
             DataSerializers.BOOLEAN);
@@ -306,6 +308,18 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
 		this.pitch = pitch;
 		this.yaw = yaw;
 		this.roll = roll;
+	}
+	
+	// ===== VW API Functions Start Here =====
+	
+	@Override
+	public Vec3d rotateVector(Vec3d vector, TransformType transformType) {
+		return this.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().rotate(vector, transformType);
+	}
+
+	@Override
+	public Vec3d transformVector(Vec3d vector, TransformType transformType) {
+		return this.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().transform(vector, transformType);
 	}
 
 }

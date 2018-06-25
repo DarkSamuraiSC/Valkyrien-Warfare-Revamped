@@ -22,11 +22,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,7 +47,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -75,6 +74,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import valkyrienwarfare.addon.control.ValkyrienWarfareControl;
 import valkyrienwarfare.addon.opencomputers.ValkyrienWarfareOC;
 import valkyrienwarfare.addon.world.ValkyrienWarfareWorld;
+import valkyrienwarfare.api.IPhysicsEntityManager;
+import valkyrienwarfare.api.RealPhysicsEntityManager;
 import valkyrienwarfare.api.addons.Module;
 import valkyrienwarfare.api.addons.VWAddon;
 import valkyrienwarfare.deprecated_api.DataTag;
@@ -346,15 +347,26 @@ public class ValkyrienWarfareMod {
 
         addons.forEach(m -> m.doPreInit(event));
 
-        /*
+        // Now change the static final field of INSTANCE in the IPhysicsEntityManager by using reflection.
         try {
-            Field chunkCache = ForgeChunkManager.class.getDeclaredField("dormantChunkCacheSize");
-            chunkCache.setAccessible(true);
-            chunkCache.set(null, new Integer(1000));
-        } catch (Exception e) {
-            e.printStackTrace();
+        	// First get the INSTANCE field
+        	Field vw_api_physics_entity_manager_field = IPhysicsEntityManager.class.getDeclaredField("INSTANCE");
+        	vw_api_physics_entity_manager_field.setAccessible(true);
+        	// Then remove the final modifier
+        	Field modifiersField = Field.class.getDeclaredField("modifiers");
+        	modifiersField.setAccessible(true);
+            modifiersField.setInt(vw_api_physics_entity_manager_field, vw_api_physics_entity_manager_field.getModifiers() & ~Modifier.FINAL);
+        	// Then update the field
+        	vw_api_physics_entity_manager_field.set(null, new RealPhysicsEntityManager());
+        	if (IPhysicsEntityManager.INSTANCE instanceof RealPhysicsEntityManager) {
+        		System.out.println("VW API injection successful!");
+        	} else {
+        		System.err.println("VW API injection failed! The API will not interact with other mods correctly!");
+        	}
+        } catch(Exception e) {
+        	e.printStackTrace();
+        	System.err.println("VW API injection failed! The API will not interact with other mods correctly!");
         }
-        */
     }
 
     @EventHandler
