@@ -26,7 +26,6 @@ public class VWModCommandRegistry {
     public static void registerCommands(MinecraftServer server) {
         ServerCommandManager manager = (ServerCommandManager) server.getCommandManager();
         manager.registerCommand(new PhysSettingsCommand());
-        manager.registerCommand(new AirshipSettingsCommand());
         manager.registerCommand(new AirshipMapCommand());
         manager.registerCommand(new VWCommandHelp());
     }

@@ -85,6 +85,11 @@ repositories {
 	maven {
         url 'http://dogforce-games.com/maven'
     }
+    // Used for FTB Utilities
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
+    }
     mavenCentral()
 }
 
@@ -100,6 +105,8 @@ dependencies {
 	compile 'net.daporkchop.lib:primitive:0.0.5'
 	compile 'gigaherz.graph:GraphLib:1.4.0'
 	compile 'valkyrienwarfare:api:1.0'
+    compile 'ftb-utilities:FTBUtilities:5.2.0.28'
+    compile 'ftblib:FTBLib:5.2.0.23'
 }
 
 processResources {

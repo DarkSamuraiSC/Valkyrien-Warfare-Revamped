@@ -1,5 +1,6 @@
 valkyrienwarfare.addon.combat.ValkyrienWarfareCombat
 valkyrienwarfare.addon.control.ValkyrienWarfareControl
-valkyrienwarfare.addon.world.ValkyrienWarfareWorld
+valkyrienwarfare.addon.ftbutil.ValkyrienWarfareFTBUtil
 valkyrienwarfare.addon.opencomputers.ValkyrienWarfareOC
+valkyrienwarfare.addon.world.ValkyrienWarfareWorld
 com.jackredcreeper.cannon.CannonMod

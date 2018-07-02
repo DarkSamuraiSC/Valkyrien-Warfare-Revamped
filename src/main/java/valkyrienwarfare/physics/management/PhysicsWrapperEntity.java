@@ -69,7 +69,6 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
         posY = y;
         posZ = z;
 
-        getPhysicsObject().setCreator(creator.entityUniqueID.toString());
         getPhysicsObject().setDetectorID(detectorID);
         getPhysicsObject().setShipType(shipType);
         getPhysicsObject().processChunkClaims(creator);
@@ -88,7 +87,6 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
         posY = y;
         posZ = z;
 
-        getPhysicsObject().setCreator("thebest108");
         getPhysicsObject().setDetectorID(0);
         getPhysicsObject().setShipType(shipType);
 

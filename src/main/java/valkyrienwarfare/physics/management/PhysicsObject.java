@@ -66,7 +66,6 @@ import valkyrienwarfare.addon.control.network.EntityFixMessage;
 import valkyrienwarfare.addon.control.nodenetwork.INodeController;
 import valkyrienwarfare.addon.control.nodenetwork.IVWNodeProvider;
 import valkyrienwarfare.api.TransformType;
-import valkyrienwarfare.deprecated_api.EnumChangeOwnerResult;
 import valkyrienwarfare.math.Quaternion;
 import valkyrienwarfare.math.Vector;
 import valkyrienwarfare.mod.BlockPhysicsRegistration;
@@ -100,7 +99,6 @@ public class PhysicsObject implements ISubspaceProvider {
 	private final PhysicsWrapperEntity wrapper;
     private final List<EntityPlayerMP> watchingPlayers;
     private PhysObjectRenderManager shipRenderer;
-    private final Set<String> allowedUsers;
     // This is used to delay mountEntity() operations by 1 tick
     private final List<Entity> queuedEntitiesToMount;
     // Used when rendering to avoid horrible floating point errors, just a random
@@ -113,7 +111,6 @@ public class PhysicsObject implements ISubspaceProvider {
 	// anything client side!
     private Set<BlockPos> blockPositions;
 	private boolean isPhysicsEnabled;
-	private String creator;
 	private int detectorID;
     // The closest Chunks to the Ship cached in here
 	private ChunkCache cachedSurroundingChunks;
@@ -144,20 +141,19 @@ public class PhysicsObject implements ISubspaceProvider {
         }
         this.setNameCustom(false);
         this.claimedChunksInMap = false;
-        this.queuedEntitiesToMount = new ArrayList<Entity>();
-        this.entityLocalPositions = new TIntObjectHashMap<Vector>();
+        this.queuedEntitiesToMount = new ArrayList<>();
+        this.entityLocalPositions = new TIntObjectHashMap<>();
         this.setPhysicsEnabled(false);
         // We need safe access to this across multiple threads.
-        this.setBlockPositions(ConcurrentHashMap.<BlockPos>newKeySet());
+        this.setBlockPositions(ConcurrentHashMap.newKeySet());
         this.shipBoundingBox = Entity.ZERO_AABB;
-        this.watchingPlayers = new ArrayList<EntityPlayerMP>();
+        this.watchingPlayers = new ArrayList<>();
         this.isPhysicsEnabled = false;
-        this.allowedUsers = new HashSet<String>();
         this.gameConsecutiveTicks = 0;
         this.physicsConsecutiveTicks = 0;
         this.shipSubspace = new ImplSubspace(this);
-        this.physicsControllers = Sets.<INodeController>newConcurrentHashSet();
-        this.physicsControllersImmutable = Collections.<INodeController>unmodifiableSet(this.physicsControllers);
+        this.physicsControllers = Sets.newConcurrentHashSet();
+        this.physicsControllersImmutable = Collections.unmodifiableSet(this.physicsControllers);
     }
 
 	public void onSetBlockState(IBlockState oldState, IBlockState newState, BlockPos posAt) {
@@ -193,44 +189,12 @@ public class PhysicsObject implements ISubspaceProvider {
 		}
 
 		if (getBlockPositions().isEmpty()) {
-			try {
-				if (getCreator() != null) {
-					EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-							.getPlayerByUsername(getCreator());
-					if (player != null) {
-						player.getCapability(ValkyrienWarfareMod.airshipCounter, null).onLose();
-					} else {
-						// TODO: Fix this later
-						if (false) {
-							try {
-								File f = new File(DimensionManager.getCurrentSaveRootDirectory(),
-										"playerdata/" + getCreator() + ".dat");
-								NBTTagCompound tag = CompressedStreamTools.read(f);
-								NBTTagCompound capsTag = tag.getCompoundTag("ForgeCaps");
-								capsTag.setInteger("valkyrienwarfare:IAirshipCounter",
-										capsTag.getInteger("valkyrienwarfare:IAirshipCounter") - 1);
-								CompressedStreamTools.safeWrite(tag, f);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-					ValkyrienWarfareMod.VW_CHUNK_MANAGER.getManagerForWorld(getWorldObj()).data.getAvalibleChunkKeys()
-							.add(getOwnedChunks().getCenterX());
-				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
 			destroy();
 		}
 
 		if (getPhysicsProcessor() != null) {
 			getPhysicsProcessor().onSetBlockState(oldState, newState, posAt);
 		}
-
-		// System.out.println(blockPositions.size() + ":" + wrapper.isDead);
 	}
 
     public void destroy() {
@@ -793,15 +757,6 @@ public class PhysicsObject implements ISubspaceProvider {
         NBTUtils.writeEntityPositionMapToNBT("entityPosHashMap", entityLocalPositions, compound);
         getPhysicsProcessor().writeToNBTTag(compound);
 
-        // TODO: This is occasionally crashing the Ship save
-        // StringBuilder result = new StringBuilder("");
-        // allowedUsers.forEach(s -> {
-        //     result.append(s);
-        //     result.append(";");
-        // });
-        // compound.setString("allowedUsers", result.substring(0, result.length() - 1));
-
-        compound.setString("owner", getCreator());
         compound.setBoolean("claimedChunksInMap", claimedChunksInMap);
         compound.setBoolean("isNameCustom", isNameCustom());
         compound.setString("shipType", shipType.name());
@@ -848,10 +803,6 @@ public class PhysicsObject implements ISubspaceProvider {
         entityLocalPositions = NBTUtils.readEntityPositionMap("entityPosHashMap", compound);
         getPhysicsProcessor().readFromNBTTag(compound);
 
-        getAllowedUsers().clear();
-        Collections.addAll(getAllowedUsers(), compound.getString("allowedUsers").split(";"));
-
-        setCreator(compound.getString("owner"));
         claimedChunksInMap = compound.getBoolean("claimedChunksInMap");
         setNameCustom(compound.getBoolean("isNameCustom"));
         getWrapperEntity().dataManager.set(PhysicsWrapperEntity.IS_NAME_CUSTOM, isNameCustom());
@@ -927,56 +878,6 @@ public class PhysicsObject implements ISubspaceProvider {
 
         modifiedBuffer.writeBoolean(isNameCustom());
         modifiedBuffer.writeEnumValue(shipType);
-    }
-
-    /**
-     * Tries to change the owner of this PhysicsObject.
-     *
-     * @param newOwner
-     * @return
-     */
-    public EnumChangeOwnerResult changeOwner(EntityPlayer newOwner) {
-        if (!ValkyrienWarfareMod.canChangeAirshipCounter(true, newOwner)) {
-            return EnumChangeOwnerResult.ERROR_NEWOWNER_NOT_ENOUGH;
-        }
-
-        if (newOwner.entityUniqueID.toString().equals(getCreator())) {
-            return EnumChangeOwnerResult.ALREADY_CLAIMED;
-        }
-
-        EntityPlayer player = null;
-        try {
-            player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-                    .getPlayerByUUID(UUID.fromString(getCreator()));
-        } catch (NullPointerException e) {
-            newOwner.sendMessage(new TextComponentString("That airship doesn't have an owner, you get to have it :D"));
-            newOwner.getCapability(ValkyrienWarfareMod.airshipCounter, null).onCreate();
-            getAllowedUsers().clear();
-            setCreator(newOwner.entityUniqueID.toString());
-            return EnumChangeOwnerResult.SUCCESS;
-        }
-
-        if (player != null) {
-            player.getCapability(ValkyrienWarfareMod.airshipCounter, null).onLose();
-        } else {
-            try {
-                File f = new File(DimensionManager.getCurrentSaveRootDirectory(), "playerdata/" + getCreator() + ".dat");
-                NBTTagCompound tag = CompressedStreamTools.read(f);
-                NBTTagCompound capsTag = tag.getCompoundTag("ForgeCaps");
-                capsTag.setInteger("valkyrienwarfare:IAirshipCounter",
-                        capsTag.getInteger("valkyrienwarfare:IAirshipCounter") - 1);
-                CompressedStreamTools.safeWrite(tag, f);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        newOwner.getCapability(ValkyrienWarfareMod.airshipCounter, null).onCreate();
-
-        getAllowedUsers().clear();
-
-        setCreator(newOwner.entityUniqueID.toString());
-        return EnumChangeOwnerResult.SUCCESS;
     }
 
     /*
@@ -1107,27 +1008,6 @@ public class PhysicsObject implements ISubspaceProvider {
 	 */
 	public void setCenterCoord(Vector centerCoord) {
 		this.centerCoord = centerCoord;
-	}
-
-	/**
-	 * @return the allowedUsers
-	 */
-	public Set<String> getAllowedUsers() {
-		return allowedUsers;
-	}
-
-	/**
-	 * @return the creator
-	 */
-	public String getCreator() {
-		return creator;
-	}
-
-	/**
-	 * @param creator the creator to set
-	 */
-	public void setCreator(String creator) {
-		this.creator = creator;
 	}
 
 	/**

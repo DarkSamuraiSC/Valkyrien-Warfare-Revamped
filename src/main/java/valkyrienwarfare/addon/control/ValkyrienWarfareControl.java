@@ -151,7 +151,7 @@ public class ValkyrienWarfareControl extends Module {
 
     @Override
     protected void registerNetworks() {
-        controlNetwork = NetworkRegistry.INSTANCE.newSimpleChannel("controlnetwork");
+        controlNetwork = NetworkRegistry.INSTANCE.newSimpleChannel("vw_control");
         controlNetwork.registerMessage(EntityFixHandler.class, EntityFixMessage.class, 0, Side.CLIENT);
         controlNetwork.registerMessage(PilotControlsMessageHandler.class, PilotControlsMessage.class, 2, Side.SERVER);
         controlNetwork.registerMessage(MessageStartPilotingHandler.class, MessageStartPiloting.class, 3, Side.CLIENT);
