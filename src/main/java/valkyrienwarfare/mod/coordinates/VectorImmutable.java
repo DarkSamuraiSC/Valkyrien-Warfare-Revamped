@@ -66,8 +66,8 @@ public class VectorImmutable {
     }
 
     public void writeToByteBuf(ByteBuf bufToWrite) {
-        bufToWrite.writeDouble(this.getX());
-        bufToWrite.writeDouble(this.getY());
-        bufToWrite.writeDouble(this.getZ());
+        bufToWrite.writeDouble(this.x);
+        bufToWrite.writeDouble(this.y);
+        bufToWrite.writeDouble(this.z);
     }
 }

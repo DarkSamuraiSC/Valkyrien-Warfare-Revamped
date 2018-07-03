@@ -72,7 +72,7 @@ public abstract class ImplTileEntityPilotable extends BasicNodeTileEntity implem
 
     @Override
     public final void playerWantsToStopPiloting(EntityPlayer player) {
-        if (player == this.getPilotEntity()) {
+        if (player == this.pilotPlayerEntity) {
             this.setPilotEntity(null);
         } else {
             // Wtf happened here?

@@ -42,7 +42,7 @@ public class MixinLoadManager implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (isSpongeEnabled()) {
+        if (isSpongeEnabled) {
             if (mixinClassName.startsWith("valkyrienwarfare.mixin.world.MixinExplosion")) {
                 FMLLog.bigWarning(
                         "Not loading valkyrienwarfare.mixin.world.MixinExplosion because SpongeForge is enabled!");
@@ -89,7 +89,7 @@ public class MixinLoadManager implements IMixinConfigPlugin {
     @Override
     public void onLoad(String mixinPackage) {
         isSpongeEnabled = this.isSpongeEnabledSlow();
-        if (isSpongeEnabled()) {
+        if (isSpongeEnabled) {
             FMLLog.bigWarning(
                     "SpongeForge has been detected. This will cause problems with Valkyrien Warfare, no doubt.");
         } else {

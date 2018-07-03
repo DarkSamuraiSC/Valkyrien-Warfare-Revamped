@@ -181,7 +181,7 @@ public abstract class BasicForceNodeTileEntity extends BasicNodeTileEntity imple
         super.update();
         this.ticksSinceLastControlSignal++;
         if (this.ticksSinceLastControlSignal > 5) {
-            this.setThrustGoal(this.getThrustActual() * .9D);
+            this.setThrustGoal(this.currentThrust * .9D);
         }
     }
 

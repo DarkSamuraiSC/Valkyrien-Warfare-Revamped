@@ -284,10 +284,10 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
                 return false;
             } else {
                 this.markVelocityChanged();
-                this.setDamage(this.getDamage() + amount * 10.0F);
+                this.setDamage(this.damage + amount * 10.0F);
                 boolean flag = source.getImmediateSource() instanceof EntityPlayer && ((EntityPlayer) source.getImmediateSource()).capabilities.isCreativeMode;
 
-                if (flag || this.getDamage() > this.getMaxDamage()) {
+                if (flag || this.damage > this.getMaxDamage()) {
                     this.removePassengers();
 
                     if (flag && !this.hasCustomName()) {

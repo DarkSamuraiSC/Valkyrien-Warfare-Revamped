@@ -69,9 +69,9 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
         this.posY = y;
         this.posZ = z;
 
-        this.getPhysicsObject().setDetectorID(detectorID);
-        this.getPhysicsObject().setShipType(shipType);
-        this.getPhysicsObject().processChunkClaims(creator);
+        this.physicsObject.setDetectorID(detectorID);
+        this.physicsObject.setShipType(shipType);
+        this.physicsObject.processChunkClaims(creator);
 
         IAirshipCounterCapability counter = creator.getCapability(ValkyrienWarfareMod.airshipCounter, null);
         counter.onCreate();
@@ -87,10 +87,10 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
         this.posY = y;
         this.posZ = z;
 
-        this.getPhysicsObject().setDetectorID(0);
-        this.getPhysicsObject().setShipType(shipType);
+        this.physicsObject.setDetectorID(0);
+        this.physicsObject.setShipType(shipType);
 
-        this.getPhysicsObject().processChunkClaims(schematic);
+        this.physicsObject.processChunkClaims(schematic);
 
         this.setCustomNameTagInitial("ShipRandom" + ":" + Math.random() * 10000000);
         ShipNameUUIDData.get(worldIn).placeShipInRegistry(this, this.getCustomNameTag());
@@ -102,17 +102,17 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
             return;
         }
         if (this.world.isRemote) {
-            this.getPhysicsObject().setNameCustom(this.dataManager.get(IS_NAME_CUSTOM));
+            this.physicsObject.setNameCustom(this.dataManager.get(IS_NAME_CUSTOM));
         }
         // super.onUpdate();
-        this.getPhysicsObject().onTick();
+        this.physicsObject.onTick();
 
         this.firstUpdate = false;
     }
 
     @Override
     public void updatePassenger(Entity passenger) {
-        Vector inLocal = this.getPhysicsObject().getLocalPositionForEntity(passenger);
+        Vector inLocal = this.physicsObject.getLocalPositionForEntity(passenger);
 
         if (inLocal != null) {
             Vector newEntityPosition = new Vector(inLocal);
@@ -121,9 +121,9 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
             AxisAlignedBB inLocalAABB = new AxisAlignedBB(newEntityPosition.X - f, newEntityPosition.Y,
                     newEntityPosition.Z - f, newEntityPosition.X + f, newEntityPosition.Y + f1,
                     newEntityPosition.Z + f);
-            this.getPhysicsObject().getShipTransformationManager().fromLocalToGlobal(newEntityPosition);
+            this.physicsObject.getShipTransformationManager().fromLocalToGlobal(newEntityPosition);
             passenger.setPosition(newEntityPosition.X, newEntityPosition.Y, newEntityPosition.Z);
-            Polygon entityBBPoly = new Polygon(inLocalAABB, this.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform(), TransformType.SUBSPACE_TO_GLOBAL);
+            Polygon entityBBPoly = new Polygon(inLocalAABB, this.physicsObject.getShipTransformationManager().getCurrentTickTransform(), TransformType.SUBSPACE_TO_GLOBAL);
 
             AxisAlignedBB newEntityBB = entityBBPoly.getEnclosedAABB();
             passenger.setEntityBoundingBox(newEntityBB);
@@ -131,11 +131,11 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
                 passenger.onUpdate();
 
                 for (Entity e : passenger.riddenByEntities) {
-                    if (this.getPhysicsObject().isEntityFixed(e)) {
-                        Vector inLocalAgain = this.getPhysicsObject().getLocalPositionForEntity(e);
+                    if (this.physicsObject.isEntityFixed(e)) {
+                        Vector inLocalAgain = this.physicsObject.getLocalPositionForEntity(e);
                         if (inLocalAgain != null) {
                             Vector newEntityPositionAgain = new Vector(inLocalAgain);
-                            this.getPhysicsObject().getShipTransformationManager().fromLocalToGlobal(newEntityPositionAgain);
+                            this.physicsObject.getShipTransformationManager().fromLocalToGlobal(newEntityPositionAgain);
 
                             e.setPosition(newEntityPositionAgain.X, newEntityPositionAgain.Y, newEntityPositionAgain.Z);
                         }
@@ -154,7 +154,7 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
                         this.getCustomNameTag());
                 if (didRenameSuccessful) {
                     super.setCustomNameTag(name);
-                    this.getPhysicsObject().setNameCustom(true);
+                    this.physicsObject.setNameCustom(true);
                     this.dataManager.set(IS_NAME_CUSTOM, true);
                 }
             } else {
@@ -178,7 +178,7 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return this.getPhysicsObject().getShipBoundingBox();
+        return this.physicsObject.getShipBoundingBox();
     }
 
     @Override
@@ -205,7 +205,7 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
     @Override
     @SideOnly(Side.CLIENT)
     public boolean getAlwaysRenderNameTagForRender() {
-        return this.getPhysicsObject().isNameCustom();
+        return this.physicsObject.isNameCustom();
     }
 
     public void setCustomNameTagInitial(String name) {
@@ -214,23 +214,23 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
 
     @Override
     protected void readEntityFromNBT(NBTTagCompound tagCompound) {
-        this.getPhysicsObject().readFromNBTTag(tagCompound);
+        this.physicsObject.readFromNBTTag(tagCompound);
     }
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound tagCompound) {
-        this.getPhysicsObject().writeToNBTTag(tagCompound);
+        this.physicsObject.writeToNBTTag(tagCompound);
     }
 
     @Override
     public void writeSpawnData(ByteBuf buffer) {
-        this.getPhysicsObject().preloadNewPlayers();
-        this.getPhysicsObject().writeSpawnData(buffer);
+        this.physicsObject.preloadNewPlayers();
+        this.physicsObject.writeSpawnData(buffer);
     }
 
     @Override
     public void readSpawnData(ByteBuf additionalData) {
-        this.getPhysicsObject().readSpawnData(additionalData);
+        this.physicsObject.readSpawnData(additionalData);
     }
 
     /**
@@ -306,12 +306,12 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
 
     @Override
     public Vec3d rotateVector(Vec3d vector, TransformType transformType) {
-        return this.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().rotate(vector, transformType);
+        return this.physicsObject.getShipTransformationManager().getCurrentTickTransform().rotate(vector, transformType);
     }
 
     @Override
     public Vec3d transformVector(Vec3d vector, TransformType transformType) {
-        return this.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().transform(vector, transformType);
+        return this.physicsObject.getShipTransformationManager().getCurrentTickTransform().transform(vector, transformType);
     }
 
 }

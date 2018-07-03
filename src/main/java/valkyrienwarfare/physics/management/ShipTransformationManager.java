@@ -74,13 +74,13 @@ public class ShipTransformationManager {
                 this.parent.getWrapperEntity().posZ);
         lToWTransform = RotationMatrices.rotateAndTranslate(lToWTransform, this.parent.getWrapperEntity().getPitch(),
                 this.parent.getWrapperEntity().getYaw(), this.parent.getWrapperEntity().getRoll(), this.parent.getCenterCoord());
-        this.setCurrentTickTransform(new ShipTransform(lToWTransform));
+        this.currentTickTransform = new ShipTransform(lToWTransform);
     }
 
     public void updateRenderTransform(double x, double y, double z, double pitch, double yaw, double roll) {
         double[] RlToWTransform = RotationMatrices.getTranslationMatrix(x, y, z);
         RlToWTransform = RotationMatrices.rotateAndTranslate(RlToWTransform, pitch, yaw, roll, this.parent.getCenterCoord());
-        this.setRenderTransform(new ShipTransform(RlToWTransform));
+        this.renderTransform = new ShipTransform(RlToWTransform);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ShipTransformationManager {
      */
     public void updatePrevTickTransform() {
         // Transformation objects are immutable, so this is 100% safe!
-        this.setPrevTickTransform(this.getCurrentTickTransform());
+        this.prevTickTransform = this.currentTickTransform;
     }
 
     /**
@@ -142,8 +142,8 @@ public class ShipTransformationManager {
 
     public void sendPositionToPlayers(int positionTickID) {
         PhysWrapperPositionMessage posMessage = null;
-        if (this.getCurrentPhysicsTransform() != ZERO_TRANSFORM) {
-            posMessage = new PhysWrapperPositionMessage((PhysicsShipTransform) this.getCurrentPhysicsTransform(),
+        if (this.currentPhysicsTransform != ZERO_TRANSFORM) {
+            posMessage = new PhysWrapperPositionMessage((PhysicsShipTransform) this.currentPhysicsTransform,
                     this.parent.getWrapperEntity().getEntityId(), positionTickID);
         } else {
             posMessage = new PhysWrapperPositionMessage(this.parent.getWrapperEntity(), positionTickID);
@@ -193,7 +193,7 @@ public class ShipTransformationManager {
     public Vector[] generateRotationNormals() {
         Vector[] norms = Vector.generateAxisAlignedNorms();
         for (int i = 0; i < 3; i++) {
-            this.getCurrentTickTransform().rotate(norms[i], TransformType.SUBSPACE_TO_GLOBAL);
+            this.currentTickTransform.rotate(norms[i], TransformType.SUBSPACE_TO_GLOBAL);
         }
         return norms;
     }
@@ -249,7 +249,7 @@ public class ShipTransformationManager {
      * @param inGlobal
      */
     public void fromGlobalToLocal(Vector inGlobal) {
-        this.getCurrentTickTransform().transform(inGlobal, TransformType.GLOBAL_TO_SUBSPACE);
+        this.currentTickTransform.transform(inGlobal, TransformType.GLOBAL_TO_SUBSPACE);
     }
 
     /**
@@ -259,7 +259,7 @@ public class ShipTransformationManager {
      * @param inLocal
      */
     public void fromLocalToGlobal(Vector inLocal) {
-        this.getCurrentTickTransform().transform(inLocal, TransformType.SUBSPACE_TO_GLOBAL);
+        this.currentTickTransform.transform(inLocal, TransformType.SUBSPACE_TO_GLOBAL);
     }
 
     /**

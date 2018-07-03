@@ -104,27 +104,27 @@ public class PhysWrapperPositionMessage implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(this.getEntityID());
-        buf.writeInt(this.getRelativeTick());
+        buf.writeInt(this.entityID);
+        buf.writeInt(this.relativeTick);
 
-        buf.writeDouble(this.getPosX());
-        buf.writeDouble(this.getPosY());
-        buf.writeDouble(this.getPosZ());
+        buf.writeDouble(this.posX);
+        buf.writeDouble(this.posY);
+        buf.writeDouble(this.posZ);
 
-        buf.writeDouble(this.getPitch());
-        buf.writeDouble(this.getYaw());
-        buf.writeDouble(this.getRoll());
+        buf.writeDouble(this.pitch);
+        buf.writeDouble(this.yaw);
+        buf.writeDouble(this.roll);
 
-        buf.writeDouble(this.getCenterOfMass().X);
-        buf.writeDouble(this.getCenterOfMass().Y);
-        buf.writeDouble(this.getCenterOfMass().Z);
+        buf.writeDouble(this.centerOfMass.X);
+        buf.writeDouble(this.centerOfMass.Y);
+        buf.writeDouble(this.centerOfMass.Z);
 
-        buf.writeDouble(this.getShipBB().minX);
-        buf.writeDouble(this.getShipBB().minY);
-        buf.writeDouble(this.getShipBB().minZ);
-        buf.writeDouble(this.getShipBB().maxX);
-        buf.writeDouble(this.getShipBB().maxY);
-        buf.writeDouble(this.getShipBB().maxZ);
+        buf.writeDouble(this.shipBB.minX);
+        buf.writeDouble(this.shipBB.minY);
+        buf.writeDouble(this.shipBB.minZ);
+        buf.writeDouble(this.shipBB.maxX);
+        buf.writeDouble(this.shipBB.maxY);
+        buf.writeDouble(this.shipBB.maxZ);
     }
 
     /**

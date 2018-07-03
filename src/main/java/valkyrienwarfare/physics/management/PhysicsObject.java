@@ -166,7 +166,7 @@ public class PhysicsObject implements ISubspaceProvider {
             return;
         }
 
-        if (!this.getOwnedChunks().isChunkEnclosedInSet(posAt.getX() >> 4, posAt.getZ() >> 4)) {
+        if (!this.ownedChunks.isChunkEnclosedInSet(posAt.getX() >> 4, posAt.getZ() >> 4)) {
             return;
         }
 
@@ -183,30 +183,30 @@ public class PhysicsObject implements ISubspaceProvider {
         boolean isNewAir = newState == null || newState.getBlock().equals(Blocks.AIR);
 
         if (isNewAir) {
-            this.getBlockPositions().remove(posAt);
+            this.blockPositions.remove(posAt);
         }
 
         if ((isOldAir && !isNewAir)) {
-            this.getBlockPositions().add(posAt);
+            this.blockPositions.add(posAt);
             int chunkX = (posAt.getX() >> 4) - this.claimedChunks[0][0].x;
             int chunkZ = (posAt.getZ() >> 4) - this.claimedChunks[0][0].z;
-            this.getOwnedChunks().markChunkOccupied(chunkX, chunkZ, this);
+            this.ownedChunks.markChunkOccupied(chunkX, chunkZ, this);
         }
 
-        if (this.getBlockPositions().isEmpty()) {
+        if (this.blockPositions.isEmpty()) {
             this.destroy();
         }
 
-        if (this.getPhysicsProcessor() != null) {
-            this.getPhysicsProcessor().onSetBlockState(oldState, newState, posAt);
+        if (this.physicsProcessor != null) {
+            this.physicsProcessor.onSetBlockState(oldState, newState, posAt);
         }
     }
 
     public void destroy() {
-        this.getWrapperEntity().setDead();
-        List<EntityPlayerMP> watchersCopy = new ArrayList<>(this.getWatchingPlayers());
-        for (int x = this.getOwnedChunks().getMinX(); x <= this.getOwnedChunks().getMaxX(); x++) {
-            for (int z = this.getOwnedChunks().getMinZ(); z <= this.getOwnedChunks().getMaxZ(); z++) {
+        this.wrapper.setDead();
+        List<EntityPlayerMP> watchersCopy = new ArrayList<>(this.watchingPlayers);
+        for (int x = this.ownedChunks.getMinX(); x <= this.ownedChunks.getMaxX(); x++) {
+            for (int z = this.ownedChunks.getMinZ(); z <= this.ownedChunks.getMaxZ(); z++) {
                 SPacketUnloadChunk unloadPacket = new SPacketUnloadChunk(x, z);
                 for (EntityPlayerMP wachingPlayer : watchersCopy) {
                     wachingPlayer.connection.sendPacket(unloadPacket);
@@ -216,20 +216,20 @@ public class PhysicsObject implements ISubspaceProvider {
             // watchingPlayers.remove(player) call, which is a waste of CPU time
             // onPlayerUntracking(wachingPlayer);
         }
-        this.getWatchingPlayers().clear();
+        this.watchingPlayers.clear();
 
         ValkyrienWarfareFTBUtil.handleUnclaim(this);
         ValkyrienWarfareMod.VW_CHUNK_MANAGER.getManagerForWorld(this.getWorldObj()).markChunksAvailable(this.ownedChunks);
-        ValkyrienWarfareMod.VW_CHUNK_MANAGER.removeRegisteredChunksForShip(this.getWrapperEntity());
-        ValkyrienWarfareMod.VW_CHUNK_MANAGER.removeShipPosition(this.getWrapperEntity());
-        ValkyrienWarfareMod.VW_CHUNK_MANAGER.removeShipNameRegistry(this.getWrapperEntity());
-        ValkyrienWarfareMod.VW_PHYSICS_MANAGER.onShipUnload(this.getWrapperEntity());
+        ValkyrienWarfareMod.VW_CHUNK_MANAGER.removeRegisteredChunksForShip(this.wrapper);
+        ValkyrienWarfareMod.VW_CHUNK_MANAGER.removeShipPosition(this.wrapper);
+        ValkyrienWarfareMod.VW_CHUNK_MANAGER.removeShipNameRegistry(this.wrapper);
+        ValkyrienWarfareMod.VW_PHYSICS_MANAGER.onShipUnload(this.wrapper);
     }
 
     public void claimNewChunks(int radius) {
-        this.setOwnedChunks(ValkyrienWarfareMod.VW_CHUNK_MANAGER.getManagerForWorld(this.getWrapperEntity().world)
+        this.setOwnedChunks(ValkyrienWarfareMod.VW_CHUNK_MANAGER.getManagerForWorld(this.wrapper.world)
                 .getNextAvailableChunkSet(radius));
-        ValkyrienWarfareMod.VW_CHUNK_MANAGER.registerChunksForShip(this.getWrapperEntity());
+        ValkyrienWarfareMod.VW_CHUNK_MANAGER.registerChunksForShip(this.wrapper);
         this.claimedChunksInMap = true;
     }
 
@@ -237,15 +237,15 @@ public class PhysicsObject implements ISubspaceProvider {
      * Generates the new chunks
      */
     public void processChunkClaims(EntityPlayer player) {
-        BlockPos centerInWorld = new BlockPos(this.getWrapperEntity().posX, this.getWrapperEntity().posY, this.getWrapperEntity().posZ);
-        SpatialDetector detector = DetectorManager.getDetectorFor(this.getDetectorID(), centerInWorld, this.getWorldObj(),
+        BlockPos centerInWorld = new BlockPos(this.wrapper.posX, this.wrapper.posY, this.wrapper.posZ);
+        SpatialDetector detector = DetectorManager.getDetectorFor(this.detectorID, centerInWorld, this.getWorldObj(),
                 ValkyrienWarfareMod.maxShipSize + 1, true);
         if (detector.foundSet.size() > ValkyrienWarfareMod.maxShipSize || detector.cleanHouse) {
             if (player != null) {
                 player.sendMessage(new TextComponentString(
                         "Ship construction canceled because its exceeding the ship size limit; or because it's attatched to bedrock. Raise it with /physsettings maxshipsize [number]"));
             }
-            this.getWrapperEntity().setDead();
+            this.wrapper.setDead();
             return;
         }
         this.assembleShip(player, detector, centerInWorld);
@@ -261,15 +261,15 @@ public class PhysicsObject implements ISubspaceProvider {
 
         this.claimNewChunks(radiusNeeded);
 
-        ValkyrienWarfareMod.VW_PHYSICS_MANAGER.onShipPreload(this.getWrapperEntity());
+        ValkyrienWarfareMod.VW_PHYSICS_MANAGER.onShipPreload(this.wrapper);
 
-        this.claimedChunks = new Chunk[(this.getOwnedChunks().getRadius() * 2) + 1][(this.getOwnedChunks().getRadius() * 2) + 1];
-        this.claimedChunksEntries = new PlayerChunkMapEntry[(this.getOwnedChunks().getRadius() * 2) + 1][(this.getOwnedChunks().getRadius() * 2) + 1];
-        for (int x = this.getOwnedChunks().getMinX(); x <= this.getOwnedChunks().getMaxX(); x++) {
-            for (int z = this.getOwnedChunks().getMinZ(); z <= this.getOwnedChunks().getMaxZ(); z++) {
+        this.claimedChunks = new Chunk[(this.ownedChunks.getRadius() * 2) + 1][(this.ownedChunks.getRadius() * 2) + 1];
+        this.claimedChunksEntries = new PlayerChunkMapEntry[(this.ownedChunks.getRadius() * 2) + 1][(this.ownedChunks.getRadius() * 2) + 1];
+        for (int x = this.ownedChunks.getMinX(); x <= this.ownedChunks.getMaxX(); x++) {
+            for (int z = this.ownedChunks.getMinZ(); z <= this.ownedChunks.getMaxZ(); z++) {
                 Chunk chunk = new Chunk(this.getWorldObj(), x, z);
                 this.injectChunkIntoWorld(chunk, x, z, true);
-                this.claimedChunks[x - this.getOwnedChunks().getMinX()][z - this.getOwnedChunks().getMinZ()] = chunk;
+                this.claimedChunks[x - this.ownedChunks.getMinX()][z - this.ownedChunks.getMinZ()] = chunk;
             }
         }
 
@@ -278,18 +278,18 @@ public class PhysicsObject implements ISubspaceProvider {
         this.setChunkCache(new VWChunkCache(this.getWorldObj(), this.claimedChunks));
 
         this.setRefrenceBlockPos(this.getRegionCenter());
-        this.setCenterCoord(new Vector(this.getRefrenceBlockPos().getX(), this.getRefrenceBlockPos().getY(), this.getRefrenceBlockPos().getZ()));
+        this.setCenterCoord(new Vector(this.refrenceBlockPos.getX(), this.refrenceBlockPos.getY(), this.refrenceBlockPos.getZ()));
 
         this.createPhysicsCalculations();
-        BlockPos centerDifference = this.getRefrenceBlockPos().subtract(centerInWorld);
+        BlockPos centerDifference = this.refrenceBlockPos.subtract(centerInWorld);
 
         toFollow.placeBlockAndTilesInWorld(this.getWorldObj(), centerDifference);
 
         this.detectBlockPositions();
 
         // TODO: This fixes the lighting, but it adds lag; maybe remove this
-        for (int x = this.getOwnedChunks().getMinX(); x <= this.getOwnedChunks().getMaxX(); x++) {
-            for (int z = this.getOwnedChunks().getMinZ(); z <= this.getOwnedChunks().getMaxZ(); z++) {
+        for (int x = this.ownedChunks.getMinX(); x <= this.ownedChunks.getMaxX(); x++) {
+            for (int z = this.ownedChunks.getMinZ(); z <= this.ownedChunks.getMaxZ(); z++) {
                 // claimedChunks[x - ownedChunks.minX][z - ownedChunks.minZ].isTerrainPopulated
                 // = true;
                 // claimedChunks[x - ownedChunks.minX][z -
@@ -299,10 +299,10 @@ public class PhysicsObject implements ISubspaceProvider {
         }
 
         this.setShipTransformationManager(new ShipTransformationManager(this));
-        this.getPhysicsProcessor().processInitialPhysicsData();
-        this.getPhysicsProcessor().updateParentCenterOfMass();
+        this.physicsProcessor.processInitialPhysicsData();
+        this.physicsProcessor.updateParentCenterOfMass();
 
-        this.getShipTransformationManager().updateAllTransforms(false, false);
+        this.shipTransformationManager.updateAllTransforms(false, false);
     }
 
     /**
@@ -310,7 +310,7 @@ public class PhysicsObject implements ISubspaceProvider {
      * be overridden to change the class of the Object
      */
     private void createPhysicsCalculations() {
-        if (this.getPhysicsProcessor() == null) {
+        if (this.physicsProcessor == null) {
             this.setPhysicsProcessor(new PhysicsCalculations(this));
         }
     }
@@ -332,15 +332,15 @@ public class PhysicsObject implements ISubspaceProvider {
         radiusNeeded = Math.min(radiusNeeded,
                 ValkyrienWarfareMod.VW_CHUNK_MANAGER.getManagerForWorld(getWrapperEntity().world).maxChunkRadius);*/
         this.claimNewChunks(PhysicsChunkManager.getMaxChunkRadius());
-        ValkyrienWarfareMod.VW_PHYSICS_MANAGER.onShipPreload(this.getWrapperEntity());
+        ValkyrienWarfareMod.VW_PHYSICS_MANAGER.onShipPreload(this.wrapper);
 
-        this.claimedChunks = new Chunk[(this.getOwnedChunks().getRadius() * 2) + 1][(this.getOwnedChunks().getRadius() * 2) + 1];
-        this.claimedChunksEntries = new PlayerChunkMapEntry[(this.getOwnedChunks().getRadius() * 2) + 1][(this.getOwnedChunks().getRadius() * 2) + 1];
-        for (int x = this.getOwnedChunks().getMinX(); x <= this.getOwnedChunks().getMaxX(); x++) {
-            for (int z = this.getOwnedChunks().getMinZ(); z <= this.getOwnedChunks().getMaxZ(); z++) {
+        this.claimedChunks = new Chunk[(this.ownedChunks.getRadius() * 2) + 1][(this.ownedChunks.getRadius() * 2) + 1];
+        this.claimedChunksEntries = new PlayerChunkMapEntry[(this.ownedChunks.getRadius() * 2) + 1][(this.ownedChunks.getRadius() * 2) + 1];
+        for (int x = this.ownedChunks.getMinX(); x <= this.ownedChunks.getMaxX(); x++) {
+            for (int z = this.ownedChunks.getMinZ(); z <= this.ownedChunks.getMaxZ(); z++) {
                 Chunk chunk = new Chunk(this.getWorldObj(), x, z);
                 this.injectChunkIntoWorld(chunk, x, z, true);
-                this.claimedChunks[x - this.getOwnedChunks().getMinX()][z - this.getOwnedChunks().getMinZ()] = chunk;
+                this.claimedChunks[x - this.ownedChunks.getMinX()][z - this.ownedChunks.getMinZ()] = chunk;
             }
         }
 
@@ -352,12 +352,12 @@ public class PhysicsObject implements ISubspaceProvider {
         int minChunkZ = this.claimedChunks[0][0].z;
 
         this.setRefrenceBlockPos(this.getRegionCenter());
-        this.setCenterCoord(new Vector(this.getRefrenceBlockPos().getX(), this.getRefrenceBlockPos().getY(), this.getRefrenceBlockPos().getZ()));
+        this.setCenterCoord(new Vector(this.refrenceBlockPos.getX(), this.refrenceBlockPos.getY(), this.refrenceBlockPos.getZ()));
 
         this.createPhysicsCalculations();
 
         iter = detector.foundSet.iterator();
-        BlockPos centerDifference = this.getRefrenceBlockPos().subtract(centerInWorld);
+        BlockPos centerDifference = this.refrenceBlockPos.subtract(centerInWorld);
         while (iter.hasNext()) {
             int i = iter.next();
             SpatialDetector.setPosWithRespectTo(i, centerInWorld, pos);
@@ -368,7 +368,7 @@ public class PhysicsObject implements ISubspaceProvider {
 
             pos.setPos(pos.getX() + centerDifference.getX(), pos.getY() + centerDifference.getY(),
                     pos.getZ() + centerDifference.getZ());
-            this.getOwnedChunks().markChunkOccupied((pos.getX() >> 4) - minChunkX, (pos.getZ() >> 4) - minChunkZ, this);
+            this.ownedChunks.markChunkOccupied((pos.getX() >> 4) - minChunkX, (pos.getZ() >> 4) - minChunkZ, this);
 
             Chunk chunkToSet = this.claimedChunks[(pos.getX() >> 4) - minChunkX][(pos.getZ() >> 4) - minChunkZ];
             int storageIndex = pos.getY() >> 4;
@@ -415,19 +415,19 @@ public class PhysicsObject implements ISubspaceProvider {
             this.getWorldObj().setBlockState(pos, Blocks.AIR.getDefaultState(), 2);
         }
 
-        for (int x = this.getOwnedChunks().getMinX(); x <= this.getOwnedChunks().getMaxX(); x++) {
-            for (int z = this.getOwnedChunks().getMinZ(); z <= this.getOwnedChunks().getMaxZ(); z++) {
-                this.claimedChunks[x - this.getOwnedChunks().getMinX()][z - this.getOwnedChunks().getMinZ()].isTerrainPopulated = true;
-                this.claimedChunks[x - this.getOwnedChunks().getMinX()][z - this.getOwnedChunks().getMinZ()].generateSkylightMap();
-                this.claimedChunks[x - this.getOwnedChunks().getMinX()][z - this.getOwnedChunks().getMinZ()].checkLight();
+        for (int x = this.ownedChunks.getMinX(); x <= this.ownedChunks.getMaxX(); x++) {
+            for (int z = this.ownedChunks.getMinZ(); z <= this.ownedChunks.getMaxZ(); z++) {
+                this.claimedChunks[x - this.ownedChunks.getMinX()][z - this.ownedChunks.getMinZ()].isTerrainPopulated = true;
+                this.claimedChunks[x - this.ownedChunks.getMinX()][z - this.ownedChunks.getMinZ()].generateSkylightMap();
+                this.claimedChunks[x - this.ownedChunks.getMinX()][z - this.ownedChunks.getMinZ()].checkLight();
             }
         }
 
         this.detectBlockPositions();
 
         // TODO: This fixes the lighting, but it adds lag; maybe remove this
-        for (int x = this.getOwnedChunks().getMinX(); x <= this.getOwnedChunks().getMaxX(); x++) {
-            for (int z = this.getOwnedChunks().getMinZ(); z <= this.getOwnedChunks().getMaxZ(); z++) {
+        for (int x = this.ownedChunks.getMinX(); x <= this.ownedChunks.getMaxX(); x++) {
+            for (int z = this.ownedChunks.getMinZ(); z <= this.ownedChunks.getMaxZ(); z++) {
                 // claimedChunks[x - ownedChunks.minX][z - ownedChunks.minZ].isTerrainPopulated
                 // = true;
                 // claimedChunks[x - ownedChunks.minX][z -
@@ -437,14 +437,14 @@ public class PhysicsObject implements ISubspaceProvider {
         }
 
         this.setShipTransformationManager(new ShipTransformationManager(this));
-        this.getPhysicsProcessor().processInitialPhysicsData();
-        this.getPhysicsProcessor().updateParentCenterOfMass();
+        this.physicsProcessor.processInitialPhysicsData();
+        this.physicsProcessor.updateParentCenterOfMass();
     }
 
     public void injectChunkIntoWorld(Chunk chunk, int x, int z, boolean putInId2ChunkMap) {
         ChunkProviderServer provider = (ChunkProviderServer) this.getWorldObj().getChunkProvider();
         chunk.dirty = true;
-        this.claimedChunks[x - this.getOwnedChunks().getMinX()][z - this.getOwnedChunks().getMinZ()] = chunk;
+        this.claimedChunks[x - this.ownedChunks.getMinX()][z - this.ownedChunks.getMinZ()] = chunk;
 
         if (putInId2ChunkMap) {
             provider.id2ChunkMap.put(ChunkPos.asLong(x, z), chunk);
@@ -463,17 +463,17 @@ public class PhysicsObject implements ISubspaceProvider {
         map.entries.add(entry);
 
         entry.sentToPlayers = true;
-        entry.players = this.getWatchingPlayers();
+        entry.players = this.watchingPlayers;
 
-        this.claimedChunksEntries[x - this.getOwnedChunks().getMinX()][z - this.getOwnedChunks().getMinZ()] = entry;
+        this.claimedChunksEntries[x - this.ownedChunks.getMinX()][z - this.ownedChunks.getMinZ()] = entry;
     }
 
     // Experimental, could fix issues with random shit generating inside of Ships
     private void replaceOuterChunksWithAir() {
-        for (int x = this.getOwnedChunks().getMinX() - 1; x <= this.getOwnedChunks().getMaxX() + 1; x++) {
-            for (int z = this.getOwnedChunks().getMinZ() - 1; z <= this.getOwnedChunks().getMaxZ() + 1; z++) {
-                if (x == this.getOwnedChunks().getMinX() - 1 || x == this.getOwnedChunks().getMaxX() + 1 || z == this.getOwnedChunks().getMinZ() - 1
-                        || z == this.getOwnedChunks().getMaxZ() + 1) {
+        for (int x = this.ownedChunks.getMinX() - 1; x <= this.ownedChunks.getMaxX() + 1; x++) {
+            for (int z = this.ownedChunks.getMinZ() - 1; z <= this.ownedChunks.getMaxZ() + 1; z++) {
+                if (x == this.ownedChunks.getMinX() - 1 || x == this.ownedChunks.getMaxX() + 1 || z == this.ownedChunks.getMinZ() - 1
+                        || z == this.ownedChunks.getMaxZ() + 1) {
                     // This is satisfied for the chunks surrounding a Ship, do fill it with empty
                     // space
                     Chunk chunk = new Chunk(this.getWorldObj(), x, z);
@@ -502,7 +502,7 @@ public class PhysicsObject implements ISubspaceProvider {
     }
 
     public BlockPos getRegionCenter() {
-        return this.getOwnedChunks().getRegionCenter();
+        return this.ownedChunks.getRegionCenter();
     }
 
     /**
@@ -512,9 +512,9 @@ public class PhysicsObject implements ISubspaceProvider {
      * @param untracking EntityPlayer that stopped tracking
      */
     public void onPlayerUntracking(EntityPlayer untracking) {
-        this.getWatchingPlayers().remove(untracking);
-        for (int x = this.getOwnedChunks().getMinX(); x <= this.getOwnedChunks().getMaxX(); x++) {
-            for (int z = this.getOwnedChunks().getMinZ(); z <= this.getOwnedChunks().getMaxZ(); z++) {
+        this.watchingPlayers.remove(untracking);
+        for (int x = this.ownedChunks.getMinX(); x <= this.ownedChunks.getMaxX(); x++) {
+            for (int z = this.ownedChunks.getMinZ(); z <= this.ownedChunks.getMaxZ(); z++) {
                 SPacketUnloadChunk unloadPacket = new SPacketUnloadChunk(x, z);
                 ((EntityPlayerMP) untracking).connection.sendPacket(unloadPacket);
             }
@@ -528,15 +528,15 @@ public class PhysicsObject implements ISubspaceProvider {
         if (!this.getWorldObj().isRemote) {
             this.unloadShipChunksFromWorld();
         } else {
-            this.getShipRenderer().killRenderers();
+            this.shipRenderer.killRenderers();
         }
     }
 
     public void unloadShipChunksFromWorld() {
         ChunkProviderServer provider = (ChunkProviderServer) this.getWorldObj().getChunkProvider();
-        for (int x = this.getOwnedChunks().getMinX(); x <= this.getOwnedChunks().getMaxX(); x++) {
-            for (int z = this.getOwnedChunks().getMinZ(); z <= this.getOwnedChunks().getMaxZ(); z++) {
-                provider.queueUnload(this.claimedChunks[x - this.getOwnedChunks().getMinX()][z - this.getOwnedChunks().getMinZ()]);
+        for (int x = this.ownedChunks.getMinX(); x <= this.ownedChunks.getMaxX(); x++) {
+            for (int z = this.ownedChunks.getMinZ(); z <= this.ownedChunks.getMaxZ(); z++) {
+                provider.queueUnload(this.claimedChunks[x - this.ownedChunks.getMinX()][z - this.ownedChunks.getMinZ()]);
 
                 // Ticket ticket =
                 // ValkyrienWarfareMod.physicsManager.getManagerForWorld(this.worldObj).chunkLoadingTicket;
@@ -551,11 +551,11 @@ public class PhysicsObject implements ISubspaceProvider {
 
     private Set getPlayersThatJustWatched() {
         HashSet newPlayers = new HashSet();
-        for (Object o : ((WorldServer) this.getWorldObj()).getEntityTracker().getTrackingPlayers(this.getWrapperEntity())) {
+        for (Object o : ((WorldServer) this.getWorldObj()).getEntityTracker().getTrackingPlayers(this.wrapper)) {
             EntityPlayerMP player = (EntityPlayerMP) o;
-            if (!this.getWatchingPlayers().contains(player)) {
+            if (!this.watchingPlayers.contains(player)) {
                 newPlayers.add(player);
-                this.getWatchingPlayers().add(player);
+                this.watchingPlayers.add(player);
             }
         }
         return newPlayers;
@@ -565,7 +565,7 @@ public class PhysicsObject implements ISubspaceProvider {
         if (!this.getWorldObj().isRemote) {
             for (Entity e : this.queuedEntitiesToMount) {
                 if (e != null) {
-                    e.startRiding(this.getWrapperEntity(), true);
+                    e.startRiding(this.wrapper, true);
                 }
             }
             this.queuedEntitiesToMount.clear();
@@ -574,11 +574,11 @@ public class PhysicsObject implements ISubspaceProvider {
     }
 
     public void onPostTick() {
-        if (!this.getWrapperEntity().isDead && !this.getWrapperEntity().world.isRemote) {
-            ValkyrienWarfareMod.VW_CHUNK_MANAGER.updateShipPosition(this.getWrapperEntity());
+        if (!this.wrapper.isDead && !this.wrapper.world.isRemote) {
+            ValkyrienWarfareMod.VW_CHUNK_MANAGER.updateShipPosition(this.wrapper);
             if (!this.claimedChunksInMap) {
                 // Old ships not in the map will add themselves in once loaded
-                ValkyrienWarfareMod.VW_CHUNK_MANAGER.registerChunksForShip(this.getWrapperEntity());
+                ValkyrienWarfareMod.VW_CHUNK_MANAGER.registerChunksForShip(this.wrapper);
                 System.out.println("Old ship detected, adding to the registered Chunks map");
                 this.claimedChunksInMap = true;
             }
@@ -590,17 +590,17 @@ public class PhysicsObject implements ISubspaceProvider {
      * from the server.
      */
     public void onPostTickClient() {
-        ShipTransformationPacketHolder toUse = this.getShipTransformationManager().serverBuffer.pollForClientTransform();
+        ShipTransformationPacketHolder toUse = this.shipTransformationManager.serverBuffer.pollForClientTransform();
         if (toUse != null) {
             toUse.applySmoothLerp(this, .6D);
         }
 
-        this.getShipTransformationManager().updatePrevTickTransform();
-        this.getShipTransformationManager().updateAllTransforms(false, true);
+        this.shipTransformationManager.updatePrevTickTransform();
+        this.shipTransformationManager.updateAllTransforms(false, true);
     }
 
     public void updateChunkCache() {
-        AxisAlignedBB cacheBB = this.getShipBoundingBox();
+        AxisAlignedBB cacheBB = this.shipBoundingBox;
         // Check if all those surrounding chunks are loaded
         BlockPos min = new BlockPos(cacheBB.minX, Math.max(cacheBB.minY, 0), cacheBB.minZ);
         BlockPos max = new BlockPos(cacheBB.maxX, Math.min(cacheBB.maxY, 255), cacheBB.maxZ);
@@ -628,12 +628,12 @@ public class PhysicsObject implements ISubspaceProvider {
     }
 
     public void loadClaimedChunks() {
-        ValkyrienWarfareMod.VW_PHYSICS_MANAGER.onShipPreload(this.getWrapperEntity());
+        ValkyrienWarfareMod.VW_PHYSICS_MANAGER.onShipPreload(this.wrapper);
 
-        this.claimedChunks = new Chunk[(this.getOwnedChunks().getRadius() * 2) + 1][(this.getOwnedChunks().getRadius() * 2) + 1];
-        this.claimedChunksEntries = new PlayerChunkMapEntry[(this.getOwnedChunks().getRadius() * 2) + 1][(this.getOwnedChunks().getRadius() * 2) + 1];
-        for (int x = this.getOwnedChunks().getMinX(); x <= this.getOwnedChunks().getMaxX(); x++) {
-            for (int z = this.getOwnedChunks().getMinZ(); z <= this.getOwnedChunks().getMaxZ(); z++) {
+        this.claimedChunks = new Chunk[(this.ownedChunks.getRadius() * 2) + 1][(this.ownedChunks.getRadius() * 2) + 1];
+        this.claimedChunksEntries = new PlayerChunkMapEntry[(this.ownedChunks.getRadius() * 2) + 1][(this.ownedChunks.getRadius() * 2) + 1];
+        for (int x = this.ownedChunks.getMinX(); x <= this.ownedChunks.getMaxX(); x++) {
+            for (int z = this.ownedChunks.getMinZ(); z <= this.ownedChunks.getMaxZ(); z++) {
                 Chunk chunk = this.getWorldObj().getChunkFromChunkCoords(x, z);
                 if (chunk == null) {
                     System.out.println("Just a loaded a null chunk");
@@ -646,7 +646,7 @@ public class PhysicsObject implements ISubspaceProvider {
                 for (Entry<BlockPos, TileEntity> entry : chunk.tileEntities.entrySet()) {
                     this.onSetTileEntity(entry.getKey(), entry.getValue());
                 }
-                this.claimedChunks[x - this.getOwnedChunks().getMinX()][z - this.getOwnedChunks().getMinZ()] = chunk;
+                this.claimedChunks[x - this.ownedChunks.getMinX()][z - this.ownedChunks.getMinZ()] = chunk;
             }
         }
         this.setChunkCache(new VWChunkCache(this.getWorldObj(), this.claimedChunks));
@@ -658,7 +658,7 @@ public class PhysicsObject implements ISubspaceProvider {
             this.detectBlockPositions();
         }
 
-        this.getShipTransformationManager().updateAllTransforms(false, false);
+        this.shipTransformationManager.updateAllTransforms(false, false);
     }
 
     // Generates the blockPos array; must be loaded DIRECTLY after the chunks are
@@ -672,7 +672,7 @@ public class PhysicsObject implements ISubspaceProvider {
         for (chunkX = this.claimedChunks.length - 1; chunkX > -1; chunkX--) {
             for (chunkZ = this.claimedChunks[0].length - 1; chunkZ > -1; chunkZ--) {
                 chunk = this.claimedChunks[chunkX][chunkZ];
-                if (chunk != null && this.getOwnedChunks().isChunkOccupied(chunkX, chunkZ)) {
+                if (chunk != null && this.ownedChunks.isChunkOccupied(chunkX, chunkZ)) {
                     for (index = 0; index < 16; index++) {
                         storage = chunk.getBlockStorageArray()[index];
                         if (storage != null) {
@@ -683,10 +683,10 @@ public class PhysicsObject implements ISubspaceProvider {
                                                 .getAt(y << 8 | z << 4 | x) != ValkyrienWarfareMod.airStateIndex) {
                                             BlockPos pos = new BlockPos(chunk.x * 16 + x, index * 16 + y,
                                                     chunk.z * 16 + z);
-                                            this.getBlockPositions().add(pos);
+                                            this.blockPositions.add(pos);
                                             if (BlockForce.basicForces.isBlockProvidingForce(
                                                     this.getWorldObj().getBlockState(pos), pos, this.getWorldObj())) {
-                                                this.getPhysicsProcessor().addPotentialActiveForcePos(pos);
+                                                this.physicsProcessor.addPotentialActiveForcePos(pos);
                                             }
                                         }
                                     }
@@ -700,7 +700,7 @@ public class PhysicsObject implements ISubspaceProvider {
     }
 
     public boolean ownsChunk(int chunkX, int chunkZ) {
-        return this.getOwnedChunks().isChunkEnclosedInSet(chunkX, chunkZ);
+        return this.ownedChunks.isChunkEnclosedInSet(chunkX, chunkZ);
     }
 
     public void queueEntityForMounting(Entity toMount) {
@@ -715,8 +715,8 @@ public class PhysicsObject implements ISubspaceProvider {
      * @param posInLocal
      */
     public void fixEntity(Entity toFix, Vector posInLocal) {
-        EntityFixMessage entityFixingMessage = new EntityFixMessage(this.getWrapperEntity(), toFix, true, posInLocal);
-        for (EntityPlayerMP watcher : this.getWatchingPlayers()) {
+        EntityFixMessage entityFixingMessage = new EntityFixMessage(this.wrapper, toFix, true, posInLocal);
+        for (EntityPlayerMP watcher : this.watchingPlayers) {
             ValkyrienWarfareControl.controlNetwork.sendTo(entityFixingMessage, watcher);
         }
         this.entityLocalPositions.put(toFix.getPersistentID().hashCode(), posInLocal);
@@ -726,8 +726,8 @@ public class PhysicsObject implements ISubspaceProvider {
      * ONLY USE THESE 2 METHODS TO EVER ADD/REMOVE ENTITIES
      */
     public void unFixEntity(Entity toUnfix) {
-        EntityFixMessage entityUnfixingMessage = new EntityFixMessage(this.getWrapperEntity(), toUnfix, false, null);
-        for (EntityPlayerMP watcher : this.getWatchingPlayers()) {
+        EntityFixMessage entityUnfixingMessage = new EntityFixMessage(this.wrapper, toUnfix, false, null);
+        for (EntityPlayerMP watcher : this.watchingPlayers) {
             ValkyrienWarfareControl.controlNetwork.sendTo(entityUnfixingMessage, watcher);
         }
         this.entityLocalPositions.remove(toUnfix.getPersistentID().hashCode());
@@ -751,25 +751,25 @@ public class PhysicsObject implements ISubspaceProvider {
     }
 
     public void writeToNBTTag(NBTTagCompound compound) {
-        this.getOwnedChunks().writeToNBT(compound);
-        NBTUtils.writeVectorToNBT("c", this.getCenterCoord(), compound);
+        this.ownedChunks.writeToNBT(compound);
+        NBTUtils.writeVectorToNBT("c", this.centerCoord, compound);
         NBTUtils.writeShipTransformToNBT("currentTickTransform",
-                this.getShipTransformationManager().getCurrentTickTransform(), compound);
+                this.shipTransformationManager.getCurrentTickTransform(), compound);
         compound.setBoolean("doPhysics", this.isPhysicsEnabled/* isPhysicsEnabled() */);
-        for (int row = 0; row < this.getOwnedChunks().getChunkOccupiedInLocal().length; row++) {
-            boolean[] curArray = this.getOwnedChunks().getChunkOccupiedInLocal()[row];
+        for (int row = 0; row < this.ownedChunks.getChunkOccupiedInLocal().length; row++) {
+            boolean[] curArray = this.ownedChunks.getChunkOccupiedInLocal()[row];
             for (int column = 0; column < curArray.length; column++) {
                 compound.setBoolean("CC:" + row + ":" + column, curArray[column]);
             }
         }
         NBTUtils.writeEntityPositionMapToNBT("entityPosHashMap", this.entityLocalPositions, compound);
-        this.getPhysicsProcessor().writeToNBTTag(compound);
+        this.physicsProcessor.writeToNBTTag(compound);
 
         compound.setBoolean("claimedChunksInMap", this.claimedChunksInMap);
-        compound.setBoolean("isNameCustom", this.isNameCustom());
+        compound.setBoolean("isNameCustom", this.isNameCustom);
         compound.setString("shipType", this.shipType.name());
         // Write and read AABB from NBT to speed things up.
-        NBTUtils.writeAABBToNBT("collision_aabb", this.getShipBoundingBox(), compound);
+        NBTUtils.writeAABBToNBT("collision_aabb", this.shipBoundingBox, compound);
 
         if (this.owner != null) {
             compound.setString("ownerName", this.owner.getName());
@@ -782,23 +782,23 @@ public class PhysicsObject implements ISubspaceProvider {
         this.setCenterCoord(NBTUtils.readVectorFromNBT("c", compound));
         ShipTransform savedTransform = NBTUtils.readShipTransformFromNBT("currentTickTransform", compound);
         if (savedTransform != null) {
-            Vector centerOfMassInGlobal = new Vector(this.getCenterCoord());
+            Vector centerOfMassInGlobal = new Vector(this.centerCoord);
             savedTransform.transform(centerOfMassInGlobal, TransformType.SUBSPACE_TO_GLOBAL);
 
-            this.getWrapperEntity().posX = centerOfMassInGlobal.X;
-            this.getWrapperEntity().posY = centerOfMassInGlobal.Y;
-            this.getWrapperEntity().posZ = centerOfMassInGlobal.Z;
+            this.wrapper.posX = centerOfMassInGlobal.X;
+            this.wrapper.posY = centerOfMassInGlobal.Y;
+            this.wrapper.posZ = centerOfMassInGlobal.Z;
 
             Quaternion rotationQuaternion = savedTransform.createRotationQuaternion(TransformType.SUBSPACE_TO_GLOBAL);
             double[] angles = rotationQuaternion.toRadians();
-            this.getWrapperEntity().setPhysicsEntityRotation(Math.toDegrees(angles[0]), Math.toDegrees(angles[1]), Math.toDegrees(angles[2]));
+            this.wrapper.setPhysicsEntityRotation(Math.toDegrees(angles[0]), Math.toDegrees(angles[1]), Math.toDegrees(angles[2]));
         } else {
             // Old code here for compatibility reasons. Should be removed by MC 1.13
-            this.getWrapperEntity().setPhysicsEntityRotation(compound.getDouble("pitch"), compound.getDouble("yaw"), compound.getDouble("roll"));
+            this.wrapper.setPhysicsEntityRotation(compound.getDouble("pitch"), compound.getDouble("yaw"), compound.getDouble("roll"));
         }
 
-        for (int row = 0; row < this.getOwnedChunks().getChunkOccupiedInLocal().length; row++) {
-            boolean[] curArray = this.getOwnedChunks().getChunkOccupiedInLocal()[row];
+        for (int row = 0; row < this.ownedChunks.getChunkOccupiedInLocal().length; row++) {
+            boolean[] curArray = this.ownedChunks.getChunkOccupiedInLocal()[row];
             for (int column = 0; column < curArray.length; column++) {
                 curArray[column] = compound.getBoolean("CC:" + row + ":" + column);
             }
@@ -814,11 +814,11 @@ public class PhysicsObject implements ISubspaceProvider {
 
         this.loadClaimedChunks();
         this.entityLocalPositions = NBTUtils.readEntityPositionMap("entityPosHashMap", compound);
-        this.getPhysicsProcessor().readFromNBTTag(compound);
+        this.physicsProcessor.readFromNBTTag(compound);
 
         this.claimedChunksInMap = compound.getBoolean("claimedChunksInMap");
         this.setNameCustom(compound.getBoolean("isNameCustom"));
-        this.getWrapperEntity().dataManager.set(PhysicsWrapperEntity.IS_NAME_CUSTOM, this.isNameCustom());
+        this.wrapper.dataManager.set(PhysicsWrapperEntity.IS_NAME_CUSTOM, this.isNameCustom);
 
         this.setShipBoundingBox(NBTUtils.readAABBFromNBT("collision_aabb", compound));
 
@@ -845,19 +845,19 @@ public class PhysicsObject implements ISubspaceProvider {
         double yaw = modifiedBuffer.readDouble();
         double roll = modifiedBuffer.readDouble();
 
-        this.getWrapperEntity().setPhysicsEntityPositionAndRotation(posX, posY, posZ, pitch, yaw, roll);
-        this.getWrapperEntity().physicsUpdateLastTickPositions();
+        this.wrapper.setPhysicsEntityPositionAndRotation(posX, posY, posZ, pitch, yaw, roll);
+        this.wrapper.physicsUpdateLastTickPositions();
 
         this.setCenterCoord(new Vector(modifiedBuffer));
-        for (boolean[] array : this.getOwnedChunks().getChunkOccupiedInLocal()) {
+        for (boolean[] array : this.ownedChunks.getChunkOccupiedInLocal()) {
             for (int i = 0; i < array.length; i++) {
                 array[i] = modifiedBuffer.readBoolean();
             }
         }
         this.loadClaimedChunks();
-        this.getShipRenderer().updateOffsetPos(this.getRefrenceBlockPos());
+        this.shipRenderer.updateOffsetPos(this.refrenceBlockPos);
 
-        this.getShipTransformationManager().serverBuffer.pushMessage(new PhysWrapperPositionMessage(this));
+        this.shipTransformationManager.serverBuffer.pushMessage(new PhysWrapperPositionMessage(this));
 
         try {
             NBTTagCompound entityFixedPositionNBT = modifiedBuffer.readCompoundTag();
@@ -874,20 +874,20 @@ public class PhysicsObject implements ISubspaceProvider {
     public void writeSpawnData(ByteBuf buffer) {
         PacketBuffer modifiedBuffer = new PacketBuffer(buffer);
 
-        modifiedBuffer.writeInt(this.getOwnedChunks().getCenterX());
-        modifiedBuffer.writeInt(this.getOwnedChunks().getCenterZ());
-        modifiedBuffer.writeInt(this.getOwnedChunks().getRadius());
+        modifiedBuffer.writeInt(this.ownedChunks.getCenterX());
+        modifiedBuffer.writeInt(this.ownedChunks.getCenterZ());
+        modifiedBuffer.writeInt(this.ownedChunks.getRadius());
 
-        modifiedBuffer.writeDouble(this.getWrapperEntity().posX);
-        modifiedBuffer.writeDouble(this.getWrapperEntity().posY);
-        modifiedBuffer.writeDouble(this.getWrapperEntity().posZ);
+        modifiedBuffer.writeDouble(this.wrapper.posX);
+        modifiedBuffer.writeDouble(this.wrapper.posY);
+        modifiedBuffer.writeDouble(this.wrapper.posZ);
 
-        modifiedBuffer.writeDouble(this.getWrapperEntity().getPitch());
-        modifiedBuffer.writeDouble(this.getWrapperEntity().getYaw());
-        modifiedBuffer.writeDouble(this.getWrapperEntity().getRoll());
+        modifiedBuffer.writeDouble(this.wrapper.getPitch());
+        modifiedBuffer.writeDouble(this.wrapper.getYaw());
+        modifiedBuffer.writeDouble(this.wrapper.getRoll());
 
-        this.getCenterCoord().writeToByteBuf(modifiedBuffer);
-        for (boolean[] array : this.getOwnedChunks().getChunkOccupiedInLocal()) {
+        this.centerCoord.writeToByteBuf(modifiedBuffer);
+        for (boolean[] array : this.ownedChunks.getChunkOccupiedInLocal()) {
             for (boolean b : array) {
                 modifiedBuffer.writeBoolean(b);
             }
@@ -897,7 +897,7 @@ public class PhysicsObject implements ISubspaceProvider {
         NBTUtils.writeEntityPositionMapToNBT("entityFixedPosMap", this.entityLocalPositions, entityFixedPositionNBT);
         modifiedBuffer.writeCompoundTag(entityFixedPositionNBT);
 
-        modifiedBuffer.writeBoolean(this.isNameCustom());
+        modifiedBuffer.writeBoolean(this.isNameCustom);
         modifiedBuffer.writeEnumValue(this.shipType);
     }
 
@@ -905,7 +905,7 @@ public class PhysicsObject implements ISubspaceProvider {
      * @return The World this PhysicsObject exists in.
      */
     public World getWorldObj() {
-        return this.getWrapperEntity().getEntityWorld();
+        return this.wrapper.getEntityWorld();
     }
 
     /**
@@ -916,7 +916,7 @@ public class PhysicsObject implements ISubspaceProvider {
     }
 
     public boolean areShipChunksFullyLoaded() {
-        return this.getChunkCache() != null;
+        return this.chunkCache != null;
     }
 
     /**

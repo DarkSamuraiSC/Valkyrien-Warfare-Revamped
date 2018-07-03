@@ -48,14 +48,14 @@ public class VWChunkClaim {
     }
 
     public void writeToNBT(NBTTagCompound toSave) {
-        toSave.setInteger("centerX", this.getCenterX());
-        toSave.setInteger("centerZ", this.getCenterZ());
-        toSave.setInteger("radius", this.getRadius());
+        toSave.setInteger("centerX", this.centerX);
+        toSave.setInteger("centerZ", this.centerZ);
+        toSave.setInteger("radius", this.radius);
     }
 
     public boolean isChunkEnclosedInMaxSet(int chunkX, int chunkZ) {
-        boolean inX = (chunkX >= this.getCenterX() - 12) && (chunkX <= this.getCenterX() + 12);
-        boolean inZ = (chunkZ >= this.getCenterZ() - 12) && (chunkZ <= this.getCenterZ() + 12);
+        boolean inX = (chunkX >= this.centerX - 12) && (chunkX <= this.centerX + 12);
+        boolean inZ = (chunkZ >= this.centerZ - 12) && (chunkZ <= this.centerZ + 12);
         return inX && inZ;
     }
 
@@ -78,14 +78,14 @@ public class VWChunkClaim {
 
     @Override
     public String toString() {
-        return this.getCenterX() + ":" + this.getCenterZ() + ":" + this.getRadius();
+        return this.centerX + ":" + this.centerZ + ":" + this.radius;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof VWChunkClaim) {
             VWChunkClaim other = (VWChunkClaim) o;
-            return other.getCenterX() == this.getCenterX() && other.getCenterZ() == this.getCenterZ() && other.getRadius() == this.getRadius();
+            return other.centerX == this.centerX && other.centerZ == this.centerZ && other.radius == this.radius;
         }
         return false;
     }
@@ -94,32 +94,32 @@ public class VWChunkClaim {
      * @return the maxX
      */
     public int getMaxX() {
-        return this.getCenterX() + this.getRadius();
+        return this.centerX + this.radius;
     }
 
     /**
      * @return the maxZ
      */
     public int getMaxZ() {
-        return this.getCenterZ() + this.getRadius();
+        return this.centerZ + this.radius;
     }
 
     /**
      * @return the minZ
      */
     public int getMinZ() {
-        return this.getCenterZ() - this.getRadius();
+        return this.centerZ - this.radius;
     }
 
     /**
      * @return the minX
      */
     public int getMinX() {
-        return this.getCenterX() - this.getRadius();
+        return this.centerX - this.radius;
     }
 
     public BlockPos getRegionCenter() {
-        return new BlockPos(this.getCenterX() * 16, 128, this.getCenterZ() * 16);
+        return new BlockPos(this.centerX * 16, 128, this.centerZ * 16);
     }
 
     public int getChunkLengthX() {

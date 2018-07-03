@@ -107,7 +107,7 @@ public class VWNode_TileEntity implements IVWNode {
             other.makeConnection(this);
             this.sendNodeUpdates();
             List stupid = Collections.singletonList(other);
-            this.getGraph().addNeighours(this, stupid);
+            this.nodeGraph.addNeighours(this, stupid);
             // System.out.println("Connections: " + getGraph().getObjects().size());
             // getNodeGraph().addNode(other);
         }
@@ -122,7 +122,7 @@ public class VWNode_TileEntity implements IVWNode {
             this.parentTile.markDirty();
             other.breakConnection(this);
             this.sendNodeUpdates();
-            this.getGraph().removeNeighbour(this, other);
+            this.nodeGraph.removeNeighbour(this, other);
             // System.out.println(getGraph().getObjects().size());
             // getNodeGraph().removeNode(other);
         }
@@ -161,9 +161,9 @@ public class VWNode_TileEntity implements IVWNode {
 
     @Override
     public void writeToNBT(NBTTagCompound compound) {
-        int[] positions = new int[this.getLinkedNodesPos().size() * 3];
+        int[] positions = new int[this.unmodifiableLinkedNodesPos.size() * 3];
         int cont = 0;
-        for (BlockPos pos : this.getLinkedNodesPos()) {
+        for (BlockPos pos : this.unmodifiableLinkedNodesPos) {
             positions[cont] = pos.getX();
             positions[cont + 1] = pos.getY();
             positions[cont + 2] = pos.getZ();
@@ -204,14 +204,14 @@ public class VWNode_TileEntity implements IVWNode {
     }
 
     private void assertValidity() {
-        if (!this.isValid()) {
+        if (!this.isValid) {
             throw new IllegalStateException("This node is not valid / initialized!");
         }
     }
 
     @Override
     public void shiftConnections(BlockPos offset) {
-        if (this.isValid()) {
+        if (this.isValid) {
             throw new IllegalStateException("Cannot shift the connections of a Node while it is valid and in use!");
         }
         List<BlockPos> shiftedNodesPos = new ArrayList<>(this.linkedNodesPos.size());
@@ -224,7 +224,7 @@ public class VWNode_TileEntity implements IVWNode {
 
     @Override
     public void setParentPhysicsObject(PhysicsObject parent) {
-        if (this.isValid()) {
+        if (this.isValid) {
             throw new IllegalStateException(
                     "Cannot change the parent physics object of a Node while it is valid and in use!");
         }
@@ -255,7 +255,7 @@ public class VWNode_TileEntity implements IVWNode {
 
     private List<GraphObject> getNeighbors() {
         List<GraphObject> neighbors = new ArrayList<>();
-        for (BlockPos pos : this.getLinkedNodesPos()) {
+        for (BlockPos pos : this.unmodifiableLinkedNodesPos) {
             IVWNode node = getVWNode_TileEntity(this.getNodeWorld(), pos);
             if (node == null) {
                 throw new IllegalStateException();
