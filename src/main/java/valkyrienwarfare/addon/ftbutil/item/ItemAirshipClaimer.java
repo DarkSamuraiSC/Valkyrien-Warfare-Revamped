@@ -23,7 +23,7 @@ public class ItemAirshipClaimer extends Item {
             if (entity == null) {
                 return EnumActionResult.FAIL;
             }
-            //TODO:
+            //TODO: set airship owner, and handle automatic claiming and unclaiming of chunks
             return null;
         }
     }

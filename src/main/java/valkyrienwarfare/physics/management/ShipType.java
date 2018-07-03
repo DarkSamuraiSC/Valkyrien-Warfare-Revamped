@@ -16,8 +16,20 @@
 
 package valkyrienwarfare.physics.management;
 
+/**
+ * The different types of airships
+ */
 public enum ShipType {
-
-    Full_Unlocked, Zepplin, Dungeon_Sky
-
+    /**
+     * A basic airship, allows everything.
+     */
+    Full_Unlocked,
+    /**
+     * A ship using the old Zeppelin Mod controls
+     */
+    Zepplin,
+    /**
+     * A sky dungeon
+     */
+    Dungeon_Sky
 }

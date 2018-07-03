@@ -16,30 +16,20 @@
 
 package valkyrienwarfare.physics.management;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.google.common.collect.Sets;
-
+import com.mojang.authlib.GameProfile;
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import io.netty.buffer.ByteBuf;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketChunkData;
@@ -58,8 +48,6 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.ChunkProviderServer;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import valkyrienwarfare.ValkyrienWarfareMod;
 import valkyrienwarfare.addon.control.ValkyrienWarfareControl;
 import valkyrienwarfare.addon.control.network.EntityFixMessage;
@@ -70,11 +58,7 @@ import valkyrienwarfare.math.Quaternion;
 import valkyrienwarfare.math.Vector;
 import valkyrienwarfare.mod.BlockPhysicsRegistration;
 import valkyrienwarfare.mod.client.render.PhysObjectRenderManager;
-import valkyrienwarfare.mod.coordinates.ISubspace;
-import valkyrienwarfare.mod.coordinates.ISubspaceProvider;
-import valkyrienwarfare.mod.coordinates.ImplSubspace;
-import valkyrienwarfare.mod.coordinates.ShipTransform;
-import valkyrienwarfare.mod.coordinates.ShipTransformationPacketHolder;
+import valkyrienwarfare.mod.coordinates.*;
 import valkyrienwarfare.mod.network.PhysWrapperPositionMessage;
 import valkyrienwarfare.mod.physmanagement.chunk.VWChunkCache;
 import valkyrienwarfare.mod.physmanagement.chunk.VWChunkClaim;
@@ -85,6 +69,11 @@ import valkyrienwarfare.physics.BlockForce;
 import valkyrienwarfare.physics.PhysicsCalculations;
 import valkyrienwarfare.util.NBTUtils;
 
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * The heart and soul of this mod. The physics object does everything from
  * custom collision, block interactions, physics, networking, rendering, and
@@ -93,6 +82,7 @@ import valkyrienwarfare.util.NBTUtils;
  * @author thebest108
  *
  */
+@Getter
 public class PhysicsObject implements ISubspaceProvider {
 
 	public static final int MIN_TICKS_EXISTED_BEFORE_PHYSICS = 5;
@@ -103,21 +93,30 @@ public class PhysicsObject implements ISubspaceProvider {
     private final List<Entity> queuedEntitiesToMount;
     // Used when rendering to avoid horrible floating point errors, just a random
     // blockpos inside the ship space.
+    @Setter
     private BlockPos refrenceBlockPos;
+    @Setter
     private Vector centerCoord;
+    @Setter(AccessLevel.PRIVATE)
     private ShipTransformationManager shipTransformationManager;
+    @Setter
     private PhysicsCalculations physicsProcessor;
 	// Has to be concurrent, only exists properly on the server. Do not use this for
 	// anything client side!
+    @Setter
     private Set<BlockPos> blockPositions;
 	private boolean isPhysicsEnabled;
-	private int detectorID;
+    @Setter
+    private int detectorID;
     // The closest Chunks to the Ship cached in here
-	private ChunkCache cachedSurroundingChunks;
+    @Setter
+    private ChunkCache cachedSurroundingChunks;
     // TODO: Make for re-organizing these to make Ship sizes Dynamic
-	private VWChunkClaim ownedChunks;
+    @Setter
+    private VWChunkClaim ownedChunks;
     // Used for faster memory access to the Chunks this object 'owns'
     private Chunk[][] claimedChunks;
+    @Setter
     private VWChunkCache shipChunks;
     // Some badly written mods use these Maps to determine who to send packets to,
     // so we need to manually fill them with nearby players
@@ -125,14 +124,18 @@ public class PhysicsObject implements ISubspaceProvider {
     // Compatibility for ships made before the update
     private boolean claimedChunksInMap;
     private boolean isNameCustom;
+    @Setter
     private AxisAlignedBB shipBoundingBox;
     private TIntObjectMap<Vector> entityLocalPositions;
+    @Setter
     private ShipType shipType;
     private volatile int gameConsecutiveTicks;
     private volatile int physicsConsecutiveTicks;
     private final ISubspace shipSubspace;
 	private final Set<INodeController> physicsControllers;
 	private final Set<INodeController> physicsControllersImmutable;
+    @Setter
+    private GameProfile owner;
 
     public PhysicsObject(PhysicsWrapperEntity host) {
     	this.wrapper = host;
@@ -762,6 +765,11 @@ public class PhysicsObject implements ISubspaceProvider {
         compound.setString("shipType", shipType.name());
         // Write and read AABB from NBT to speed things up.
         NBTUtils.writeAABBToNBT("collision_aabb", getShipBoundingBox(), compound);
+
+        if (this.owner != null) {
+            compound.setString("ownerName", this.owner.getName());
+            compound.setUniqueId("ownerUuid", this.owner.getId());
+        }
     }
 
     public void readFromNBTTag(NBTTagCompound compound) {
@@ -810,6 +818,14 @@ public class PhysicsObject implements ISubspaceProvider {
         this.setShipBoundingBox(NBTUtils.readAABBFromNBT("collision_aabb", compound));
         
         setPhysicsEnabled(compound.getBoolean("doPhysics"));
+
+        if (compound.hasKey("ownerName")) {
+            UUID uuid = compound.getUniqueId("ownerUuid");
+            String name = compound.getString("ownerName");
+            this.owner = new GameProfile(uuid, name);
+        } else {
+            this.owner = null;
+        }
     }
 
     public void readSpawnData(ByteBuf additionalData) {
@@ -880,25 +896,6 @@ public class PhysicsObject implements ISubspaceProvider {
         modifiedBuffer.writeEnumValue(shipType);
     }
 
-    /*
-     * Encapsulation code past here.
-     */
-    public ShipType getShipType() {
-        return shipType;
-    }
-
-    public void setShipType(ShipType shipType) {
-        this.shipType = shipType;
-    }
-
-    public AxisAlignedBB getShipBoundingBox() {
-        return shipBoundingBox;
-    }
-
-    public void setShipBoundingBox(AxisAlignedBB newShipBB) {
-        this.shipBoundingBox = newShipBB;
-    }
-
     /**
      * @return The World this PhysicsObject exists in.
      */
@@ -953,106 +950,8 @@ public class PhysicsObject implements ISubspaceProvider {
 	public boolean needsImmediateCollisionCacheUpdate() {
 		return gameConsecutiveTicks == MIN_TICKS_EXISTED_BEFORE_PHYSICS;
 	}
-	
-	/**
-	 * @return this ships ShipTransformationManager
-	 */
-	public ShipTransformationManager getShipTransformationManager() {
-		return shipTransformationManager;
-	}
 
-	/**
-	 * @param shipTransformationManager the coordTransform to set
-	 */
-	private void setShipTransformationManager(ShipTransformationManager shipTransformationManager) {
-		this.shipTransformationManager = shipTransformationManager;
-	}
-
-	/**
-	 * @return the watchingPlayers
-	 */
-	public List<EntityPlayerMP> getWatchingPlayers() {
-		return watchingPlayers;
-	}
-
-	/**
-	 * @return the ship renderer
-	 */
-	public PhysObjectRenderManager getShipRenderer() {
-		return shipRenderer;
-	}
-
-	/**
-	 * @return the physicsProcessor
-	 */
-	public PhysicsCalculations getPhysicsProcessor() {
-		return physicsProcessor;
-	}
-
-	/**
-	 * @param physicsProcessor the physicsProcessor to set
-	 */
-	public void setPhysicsProcessor(PhysicsCalculations physicsProcessor) {
-		this.physicsProcessor = physicsProcessor;
-	}
-
-	/**
-	 * @return the centerCoord
-	 */
-	public Vector getCenterCoord() {
-		return centerCoord;
-	}
-
-	/**
-	 * @param centerCoord the centerCoord to set
-	 */
-	public void setCenterCoord(Vector centerCoord) {
-		this.centerCoord = centerCoord;
-	}
-
-	/**
-	 * @return the blockPositions
-	 */
-	public Set<BlockPos> getBlockPositions() {
-		return blockPositions;
-	}
-
-	/**
-	 * @param blockPositions the blockPositions to set
-	 */
-	public void setBlockPositions(Set<BlockPos> blockPositions) {
-		this.blockPositions = blockPositions;
-	}
-
-	/**
-	 * @return the shipChunks
-	 */
-	public VWChunkCache getShipChunks() {
-		return shipChunks;
-	}
-
-	/**
-	 * @param shipChunks the shipChunks to set
-	 */
-	public void setShipChunks(VWChunkCache shipChunks) {
-		this.shipChunks = shipChunks;
-	}
-
-	/**
-	 * @return the detectorID
-	 */
-	public int getDetectorID() {
-		return detectorID;
-	}
-
-	/**
-	 * @param detectorID the detectorID to set
-	 */
-	public void setDetectorID(int detectorID) {
-		this.detectorID = detectorID;
-	}
-
-	/**
+    /**
 	 * @return the isNameCustom
 	 */
 	public boolean isNameCustom() {
@@ -1066,50 +965,7 @@ public class PhysicsObject implements ISubspaceProvider {
 		this.isNameCustom = isNameCustom;
 	}
 
-	/**
-	 * @return the cachedSurroundingChunks
-	 */
-	public ChunkCache getCachedSurroundingChunks() {
-		return cachedSurroundingChunks;
-	}
-
-	/**
-	 * @param cachedSurroundingChunks the cachedSurroundingChunks to set
-	 */
-	public void setCachedSurroundingChunks(ChunkCache cachedSurroundingChunks) {
-		this.cachedSurroundingChunks = cachedSurroundingChunks;
-	}
-
-	/**
-	 * @return the ownedChunks
-	 */
-	public VWChunkClaim getOwnedChunks() {
-		return ownedChunks;
-	}
-
-	/**
-	 * @param ownedChunks the ownedChunks to set
-	 */
-	public void setOwnedChunks(VWChunkClaim ownedChunks) {
-		this.ownedChunks = ownedChunks;
-	}
-
-	/**
-	 * @return the refrenceBlockPos
-	 */
-	public BlockPos getRefrenceBlockPos() {
-		return refrenceBlockPos;
-	}
-
-	/**
-	 * @param refrenceBlockPos
-	 *            the refrenceBlockPos to set
-	 */
-	public void setRefrenceBlockPos(BlockPos refrenceBlockPos) {
-		this.refrenceBlockPos = refrenceBlockPos;
-	}
-
-	@Override
+    @Override
 	public ISubspace getSubspace() {
 		return this.shipSubspace;
 	}

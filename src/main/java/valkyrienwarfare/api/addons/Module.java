@@ -16,6 +16,7 @@
 
 package valkyrienwarfare.api.addons;
 
+import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -31,7 +32,7 @@ import valkyrienwarfare.ValkyrienWarfareMod;
 import java.util.UUID;
 
 public abstract class Module {
-	
+    @Getter
     private final String name;
     private boolean donePreInit = false, doneInit = false, donePostInit = false;
     private ModuleProxy common, client, server; //tODO: call these
