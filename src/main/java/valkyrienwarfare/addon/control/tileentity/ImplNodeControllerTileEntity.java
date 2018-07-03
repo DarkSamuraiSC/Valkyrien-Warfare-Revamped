@@ -41,12 +41,12 @@ public abstract class ImplNodeControllerTileEntity extends BasicNodeTileEntity i
     public void setPriority(int newPriority) {
         priority = newPriority;
     }
-    
+
     @Override
     public BlockPos getNodePos() {
-    	return this.getPos();
+        return this.getPos();
     }
-    
+
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
@@ -62,6 +62,6 @@ public abstract class ImplNodeControllerTileEntity extends BasicNodeTileEntity i
 
     @Override
     public int hashCode() {
-    	return getNodePos().hashCode();
+        return getNodePos().hashCode();
     }
 }

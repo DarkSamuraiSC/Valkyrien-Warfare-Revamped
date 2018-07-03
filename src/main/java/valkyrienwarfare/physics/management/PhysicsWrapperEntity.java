@@ -16,8 +16,6 @@
 
 package valkyrienwarfare.physics.management;
 
-import javax.annotation.Nullable;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,6 +39,8 @@ import valkyrienwarfare.mod.physmanagement.interaction.ShipNameUUIDData;
 import valkyrienwarfare.mod.schematics.SchematicReader.Schematic;
 import valkyrienwarfare.physics.collision.polygons.Polygon;
 
+import javax.annotation.Nullable;
+
 /**
  * This entity's only purpose is to use the functionality of sending itself to
  * nearby players, as well as the functionality of automatically loading with
@@ -48,7 +48,7 @@ import valkyrienwarfare.physics.collision.polygons.Polygon;
  */
 public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpawnData, IPhysicsEntity {
 
-    public static final DataParameter<Boolean> IS_NAME_CUSTOM = EntityDataManager.<Boolean>createKey(Entity.class,
+    public static final DataParameter<Boolean> IS_NAME_CUSTOM = EntityDataManager.createKey(Entity.class,
             DataSerializers.BOOLEAN);
     private final PhysicsObject physicsObject;
     // TODO: Replace these raw types with something safer.
@@ -254,70 +254,64 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
         return pitch;
     }
 
-	/**
-	 * @return The PhysicsObject this entity is wrapping around.
-	 */
-	public PhysicsObject getPhysicsObject() {
-		return physicsObject;
-	}
+    /**
+     * @return The PhysicsObject this entity is wrapping around.
+     */
+    public PhysicsObject getPhysicsObject() {
+        return physicsObject;
+    }
 
-	/**
-	 * Sets the position and rotation of the PhysicsWrapperEntity, and updates the pseudo
-	 * ship AABB (not the same as the actual collision one).
-	 * 
-	 * @param posX
-	 * @param posY
-	 * @param posZ
-	 * @param pitch
-	 *            in degrees
-	 * @param yaw
-	 *            in degrees
-	 * @param roll
-	 *            in degrees
-	 */
-	public void setPhysicsEntityPositionAndRotation(double posX, double posY, double posZ, double pitch, double yaw, double roll) {
-		this.posX = posX;
-		this.posY = posY;
-		this.posZ = posZ;
-		setPhysicsEntityRotation(pitch, yaw, roll);
-		this.setEntityBoundingBox(new AxisAlignedBB(this.posX, this.posY, this.posZ, this.posX, this.posY, this.posZ).grow(.1D));
-	}
+    /**
+     * Sets the position and rotation of the PhysicsWrapperEntity, and updates the pseudo
+     * ship AABB (not the same as the actual collision one).
+     *
+     * @param posX
+     * @param posY
+     * @param posZ
+     * @param pitch in degrees
+     * @param yaw   in degrees
+     * @param roll  in degrees
+     */
+    public void setPhysicsEntityPositionAndRotation(double posX, double posY, double posZ, double pitch, double yaw, double roll) {
+        this.posX = posX;
+        this.posY = posY;
+        this.posZ = posZ;
+        setPhysicsEntityRotation(pitch, yaw, roll);
+        this.setEntityBoundingBox(new AxisAlignedBB(this.posX, this.posY, this.posZ, this.posX, this.posY, this.posZ).grow(.1D));
+    }
 
-	/**
-	 * Sets the lastTickPos fields to be the current position. Only should be used by the client.
-	 */
-	public void physicsUpdateLastTickPositions() {
-		this.lastTickPosX = this.posX;
-		this.lastTickPosY = this.posY;
-		this.lastTickPosZ = this.posZ;
-	}
+    /**
+     * Sets the lastTickPos fields to be the current position. Only should be used by the client.
+     */
+    public void physicsUpdateLastTickPositions() {
+        this.lastTickPosX = this.posX;
+        this.lastTickPosY = this.posY;
+        this.lastTickPosZ = this.posZ;
+    }
 
-	/**
-	 * Sets the rotation of this PhysicsWrapperEntity to the given values.
-	 * 
-	 * @param pitch
-	 *            in degrees
-	 * @param yaw
-	 *            in degrees
-	 * @param roll
-	 *            in degrees
-	 */
-	public void setPhysicsEntityRotation(double pitch, double yaw, double roll) {
-		this.pitch = pitch;
-		this.yaw = yaw;
-		this.roll = roll;
-	}
-	
-	// ===== VW API Functions Start Here =====
-	
-	@Override
-	public Vec3d rotateVector(Vec3d vector, TransformType transformType) {
-		return this.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().rotate(vector, transformType);
-	}
+    /**
+     * Sets the rotation of this PhysicsWrapperEntity to the given values.
+     *
+     * @param pitch in degrees
+     * @param yaw   in degrees
+     * @param roll  in degrees
+     */
+    public void setPhysicsEntityRotation(double pitch, double yaw, double roll) {
+        this.pitch = pitch;
+        this.yaw = yaw;
+        this.roll = roll;
+    }
 
-	@Override
-	public Vec3d transformVector(Vec3d vector, TransformType transformType) {
-		return this.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().transform(vector, transformType);
-	}
+    // ===== VW API Functions Start Here =====
+
+    @Override
+    public Vec3d rotateVector(Vec3d vector, TransformType transformType) {
+        return this.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().rotate(vector, transformType);
+    }
+
+    @Override
+    public Vec3d transformVector(Vec3d vector, TransformType transformType) {
+        return this.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().transform(vector, transformType);
+    }
 
 }

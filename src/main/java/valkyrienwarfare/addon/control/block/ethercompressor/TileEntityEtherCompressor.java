@@ -17,66 +17,64 @@
 package valkyrienwarfare.addon.control.block.ethercompressor;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 import valkyrienwarfare.addon.control.fuel.IEtherGasEngine;
 import valkyrienwarfare.addon.control.nodenetwork.BasicForceNodeTileEntity;
 import valkyrienwarfare.math.Vector;
-import valkyrienwarfare.physics.management.PhysicsObject;
 
 public abstract class TileEntityEtherCompressor extends BasicForceNodeTileEntity implements IEtherGasEngine {
 
-	private int etherGas;
-	private int etherGasCapacity;
+    private int etherGas;
+    private int etherGasCapacity;
 
-	public TileEntityEtherCompressor(Vector normalForceVector, double power) {
-		super(normalForceVector, false, power);
-		validate();
-		etherGas = 0;
-		etherGasCapacity = 1000;
-	}
+    public TileEntityEtherCompressor(Vector normalForceVector, double power) {
+        super(normalForceVector, false, power);
+        validate();
+        etherGas = 0;
+        etherGasCapacity = 1000;
+    }
 
-	public TileEntityEtherCompressor() {
-		this(null, 0);
-	}
+    public TileEntityEtherCompressor() {
+        this(null, 0);
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		super.readFromNBT(compound);
-		etherGas = compound.getInteger("etherGas");
-		etherGasCapacity = compound.getInteger("etherGasCapacity");
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        etherGas = compound.getInteger("etherGas");
+        etherGasCapacity = compound.getInteger("etherGasCapacity");
+    }
 
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		NBTTagCompound toReturn = super.writeToNBT(compound);
-		toReturn.setInteger("etherGas", etherGas);
-		toReturn.setInteger("etherGasCapacity", etherGasCapacity);
-		return toReturn;
-	}
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        NBTTagCompound toReturn = super.writeToNBT(compound);
+        toReturn.setInteger("etherGas", etherGas);
+        toReturn.setInteger("etherGasCapacity", etherGasCapacity);
+        return toReturn;
+    }
 
-	@Override
-	public boolean isForceOutputOriented() {
-		return false;
-	}
+    @Override
+    public boolean isForceOutputOriented() {
+        return false;
+    }
 
-	@Override
-	public int getCurrentEtherGas() {
-		return etherGas;
-	}
+    @Override
+    public int getCurrentEtherGas() {
+        return etherGas;
+    }
 
-	@Override
-	public int getEtherGasCapacity() {
-		return etherGasCapacity;
-	}
+    @Override
+    public int getEtherGasCapacity() {
+        return etherGasCapacity;
+    }
 
-	// pre : Throws an IllegalArgumentExcepion if more gas is added than there is
-	// capacity for this engine.
-	@Override
-	public void addEtherGas(int gas) {
-		if (etherGas + gas > etherGasCapacity) {
-			throw new IllegalArgumentException();
-		}
-		etherGas += gas;
-	}
+    // pre : Throws an IllegalArgumentExcepion if more gas is added than there is
+    // capacity for this engine.
+    @Override
+    public void addEtherGas(int gas) {
+        if (etherGas + gas > etherGasCapacity) {
+            throw new IllegalArgumentException();
+        }
+        etherGas += gas;
+    }
 
 }

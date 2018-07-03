@@ -30,11 +30,7 @@ import valkyrienwarfare.addon.control.renderer.BasicNodeTileEntityRenderer;
 import valkyrienwarfare.addon.control.renderer.PropellerEngineTileEntityRenderer;
 import valkyrienwarfare.addon.control.renderer.ShipHelmTileEntityRenderer;
 import valkyrienwarfare.addon.control.renderer.ShipTelegraphTileEntityRenderer;
-import valkyrienwarfare.addon.control.tileentity.TileEntityNodeRelay;
-import valkyrienwarfare.addon.control.tileentity.TileEntityPropellerEngine;
-import valkyrienwarfare.addon.control.tileentity.TileEntityShipHelm;
-import valkyrienwarfare.addon.control.tileentity.TileEntityShipTelegraph;
-import valkyrienwarfare.addon.control.tileentity.TileEntityThrustModulator;
+import valkyrienwarfare.addon.control.tileentity.*;
 
 public class ClientProxyControl extends CommonProxyControl {
 
@@ -69,7 +65,7 @@ public class ClientProxyControl extends CommonProxyControl {
         registerBlockItem(ValkyrienWarfareControl.INSTANCE.vwControlBlocks.dopedEtherium);
         registerBlockItem(ValkyrienWarfareControl.INSTANCE.vwControlBlocks.thrustRelay);
         registerBlockItem(ValkyrienWarfareControl.INSTANCE.vwControlBlocks.thrustModulator);
-        
+
         registerBlockItem(ValkyrienWarfareControl.INSTANCE.vwControlBlocks.gyroscope);
         registerBlockItem(ValkyrienWarfareControl.INSTANCE.vwControlBlocks.liftValve);
         registerBlockItem(ValkyrienWarfareControl.INSTANCE.vwControlBlocks.networkDisplay);

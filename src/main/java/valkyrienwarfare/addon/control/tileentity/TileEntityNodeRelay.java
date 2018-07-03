@@ -31,9 +31,9 @@ public class TileEntityNodeRelay extends BasicNodeTileEntity {
 
     @Override
     protected int getMaximumConnections() {
-    	return 4;
+        return 4;
     }
-    
+
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {

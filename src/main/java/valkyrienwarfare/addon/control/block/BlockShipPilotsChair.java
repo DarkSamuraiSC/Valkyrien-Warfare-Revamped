@@ -16,15 +16,8 @@
 
 package valkyrienwarfare.addon.control.block;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -45,6 +38,9 @@ import valkyrienwarfare.math.Vector;
 import valkyrienwarfare.mod.physmanagement.interaction.EntityDraggable;
 import valkyrienwarfare.mod.physmanagement.interaction.IDraggable;
 import valkyrienwarfare.physics.management.PhysicsWrapperEntity;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class BlockShipPilotsChair extends BlockPilotableBasic {
 
@@ -79,9 +75,9 @@ public class BlockShipPilotsChair extends BlockPilotableBasic {
                         IDraggable entityDraggable = EntityDraggable.getDraggableFromEntity(playerIn);
                         // Only mount the player if they're standing on the ship.
                         if (entityDraggable.getWorldBelowFeet() == wrapper) {
-	                        playerIn.startRiding(wrapper);
-	                        Vector localMountPos = getPlayerMountOffset(state, pos);
-	                        wrapper.getPhysicsObject().fixEntity(playerIn, localMountPos);
+                            playerIn.startRiding(wrapper);
+                            Vector localMountPos = getPlayerMountOffset(state, pos);
+                            wrapper.getPhysicsObject().fixEntity(playerIn, localMountPos);
                         }
 
                         ((TileEntityPilotsChair) tileEntity).setPilotEntity(playerIn);
@@ -92,11 +88,11 @@ public class BlockShipPilotsChair extends BlockPilotableBasic {
                         playerIn.posZ = playerPos.Z;
                     }
                 }
-			}
-		}
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> itemInformation, ITooltipFlag advanced) {
@@ -111,7 +107,7 @@ public class BlockShipPilotsChair extends BlockPilotableBasic {
     }
 
     private Vector getPlayerMountOffset(IBlockState state, BlockPos pos) {
-        EnumFacing facing = (EnumFacing) state.getValue(FACING);
+        EnumFacing facing = state.getValue(FACING);
         switch (facing) {
             case NORTH:
                 return new Vector(pos.getX() + .5D, pos.getY(), pos.getZ() + .6D);
@@ -148,7 +144,7 @@ public class BlockShipPilotsChair extends BlockPilotableBasic {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[]{FACING});
+        return new BlockStateContainer(this, FACING);
     }
 
     @Override
@@ -162,7 +158,7 @@ public class BlockShipPilotsChair extends BlockPilotableBasic {
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        int i = ((EnumFacing) state.getValue(FACING)).getIndex();
+        int i = state.getValue(FACING).getIndex();
         return i;
     }
 

@@ -16,11 +16,6 @@
 
 package valkyrienwarfare.mod.event;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityBoat;
@@ -29,7 +24,6 @@ import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemNameTag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagIntArray;
@@ -72,6 +66,10 @@ import valkyrienwarfare.mod.physmanagement.interaction.VWWorldEventListener;
 import valkyrienwarfare.physics.management.PhysicsTickHandler;
 import valkyrienwarfare.physics.management.PhysicsWrapperEntity;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+
 public class EventsCommon {
 
     public static final Map<EntityPlayer, Double[]> lastPositions = new HashMap<EntityPlayer, Double[]>();
@@ -108,10 +106,10 @@ public class EventsCommon {
             }
         }
     }
-    
+
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public void onLeftClickBlock(LeftClickBlock event) {
-    	// Take that Chisels and Bits!
+        // Take that Chisels and Bits!
 //    	event.setCanceled(false);
 //    	event.setUseBlock(Result.ALLOW);
 //    	event.setUseItem(Result.ALLOW);
@@ -151,7 +149,7 @@ public class EventsCommon {
                 if (event.phase == Phase.START) {
                     PhysicsTickHandler.onWorldTickStart(worldFor);
                 } else if (event.phase == Phase.END) {
-                	// TODO: This is a big source of tick lag.
+                    // TODO: This is a big source of tick lag.
                     PhysicsTickHandler.onWorldTickEnd(worldFor);
                 }
             }
@@ -192,7 +190,7 @@ public class EventsCommon {
         event.getWorld().addEventListener(new VWWorldEventListener(event.getWorld()));
         // Don't make any VW threads for client worlds
         if (!event.getWorld().isRemote) {
-        	ValkyrienWarfareMod.VW_CHUNK_MANAGER.initWorld(event.getWorld());
+            ValkyrienWarfareMod.VW_CHUNK_MANAGER.initWorld(event.getWorld());
             VWThreadManager.createVWThreadForWorld(event.getWorld());
         }
     }

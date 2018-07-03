@@ -20,7 +20,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -70,15 +69,15 @@ public class BlockThrustRelay extends BlockDirectional implements ITileEntityPro
     public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
-    
+
     @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face){
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
     }
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        EnumFacing enumfacing = (EnumFacing) state.getValue(FACING);
+        EnumFacing enumfacing = state.getValue(FACING);
         switch (enumfacing) {
             case EAST:
                 return EAST;
@@ -132,7 +131,7 @@ public class BlockThrustRelay extends BlockDirectional implements ITileEntityPro
      */
     @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        if (this.checkForDrop(worldIn, pos, state) && !canPlaceBlock(worldIn, pos, ((EnumFacing) state.getValue(FACING)).getOpposite())) {
+        if (this.checkForDrop(worldIn, pos, state) && !canPlaceBlock(worldIn, pos, state.getValue(FACING).getOpposite())) {
             this.dropBlockAsItem(worldIn, pos, state, 0);
             worldIn.setBlockToAir(pos);
         }
@@ -150,7 +149,7 @@ public class BlockThrustRelay extends BlockDirectional implements ITileEntityPro
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[]{FACING});
+        return new BlockStateContainer(this, FACING);
     }
 
     /**
@@ -191,7 +190,7 @@ public class BlockThrustRelay extends BlockDirectional implements ITileEntityPro
     public int getMetaFromState(IBlockState state) {
         int i;
 
-        switch ((EnumFacing) state.getValue(FACING)) {
+        switch (state.getValue(FACING)) {
             case EAST:
                 i = 1;
                 break;

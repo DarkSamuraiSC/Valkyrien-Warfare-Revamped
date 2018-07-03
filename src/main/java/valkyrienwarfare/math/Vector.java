@@ -258,13 +258,13 @@ public class Vector {
         setValue(toCopy.X, toCopy.Y, toCopy.Z);
     }
 
-	public double angleBetween(Vector other) {
-		double dotProduct = this.dot(other);
-		double normalizedDotProduect = dotProduct / (this.length() * other.length());
-		return Math.acos(dotProduct);
-	}
+    public double angleBetween(Vector other) {
+        double dotProduct = this.dot(other);
+        double normalizedDotProduect = dotProduct / (this.length() * other.length());
+        return Math.acos(dotProduct);
+    }
 
-	public VectorImmutable toImmutable() {
-		return new VectorImmutable(this);
-	}
+    public VectorImmutable toImmutable() {
+        return new VectorImmutable(this);
+    }
 }

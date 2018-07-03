@@ -82,12 +82,12 @@ public class DimensionPhysObjectManager {
         }
         PhysicsWrapperEntity wrapperEntity = getManagerForWorld(world).getManagingObjectForChunkPosition(pos.getX() >> 4, pos.getZ() >> 4);
         if (wrapperEntity == null) {
-        	return null;
+            return null;
         }
         if (wrapperEntity.getPhysicsObject() == null || wrapperEntity.getPhysicsObject().getShipTransformationManager() == null) {
-        	System.err.println("Broken ship with UUID: " + wrapperEntity.getCachedUniqueIdString() + " at " + wrapperEntity.getPositionVector());
-        	System.err.println("Other info: " + wrapperEntity.getYaw());
-        	return null;
+            System.err.println("Broken ship with UUID: " + wrapperEntity.getCachedUniqueIdString() + " at " + wrapperEntity.getPositionVector());
+            System.err.println("Other info: " + wrapperEntity.getYaw());
+            return null;
         }
         return wrapperEntity;
     }

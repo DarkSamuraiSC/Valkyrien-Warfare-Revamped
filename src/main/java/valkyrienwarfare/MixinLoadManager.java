@@ -28,15 +28,11 @@ public class MixinLoadManager implements IMixinConfigPlugin {
 
     private static boolean isSpongeEnabled;
 
-    @Override
-    public void onLoad(String mixinPackage) {
-    	isSpongeEnabled = isSpongeEnabledSlow();
-        if (isSpongeEnabled()) {
-            FMLLog.bigWarning(
-                    "SpongeForge has been detected. This will cause problems with Valkyrien Warfare, no doubt.");
-        } else {
-            FMLLog.info("Sponge ain't here! Everything is good and also nice");
-        }
+    /**
+     * @return the isSpongeEnabled
+     */
+    public static boolean isSpongeEnabled() {
+        return isSpongeEnabled;
     }
 
     @Override
@@ -90,11 +86,15 @@ public class MixinLoadManager implements IMixinConfigPlugin {
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
     }
 
-	/**
-	 * @return the isSpongeEnabled
-	 */
-	public static boolean isSpongeEnabled() {
-		return isSpongeEnabled;
-	}
+    @Override
+    public void onLoad(String mixinPackage) {
+        isSpongeEnabled = isSpongeEnabledSlow();
+        if (isSpongeEnabled()) {
+            FMLLog.bigWarning(
+                    "SpongeForge has been detected. This will cause problems with Valkyrien Warfare, no doubt.");
+        } else {
+            FMLLog.info("Sponge ain't here! Everything is good and also nice");
+        }
+    }
 
 }

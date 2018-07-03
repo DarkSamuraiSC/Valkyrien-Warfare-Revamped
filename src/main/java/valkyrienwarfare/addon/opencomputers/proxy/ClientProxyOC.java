@@ -21,7 +21,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.event.FMLStateEvent;
-import valkyrienwarfare.addon.control.ValkyrienWarfareControl;
 import valkyrienwarfare.addon.opencomputers.ValkyrienWarfareOC;
 
 public class ClientProxyOC extends CommonProxyOC {
@@ -33,15 +32,15 @@ public class ClientProxyOC extends CommonProxyOC {
     public void init(FMLStateEvent e) {
     }
 
+    private static void registerBlockItemModels() {
+        registerBlockItem(ValkyrienWarfareOC.INSTANCE.gpsBlock);
+    }
+
     @Override
     public void postInit(FMLStateEvent e) {
-    	registerBlockItemModels();
+        registerBlockItemModels();
     }
-    
-    private static void registerBlockItemModels() {
-    	registerBlockItem(ValkyrienWarfareOC.INSTANCE.gpsBlock);
-    }
-    
+
     private static void registerBlockItem(Block toRegister) {
         Item item = Item.getItemFromBlock(toRegister);
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation(ValkyrienWarfareOC.INSTANCE.getModID() + ":" + item.getUnlocalizedName().substring(5), "inventory"));

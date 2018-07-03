@@ -16,13 +16,6 @@
 
 package valkyrienwarfare.physics;
 
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.vecmath.Matrix3d;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -44,6 +37,12 @@ import valkyrienwarfare.physics.management.PhysicsObject;
 import valkyrienwarfare.physics.management.ShipTransformationManager;
 import valkyrienwarfare.util.NBTUtils;
 import valkyrienwarfare.util.PhysicsSettings;
+
+import javax.vecmath.Matrix3d;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PhysicsCalculations {
 
@@ -220,35 +219,35 @@ public class PhysicsCalculations {
         }
     }
 
-	public void rawPhysTickPostCol() {
-		if (!isPhysicsBroken()) {
-			if (getParent().isPhysicsEnabled()) {
-				enforceStaticFriction();
-				if (PhysicsSettings.doAirshipRotation) {
-					applyAngularVelocity();
-				}
-				if (PhysicsSettings.doAirshipMovement) {
-					applyLinearVelocity();
-				}
-			}
-		} else {
-			getParent().setPhysicsEnabled(false);
-			linearMomentum.zero();
-			angularVelocity.zero();
-		}
+    public void rawPhysTickPostCol() {
+        if (!isPhysicsBroken()) {
+            if (getParent().isPhysicsEnabled()) {
+                enforceStaticFriction();
+                if (PhysicsSettings.doAirshipRotation) {
+                    applyAngularVelocity();
+                }
+                if (PhysicsSettings.doAirshipMovement) {
+                    applyLinearVelocity();
+                }
+            }
+        } else {
+            getParent().setPhysicsEnabled(false);
+            linearMomentum.zero();
+            angularVelocity.zero();
+        }
 
-		PhysicsShipTransform finalPhysTransform = new PhysicsShipTransform(physX, physY, physZ, physPitch, physYaw,
-				physRoll, physCenterOfMass, getParent().getShipBoundingBox(),
-				getParent().getShipTransformationManager().getCurrentTickTransform());
+        PhysicsShipTransform finalPhysTransform = new PhysicsShipTransform(physX, physY, physZ, physPitch, physYaw,
+                physRoll, physCenterOfMass, getParent().getShipBoundingBox(),
+                getParent().getShipTransformationManager().getCurrentTickTransform());
 
-		getParent().getShipTransformationManager().updatePreviousPhysicsTransform();
-		getParent().getShipTransformationManager().setCurrentPhysicsTransform(finalPhysTransform);
+        getParent().getShipTransformationManager().updatePreviousPhysicsTransform();
+        getParent().getShipTransformationManager().setCurrentPhysicsTransform(finalPhysTransform);
 
-		updatePhysCenterOfMass();
-		// Moved out to VW Thread. Code run in this class should have no direct effect
-		// on the physics object.
-		// parent.coordTransform.updateAllTransforms(true, true);
-	}
+        updatePhysCenterOfMass();
+        // Moved out to VW Thread. Code run in this class should have no direct effect
+        // on the physics object.
+        // parent.coordTransform.updateAllTransforms(true, true);
+    }
 
     // If the ship is moving at these speeds, its likely something in the physics
     // broke. This method helps detect that.
@@ -259,19 +258,19 @@ public class PhysicsCalculations {
         }
         return false;
     }
-    
+
     /**
      * This method will set the linear and angular velocities to zero if both are too small.
      */
     private void enforceStaticFriction() {
         if (angularVelocity.lengthSq() < .001) {
-        	double linearSpeedSq = linearMomentum.lengthSq() * this.getInvMass() * this.getInvMass();
-        	if (linearSpeedSq < .05) {
-        		angularVelocity.zero();
-        		if (linearSpeedSq < .0001) {
-        			linearMomentum.zero();
-        		}
-        	}
+            double linearSpeedSq = linearMomentum.lengthSq() * this.getInvMass() * this.getInvMass();
+            if (linearSpeedSq < .05) {
+                angularVelocity.zero();
+                if (linearSpeedSq < .0001) {
+                    linearMomentum.zero();
+                }
+            }
         }
     }
 
@@ -361,17 +360,17 @@ public class PhysicsCalculations {
         World worldObj = getParent().getWorldObj();
 
         if (PhysicsSettings.doPhysicsBlocks && getParent().areShipChunksFullyLoaded()) {
-        	// We want to loop through all the physics nodes in a sorted order. Priority Queue handles that.
-        	Queue<INodeController> nodesPriorityQueue = new PriorityQueue<INodeController>();
-        	for (INodeController processor : parent.getPhysicsControllersInShip()) {
-        		nodesPriorityQueue.add(processor);
-        	}
-        	
-        	while (nodesPriorityQueue.size() > 0) {
-        		INodeController controller = nodesPriorityQueue.poll();
-        		controller.onPhysicsTick(parent, this, this.getPhysicsTimeDeltaPerPhysTick());
-        	}
-        	
+            // We want to loop through all the physics nodes in a sorted order. Priority Queue handles that.
+            Queue<INodeController> nodesPriorityQueue = new PriorityQueue<INodeController>();
+            for (INodeController processor : parent.getPhysicsControllersInShip()) {
+                nodesPriorityQueue.add(processor);
+            }
+
+            while (nodesPriorityQueue.size() > 0) {
+                INodeController controller = nodesPriorityQueue.poll();
+                controller.onPhysicsTick(parent, this, this.getPhysicsTimeDeltaPerPhysTick());
+            }
+
             for (BlockPos pos : activeForcePositions) {
                 IBlockState state = getParent().getShipChunks().getBlockState(pos);
                 Block blockAt = state.getBlock();
@@ -442,7 +441,7 @@ public class PhysicsCalculations {
 
     public void applyAngularVelocity() {
         ShipTransformationManager coordTrans = getParent().getShipTransformationManager();
-        
+
         double[] rotationChange = RotationMatrices.getRotationMatrix(angularVelocity.X, angularVelocity.Y,
                 angularVelocity.Z, angularVelocity.length() * getPhysicsTimeDeltaPerPhysTick());
         Quaternion finalTransform = Quaternion.QuaternionFromMatrix(RotationMatrices.getMatrixProduct(rotationChange,
@@ -508,13 +507,13 @@ public class PhysicsCalculations {
         for (BlockPos pos : getParent().getBlockPositions()) {
             onSetBlockState(air, getParent().getShipChunks().getBlockState(pos), pos);
         }
-	}
+    }
 
-	// These getter methods guarantee that only code within this class can modify
-	// the mass, preventing outside code from breaking things
-	public double getMass() {
-		return gameTickMass;
-	}
+    // These getter methods guarantee that only code within this class can modify
+    // the mass, preventing outside code from breaking things
+    public double getMass() {
+        return gameTickMass;
+    }
 
     public double getInvMass() {
         return 1D / gameTickMass;
@@ -555,25 +554,25 @@ public class PhysicsCalculations {
         return this.physMOITensor;
     }
 
-	/**
-	 * @return the parent
-	 */
-	public PhysicsObject getParent() {
-		return parent;
-	}
+    /**
+     * @return the parent
+     */
+    public PhysicsObject getParent() {
+        return parent;
+    }
 
-	/**
-	 * @return the worldCollision
-	 */
-	public WorldPhysicsCollider getWorldCollision() {
-		return worldCollision;
-	}
+    /**
+     * @return the worldCollision
+     */
+    public WorldPhysicsCollider getWorldCollision() {
+        return worldCollision;
+    }
 
-	public double getInertiaAlongRotationAxis() {
-		Vector rotationAxis = new Vector(angularVelocity);
-		rotationAxis.normalize();
-		RotationMatrices.applyTransform3by3(getPhysMOITensor(), rotationAxis);
-		return rotationAxis.length();
-	}
+    public double getInertiaAlongRotationAxis() {
+        Vector rotationAxis = new Vector(angularVelocity);
+        rotationAxis.normalize();
+        RotationMatrices.applyTransform3by3(getPhysMOITensor(), rotationAxis);
+        return rotationAxis.length();
+    }
 
 }

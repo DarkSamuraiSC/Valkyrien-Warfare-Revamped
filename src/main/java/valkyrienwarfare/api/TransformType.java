@@ -27,5 +27,5 @@ package valkyrienwarfare.api;
  */
 public enum TransformType {
 
-	GLOBAL_TO_SUBSPACE, SUBSPACE_TO_GLOBAL
+    GLOBAL_TO_SUBSPACE, SUBSPACE_TO_GLOBAL
 }
