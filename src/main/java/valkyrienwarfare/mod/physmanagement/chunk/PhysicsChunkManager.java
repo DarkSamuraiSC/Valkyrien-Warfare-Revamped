@@ -16,6 +16,8 @@
 
 package valkyrienwarfare.mod.physmanagement.chunk;
 
+import lombok.Getter;
+import lombok.NonNull;
 import net.minecraft.world.World;
 
 /**
@@ -24,58 +26,71 @@ import net.minecraft.world.World;
  *
  * @author thebest108
  */
+@Getter
 public class PhysicsChunkManager {
-
-    public static int xChunkStartingPos = -1870000;
-    public static int zChunkStartingPos = -1870000;
-    // public int chunkRadius = 3;
-    public static int maxChunkRadius = 12;
-    public World worldObj;
-    public int nextChunkSetKey;
-    public int chunkSetIncrement;
-    // Currently at 3 to be safe, this is important because Ships could start
-    // affecting
-    // each other remotely if this value is too small (ex. 0)
-    public int distanceBetweenSets = 1;
-    public ChunkClaimWorldData data;
+    private static final int xChunkStartingPos = -1870000;
+    private static final int zChunkStartingPos = -1869950;
+    /**
+     * the widest area that a ship is allowed to take up
+     */
+    @Getter
+    private static final int maxChunkRadius = 12;
+    /**
+     * the + 1 is for padding, to reduce the risk of ships interacting with each other
+     * inside of ship space
+     */
+    private static final int distanceBetweenSets = maxChunkRadius + 1;
+    /**
+     * the maximum number of airships that are allowed to be in a single row on the x axis
+     * before starting a new row
+     */
+    private static final long maxSetsPerRow = (-xChunkStartingPos) * 2L / distanceBetweenSets; //287692
+    private World worldObj;
+    private ChunkClaimWorldData data;
 
     public PhysicsChunkManager(World worldFor) {
         worldObj = worldFor;
-        chunkSetIncrement = (maxChunkRadius * 2) + distanceBetweenSets;
-//		try {
         loadDataFromWorld();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
     }
 
-    // The +50 is used to make sure chunks too close to ships dont interfere
     public static boolean isLikelyShipChunk(int chunkX, int chunkZ) {
-        return chunkZ < zChunkStartingPos + maxChunkRadius + 50;
+        // The +50 is used to make sure chunks too close to ships dont interfere
+        //return chunkZ < zChunkStartingPos + distanceBetweenSets + 50;
+        return chunkZ < (27000000 >> 16) - 1024;
+        //we prevent players from going beyond 27 million, plus 1024
+        //to play it safe. in all honesty there'll probably never be this many ships in a world, but hey :P
     }
 
     /**
-     * This finds the next empty chunkSet for use, currently only increases the xPos
-     * to get new positions
+     * This finds the next empty chunkSet for use
+     * <p>
+     * This will increase the x position until it hits the maximum value, at which point it will
+     * reset the x position and increment the z position by one, and then continue to increment x.
+     * <p>
+     * If free, previously occupied chunkSets are found, this will attempt to fill those before
+     * allocating a new one.
      *
-     * @return
+     * @return a new, empty chunkSet
      */
-    public VWChunkClaim getNextAvaliableChunkSet(int chunkRadius) {
-        loadDataFromWorld();
-        // System.out.println("Got next avaliable chunk set.");
+    public VWChunkClaim getNextAvailableChunkSet(int chunkRadius) {
+        if (chunkRadius > maxChunkRadius) {
+            return null;
+        }
+        //TODO: figure out why this was being loaded every time the method is called
+        //loadDataFromWorld();
 
-        int chunkX = xChunkStartingPos + nextChunkSetKey;
-        int chunkZ = zChunkStartingPos;
-
-        // This is broken; don't try recycling old chunks for now.
-        if (data.getAvalibleChunkKeys().size() > 0 && false) {
-            chunkX = data.getAvalibleChunkKeys().get(0);
-            data.getAvalibleChunkKeys().remove(0);
+        long key;
+        if (this.data.getAvailableChunkKeys().getSize() == 0) {
+            key = this.data.getChunkKey().getAndIncrement();
         } else {
-            nextChunkSetKey += chunkSetIncrement;
-            data.setChunkKey(nextChunkSetKey);
+            //get the next free chunk key
+            key = this.data.getAvailableChunkKeys().get(0);
+            this.data.getAvailableChunkKeys().remove(0);
         }
         data.markDirty();
+
+        int chunkX = (int) ((key % maxSetsPerRow) * distanceBetweenSets + xChunkStartingPos);
+        int chunkZ = (int) ((key / maxSetsPerRow) * distanceBetweenSets + zChunkStartingPos);
         return new VWChunkClaim(chunkX, chunkZ, chunkRadius);
     }
 
@@ -84,7 +99,11 @@ public class PhysicsChunkManager {
      */
     public void loadDataFromWorld() {
         data = ChunkClaimWorldData.get(worldObj);
-        nextChunkSetKey = data.getChunkKey();
     }
 
+    public void markChunksAvailable(@NonNull VWChunkClaim claim) {
+        long chunkKey = (claim.getCenterZ() - zChunkStartingPos) * maxSetsPerRow + (claim.getCenterX() - xChunkStartingPos);
+        this.data.getAvailableChunkKeys().add(chunkKey);
+        this.data.markDirty();
+    }
 }

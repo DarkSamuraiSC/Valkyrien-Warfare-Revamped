@@ -73,7 +73,7 @@ public class PhysObjectRenderManager {
                     .getChunkLengthZ()];
             for (int xChunk = 0; xChunk < parent.getOwnedChunks().getChunkLengthX(); xChunk++) {
                 for (int zChunk = 0; zChunk < parent.getOwnedChunks().getChunkLengthZ(); zChunk++) {
-                    renderChunks[xChunk][zChunk] = new PhysRenderChunk(parent, parent.getShipChunks()
+                    renderChunks[xChunk][zChunk] = new PhysRenderChunk(parent, parent.getChunkCache()
                             .getChunkAt(xChunk + parent.getOwnedChunks().getMinX(), zChunk + parent.getOwnedChunks().getMinZ()));
                 }
             }

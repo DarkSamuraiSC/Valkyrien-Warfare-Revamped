@@ -29,7 +29,7 @@ public class DimensionPhysObjectManager {
     private final Map<World, WorldPhysObjectManager> managerPerWorld;
 
     public DimensionPhysObjectManager() {
-        managerPerWorld = new HashMap<World, WorldPhysObjectManager>();
+        managerPerWorld = new HashMap<>();
     }
 
     /**

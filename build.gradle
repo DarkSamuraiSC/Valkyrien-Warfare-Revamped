@@ -106,7 +106,8 @@ dependencies {
 	compileOnly("org.spongepowered:spongeforge:1.12.2-2611-7.1.0-BETA-3002:dev")
     compileOnly "li.cil.oc:OpenComputers:MC1.12.1-1.7.1.+:api"
 	// Porky datastructures
-	compile 'net.daporkchop.lib:primitive:0.0.5'
+    compile 'net.daporkchop.lib:primitive:0.0.5'
+    compile 'net.daporkchop.lib:encoding:0.0.7'
 	compile 'gigaherz.graph:GraphLib:1.4.0'
 	compile 'valkyrienwarfare:api:1.0'
     compile 'ftb-utilities:FTBUtilities:5.2.0.28'

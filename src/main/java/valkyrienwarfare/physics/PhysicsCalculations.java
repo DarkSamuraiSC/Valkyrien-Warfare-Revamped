@@ -372,7 +372,7 @@ public class PhysicsCalculations {
             }
 
             for (BlockPos pos : activeForcePositions) {
-                IBlockState state = getParent().getShipChunks().getBlockState(pos);
+                IBlockState state = getParent().getChunkCache().getBlockState(pos);
                 Block blockAt = state.getBlock();
                 VWMath.getBodyPosWithOrientation(pos, physCenterOfMass, getParent().getShipTransformationManager()
                         .getCurrentPhysicsTransform().getInternalMatrix(TransformType.SUBSPACE_TO_GLOBAL), inBodyWO);
@@ -505,7 +505,7 @@ public class PhysicsCalculations {
     public void processInitialPhysicsData() {
         IBlockState air = Blocks.AIR.getDefaultState();
         for (BlockPos pos : getParent().getBlockPositions()) {
-            onSetBlockState(air, getParent().getShipChunks().getBlockState(pos), pos);
+            onSetBlockState(air, getParent().getChunkCache().getBlockState(pos), pos);
         }
     }
 

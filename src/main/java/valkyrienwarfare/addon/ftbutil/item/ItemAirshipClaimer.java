@@ -16,20 +16,86 @@
 
 package valkyrienwarfare.addon.ftbutil.item;
 
+import com.feed_the_beast.ftblib.lib.data.ForgePlayer;
+import com.feed_the_beast.ftblib.lib.data.ForgeTeam;
+import com.feed_the_beast.ftblib.lib.math.ChunkDimPos;
+import com.feed_the_beast.ftbutilities.data.ClaimResult;
+import com.feed_the_beast.ftbutilities.data.ClaimedChunks;
+import com.mojang.authlib.GameProfile;
+import lombok.NonNull;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import valkyrienwarfare.ValkyrienWarfareMod;
+import valkyrienwarfare.mod.physmanagement.chunk.VWChunkClaim;
+import valkyrienwarfare.physics.management.PhysicsObject;
 import valkyrienwarfare.physics.management.PhysicsWrapperEntity;
 
 /**
+ * Also contains hooks for claiming and unclaiming ships
+ *
  * @author DaPorkchop_
  */
 public class ItemAirshipClaimer extends Item {
+
+    public void initialClaim(@NonNull PhysicsObject object) {
+        //unclaim all existing chunks (this shouldn't ever do anything, but you never know)
+        handleUnclaim(object);
+        int dim = object.getWrapperEntity().dimension;
+        ForgePlayer player = ClaimedChunks.instance.universe.getPlayer(object.getOwner());
+        if (player == null) {
+            throw new IllegalStateException("Unable to claim chunks for unknown player: " + object.getOwner().getName() + " (" + object.getOwner().getId().toString() + ")");
+        }
+        Chunk[][] chunks2d = object.getClaimedChunks();
+        boolean[][] occupied2d = object.getOwnedChunks().getChunkOccupiedInLocal();
+        for (int x = chunks2d.length - 1; x >= 0; x--) {
+            Chunk[] chunks1d = chunks2d[x];
+            boolean[] occupied1d = occupied2d[x];
+            for (int z = chunks1d.length - 1; z >= 0; z--) {
+                if (occupied1d[z]) {
+                    Chunk chunk = chunks1d[z];
+                    ClaimResult result = ClaimedChunks.instance.claimChunk(player, new ChunkDimPos(chunk.x, chunk.z, dim));
+                    if (result != ClaimResult.SUCCESS) {
+                        handleUnclaim(object);
+                        player.entityPlayer.sendMessage(new TextComponentString("Unable to claim chunks! Error at (" + chunk.x + ", " + chunk.z + "): " + result.name()));
+                        object.setOwner(null);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    public void handleClaim(@NonNull PhysicsObject object, int relX, int relZ) {
+        ForgePlayer player = ClaimedChunks.instance.universe.getPlayer(object.getOwner());
+        if (player == null) {
+            throw new IllegalStateException("Unable to claim chunks for unknown player: " + object.getOwner().getName() + " (" + object.getOwner().getId().toString() + ")");
+        }
+        Chunk chunk = object.getClaimedChunks()[relX][relZ];
+        ClaimResult result = ClaimedChunks.instance.claimChunk(player, new ChunkDimPos(chunk.x, chunk.z, object.getWrapperEntity().dimension));
+        if (player.isOnline()) {
+            player.entityPlayer.sendMessage(new TextComponentString("Unable to claim chunks! Error at (" + chunk.x + ", " + chunk.z + "): " + result.name()));
+        }
+    }
+
+    public void handleUnclaim(@NonNull PhysicsObject object) {
+        int dim = object.getWrapperEntity().dimension;
+        VWChunkClaim claim = object.getOwnedChunks();
+        int minX = claim.getMinX();
+        int minZ = claim.getMinZ();
+        for (int x = claim.getMaxX(); x >= minX; x--) {
+            for (int z = claim.getMaxZ(); z >= minZ; z--) {
+                ClaimedChunks.instance.unclaimChunk(new ChunkDimPos(x, z, dim));
+            }
+        }
+    }
+
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (world.isRemote) {
@@ -39,7 +105,22 @@ public class ItemAirshipClaimer extends Item {
             if (entity == null) {
                 return EnumActionResult.FAIL;
             }
-            //TODO: set airship owner, and handle automatic claiming and unclaiming of chunks
+            PhysicsObject object = entity.getPhysicsObject();
+            if (object.getOwner() != null) {
+                player.sendMessage(new TextComponentString("Ship already claimed by: " + object.getOwner().getName()));
+                return EnumActionResult.FAIL;
+            }
+            VWChunkClaim claim = object.getOwnedChunks();
+            {
+                ChunkDimPos dimPos = new ChunkDimPos(claim.getCenterX(), claim.getCenterZ(), player.dimension);
+                ForgeTeam team = ClaimedChunks.instance.getChunkTeam(dimPos);
+                if (team != null) {
+                    player.sendMessage(new TextComponentString("Ship already claimed by: " + team.getName()));
+                    return EnumActionResult.FAIL;
+                }
+            }
+            object.setOwner(new GameProfile(player.gameProfile.getId(), player.gameProfile.getName()));
+            initialClaim(object);
             return null;
         }
     }

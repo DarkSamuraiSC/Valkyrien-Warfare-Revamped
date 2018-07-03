@@ -17,48 +17,82 @@
 package valkyrienwarfare.addon.ftbutil;
 
 import lombok.Getter;
+import lombok.NonNull;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLStateEvent;
 import valkyrienwarfare.ValkyrienWarfareMod;
 import valkyrienwarfare.addon.ftbutil.item.ItemAirshipClaimer;
 import valkyrienwarfare.api.addons.Module;
+import valkyrienwarfare.physics.management.PhysicsObject;
 
 /**
  * @author DaPorkchop_
  */
 public class ValkyrienWarfareFTBUtil extends Module {
+    private static boolean LOADED = false;
+
+    @Getter
+    private static ValkyrienWarfareFTBUtil instance;
+
     @Getter
     private ItemAirshipClaimer airshipClaimer;
 
     public ValkyrienWarfareFTBUtil() {
         super("valkyrienwarfareftb", null, null, null);
+        if (instance != null) {
+            throw new IllegalStateException("Instance already set!");
+        }
+        instance = this;
     }
 
     @Override
     public void applyConfig(Configuration config) {
-
     }
 
     @Override
     protected void preInit(FMLStateEvent event) {
-
     }
 
     @Override
     protected void init(FMLStateEvent event) {
-
     }
 
     @Override
     protected void postInit(FMLStateEvent event) {
+    }
 
+    public static void initialClaim(@NonNull PhysicsObject object) {
+        if (!LOADED) {
+            return;
+        }
+        instance.airshipClaimer.initialClaim(object);
+    }
+
+    public static void handleClaim(@NonNull PhysicsObject object, int relX, int relZ) {
+        if (!LOADED || object.getOwner() == null) {
+            return;
+        }
+        instance.airshipClaimer.handleClaim(object, relX, relZ);
+    }
+
+    public static void handleUnclaim(@NonNull PhysicsObject object) {
+        if (!LOADED) {
+            return;
+        }
+        instance.airshipClaimer.handleUnclaim(object);
     }
 
     @Override
     public void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().register(this.airshipClaimer = (ItemAirshipClaimer) new ItemAirshipClaimer().setUnlocalizedName("airshipclaimer").setRegistryName(new ResourceLocation(getModID(), "airshipclaimer")).setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(16));
+        if (Loader.isModLoaded("ftbutilities")) {
+            LOADED = true;
+            event.getRegistry().register(this.airshipClaimer = (ItemAirshipClaimer) new ItemAirshipClaimer().setUnlocalizedName("airshipclaimer").setRegistryName(new ResourceLocation(getModID(), "airshipclaimer")).setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(16));
+        } else {
+            System.out.println("FTB Utilities not found, skipping integration!");
+        }
     }
 }

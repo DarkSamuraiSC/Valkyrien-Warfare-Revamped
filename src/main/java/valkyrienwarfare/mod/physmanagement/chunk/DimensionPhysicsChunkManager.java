@@ -32,7 +32,7 @@ public class DimensionPhysicsChunkManager {
     private final Map<World, PhysicsChunkManager> managerPerWorld;
 
     public DimensionPhysicsChunkManager() {
-        managerPerWorld = new HashMap<World, PhysicsChunkManager>();
+        managerPerWorld = new HashMap<>();
     }
 
     public void initWorld(World world) {
@@ -56,7 +56,7 @@ public class DimensionPhysicsChunkManager {
         data.addShipToPersistantMap(wrapper);
     }
 
-    public void removeRegistedChunksForShip(PhysicsWrapperEntity wrapper) {
+    public void removeRegisteredChunksForShip(PhysicsWrapperEntity wrapper) {
         World shipWorld = wrapper.world;
         BlockPosToShipUUIDData data = BlockPosToShipUUIDData.get(shipWorld);
 

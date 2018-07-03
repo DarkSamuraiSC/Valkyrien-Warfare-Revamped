@@ -24,6 +24,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import io.netty.buffer.ByteBuf;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -53,6 +54,7 @@ import valkyrienwarfare.addon.control.ValkyrienWarfareControl;
 import valkyrienwarfare.addon.control.network.EntityFixMessage;
 import valkyrienwarfare.addon.control.nodenetwork.INodeController;
 import valkyrienwarfare.addon.control.nodenetwork.IVWNodeProvider;
+import valkyrienwarfare.addon.ftbutil.ValkyrienWarfareFTBUtil;
 import valkyrienwarfare.api.TransformType;
 import valkyrienwarfare.math.Quaternion;
 import valkyrienwarfare.math.Vector;
@@ -60,6 +62,7 @@ import valkyrienwarfare.mod.BlockPhysicsRegistration;
 import valkyrienwarfare.mod.client.render.PhysObjectRenderManager;
 import valkyrienwarfare.mod.coordinates.*;
 import valkyrienwarfare.mod.network.PhysWrapperPositionMessage;
+import valkyrienwarfare.mod.physmanagement.chunk.PhysicsChunkManager;
 import valkyrienwarfare.mod.physmanagement.chunk.VWChunkCache;
 import valkyrienwarfare.mod.physmanagement.chunk.VWChunkClaim;
 import valkyrienwarfare.mod.physmanagement.relocation.DetectorManager;
@@ -113,7 +116,7 @@ public class PhysicsObject implements ISubspaceProvider {
     // Used for faster memory access to the Chunks this object 'owns'
     private Chunk[][] claimedChunks;
     @Setter
-    private VWChunkCache shipChunks;
+    private VWChunkCache chunkCache;
     // Some badly written mods use these Maps to determine who to send packets to,
     // so we need to manually fill them with nearby players
     private PlayerChunkMapEntry[][] claimedChunksEntries;
@@ -136,7 +139,7 @@ public class PhysicsObject implements ISubspaceProvider {
     @Setter
     private GameProfile owner;
 
-    public PhysicsObject(PhysicsWrapperEntity host) {
+    public PhysicsObject(@NonNull PhysicsWrapperEntity host) {
         this.wrapper = host;
         if (host.world.isRemote) {
             this.shipRenderer = new PhysObjectRenderManager(this);
@@ -187,7 +190,7 @@ public class PhysicsObject implements ISubspaceProvider {
             getBlockPositions().add(posAt);
             int chunkX = (posAt.getX() >> 4) - claimedChunks[0][0].x;
             int chunkZ = (posAt.getZ() >> 4) - claimedChunks[0][0].z;
-            getOwnedChunks().chunkOccupiedInLocal[chunkX][chunkZ] = true;
+            this.getOwnedChunks().markChunkOccupied(chunkX, chunkZ, this);
         }
 
         if (getBlockPositions().isEmpty()) {
@@ -201,7 +204,7 @@ public class PhysicsObject implements ISubspaceProvider {
 
     public void destroy() {
         getWrapperEntity().setDead();
-        List<EntityPlayerMP> watchersCopy = new ArrayList<EntityPlayerMP>(getWatchingPlayers());
+        List<EntityPlayerMP> watchersCopy = new ArrayList<>(getWatchingPlayers());
         for (int x = getOwnedChunks().getMinX(); x <= getOwnedChunks().getMaxX(); x++) {
             for (int z = getOwnedChunks().getMinZ(); z <= getOwnedChunks().getMaxZ(); z++) {
                 SPacketUnloadChunk unloadPacket = new SPacketUnloadChunk(x, z);
@@ -214,7 +217,10 @@ public class PhysicsObject implements ISubspaceProvider {
             // onPlayerUntracking(wachingPlayer);
         }
         getWatchingPlayers().clear();
-        ValkyrienWarfareMod.VW_CHUNK_MANAGER.removeRegistedChunksForShip(getWrapperEntity());
+
+        ValkyrienWarfareFTBUtil.handleUnclaim(this);
+        ValkyrienWarfareMod.VW_CHUNK_MANAGER.getManagerForWorld(this.getWorldObj()).markChunksAvailable(this.ownedChunks);
+        ValkyrienWarfareMod.VW_CHUNK_MANAGER.removeRegisteredChunksForShip(getWrapperEntity());
         ValkyrienWarfareMod.VW_CHUNK_MANAGER.removeShipPosition(getWrapperEntity());
         ValkyrienWarfareMod.VW_CHUNK_MANAGER.removeShipNameRegistry(getWrapperEntity());
         ValkyrienWarfareMod.VW_PHYSICS_MANAGER.onShipUnload(getWrapperEntity());
@@ -222,7 +228,7 @@ public class PhysicsObject implements ISubspaceProvider {
 
     public void claimNewChunks(int radius) {
         setOwnedChunks(ValkyrienWarfareMod.VW_CHUNK_MANAGER.getManagerForWorld(getWrapperEntity().world)
-                .getNextAvaliableChunkSet(radius));
+                .getNextAvailableChunkSet(radius));
         ValkyrienWarfareMod.VW_CHUNK_MANAGER.registerChunksForShip(getWrapperEntity());
         claimedChunksInMap = true;
     }
@@ -269,7 +275,7 @@ public class PhysicsObject implements ISubspaceProvider {
 
         replaceOuterChunksWithAir();
 
-        setShipChunks(new VWChunkCache(getWorldObj(), claimedChunks));
+        setChunkCache(new VWChunkCache(getWorldObj(), claimedChunks));
 
         setRefrenceBlockPos(getRegionCenter());
         setCenterCoord(new Vector(getRefrenceBlockPos().getX(), getRefrenceBlockPos().getY(), getRefrenceBlockPos().getZ()));
@@ -313,7 +319,7 @@ public class PhysicsObject implements ISubspaceProvider {
         this.setPhysicsEnabled(true);
         MutableBlockPos pos = new MutableBlockPos();
         TIntIterator iter = detector.foundSet.iterator();
-        int radiusNeeded = 1;
+        /*int radiusNeeded = 1;
 
         while (iter.hasNext()) {
             int i = iter.next();
@@ -324,8 +330,8 @@ public class PhysicsObject implements ISubspaceProvider {
         }
 
         radiusNeeded = Math.min(radiusNeeded,
-                ValkyrienWarfareMod.VW_CHUNK_MANAGER.getManagerForWorld(getWrapperEntity().world).maxChunkRadius);
-        claimNewChunks(radiusNeeded);
+                ValkyrienWarfareMod.VW_CHUNK_MANAGER.getManagerForWorld(getWrapperEntity().world).maxChunkRadius);*/
+        claimNewChunks(PhysicsChunkManager.getMaxChunkRadius());
         ValkyrienWarfareMod.VW_PHYSICS_MANAGER.onShipPreload(getWrapperEntity());
 
         claimedChunks = new Chunk[(getOwnedChunks().getRadius() * 2) + 1][(getOwnedChunks().getRadius() * 2) + 1];
@@ -341,7 +347,7 @@ public class PhysicsObject implements ISubspaceProvider {
         // Prevents weird shit from spawning at the edges of a ship
         replaceOuterChunksWithAir();
 
-        setShipChunks(new VWChunkCache(getWorldObj(), claimedChunks));
+        setChunkCache(new VWChunkCache(getWorldObj(), claimedChunks));
         int minChunkX = claimedChunks[0][0].x;
         int minChunkZ = claimedChunks[0][0].z;
 
@@ -362,7 +368,7 @@ public class PhysicsObject implements ISubspaceProvider {
 
             pos.setPos(pos.getX() + centerDifference.getX(), pos.getY() + centerDifference.getY(),
                     pos.getZ() + centerDifference.getZ());
-            getOwnedChunks().chunkOccupiedInLocal[(pos.getX() >> 4) - minChunkX][(pos.getZ() >> 4) - minChunkZ] = true;
+            this.getOwnedChunks().markChunkOccupied((pos.getX() >> 4) - minChunkX, (pos.getZ() >> 4) - minChunkZ, this);
 
             Chunk chunkToSet = claimedChunks[(pos.getX() >> 4) - minChunkX][(pos.getZ() >> 4) - minChunkZ];
             int storageIndex = pos.getY() >> 4;
@@ -643,7 +649,7 @@ public class PhysicsObject implements ISubspaceProvider {
                 claimedChunks[x - getOwnedChunks().getMinX()][z - getOwnedChunks().getMinZ()] = chunk;
             }
         }
-        setShipChunks(new VWChunkCache(getWorldObj(), claimedChunks));
+        setChunkCache(new VWChunkCache(getWorldObj(), claimedChunks));
         setRefrenceBlockPos(getRegionCenter());
         setShipTransformationManager(new ShipTransformationManager(this));
         if (!getWorldObj().isRemote) {
@@ -666,7 +672,7 @@ public class PhysicsObject implements ISubspaceProvider {
         for (chunkX = claimedChunks.length - 1; chunkX > -1; chunkX--) {
             for (chunkZ = claimedChunks[0].length - 1; chunkZ > -1; chunkZ--) {
                 chunk = claimedChunks[chunkX][chunkZ];
-                if (chunk != null && getOwnedChunks().chunkOccupiedInLocal[chunkX][chunkZ]) {
+                if (chunk != null && this.getOwnedChunks().isChunkOccupied(chunkX, chunkZ)) {
                     for (index = 0; index < 16; index++) {
                         storage = chunk.getBlockStorageArray()[index];
                         if (storage != null) {
@@ -750,8 +756,8 @@ public class PhysicsObject implements ISubspaceProvider {
         NBTUtils.writeShipTransformToNBT("currentTickTransform",
                 getShipTransformationManager().getCurrentTickTransform(), compound);
         compound.setBoolean("doPhysics", isPhysicsEnabled/* isPhysicsEnabled() */);
-        for (int row = 0; row < getOwnedChunks().chunkOccupiedInLocal.length; row++) {
-            boolean[] curArray = getOwnedChunks().chunkOccupiedInLocal[row];
+        for (int row = 0; row < getOwnedChunks().getChunkOccupiedInLocal().length; row++) {
+            boolean[] curArray = getOwnedChunks().getChunkOccupiedInLocal()[row];
             for (int column = 0; column < curArray.length; column++) {
                 compound.setBoolean("CC:" + row + ":" + column, curArray[column]);
             }
@@ -791,8 +797,8 @@ public class PhysicsObject implements ISubspaceProvider {
             getWrapperEntity().setPhysicsEntityRotation(compound.getDouble("pitch"), compound.getDouble("yaw"), compound.getDouble("roll"));
         }
 
-        for (int row = 0; row < getOwnedChunks().chunkOccupiedInLocal.length; row++) {
-            boolean[] curArray = getOwnedChunks().chunkOccupiedInLocal[row];
+        for (int row = 0; row < getOwnedChunks().getChunkOccupiedInLocal().length; row++) {
+            boolean[] curArray = getOwnedChunks().getChunkOccupiedInLocal()[row];
             for (int column = 0; column < curArray.length; column++) {
                 curArray[column] = compound.getBoolean("CC:" + row + ":" + column);
             }
@@ -843,7 +849,7 @@ public class PhysicsObject implements ISubspaceProvider {
         getWrapperEntity().physicsUpdateLastTickPositions();
 
         setCenterCoord(new Vector(modifiedBuffer));
-        for (boolean[] array : getOwnedChunks().chunkOccupiedInLocal) {
+        for (boolean[] array : getOwnedChunks().getChunkOccupiedInLocal()) {
             for (int i = 0; i < array.length; i++) {
                 array[i] = modifiedBuffer.readBoolean();
             }
@@ -881,7 +887,7 @@ public class PhysicsObject implements ISubspaceProvider {
         modifiedBuffer.writeDouble(getWrapperEntity().getRoll());
 
         getCenterCoord().writeToByteBuf(modifiedBuffer);
-        for (boolean[] array : getOwnedChunks().chunkOccupiedInLocal) {
+        for (boolean[] array : getOwnedChunks().getChunkOccupiedInLocal()) {
             for (boolean b : array) {
                 modifiedBuffer.writeBoolean(b);
             }
@@ -910,7 +916,7 @@ public class PhysicsObject implements ISubspaceProvider {
     }
 
     public boolean areShipChunksFullyLoaded() {
-        return getShipChunks() != null;
+        return getChunkCache() != null;
     }
 
     /**

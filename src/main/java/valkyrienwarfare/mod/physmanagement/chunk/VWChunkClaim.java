@@ -16,26 +16,31 @@
 
 package valkyrienwarfare.mod.physmanagement.chunk;
 
+import lombok.Getter;
+import lombok.NonNull;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import valkyrienwarfare.addon.ftbutil.ValkyrienWarfareFTBUtil;
+import valkyrienwarfare.physics.management.PhysicsObject;
 
 /**
  * This stores the chunk claims for a PhysicsObject; not the chunks themselves
  *
  * @author thebest108
  */
+@Getter
 public class VWChunkClaim {
 
     private final int centerX;
     private final int centerZ;
     private final int radius;
-    public final boolean[][] chunkOccupiedInLocal;
+    private final boolean[][] chunkOccupiedInLocal;
 
     public VWChunkClaim(int x, int z, int size) {
         this.centerX = x;
         this.centerZ = z;
         this.radius = size;
-        this.chunkOccupiedInLocal = new boolean[(getRadius() * 2) + 1][(getRadius() * 2) + 1];
+        this.chunkOccupiedInLocal = new boolean[(this.radius << 1) + 1][(this.radius << 1) + 1];
     }
 
     public VWChunkClaim(NBTTagCompound readFrom) {
@@ -60,6 +65,17 @@ public class VWChunkClaim {
         return inX && inZ;
     }
 
+    public void markChunkOccupied(int x, int z, @NonNull PhysicsObject object) {
+        if (!this.isChunkOccupied(x, z)) {
+            ValkyrienWarfareFTBUtil.handleClaim(object, x, z);
+            this.chunkOccupiedInLocal[x][z] = true;
+        }
+    }
+
+    public boolean isChunkOccupied(int x, int z) {
+        return this.chunkOccupiedInLocal[x][z];
+    }
+
     @Override
     public String toString() {
         return getCenterX() + ":" + getCenterZ() + ":" + getRadius();
@@ -72,27 +88,6 @@ public class VWChunkClaim {
             return other.getCenterX() == getCenterX() && other.getCenterZ() == getCenterZ() && other.getRadius() == getRadius();
         }
         return false;
-    }
-
-    /**
-     * @return the centerX
-     */
-    public int getCenterX() {
-        return centerX;
-    }
-
-    /**
-     * @return the centerZ
-     */
-    public int getCenterZ() {
-        return centerZ;
-    }
-
-    /**
-     * @return the radius
-     */
-    public int getRadius() {
-        return radius;
     }
 
     /**

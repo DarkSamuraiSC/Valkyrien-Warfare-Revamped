@@ -16,28 +16,26 @@
 
 package valkyrienwarfare.mod.physmanagement.chunk;
 
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
+import lombok.Getter;
+import net.daporkchop.lib.encoding.ToBytes;
+import net.daporkchop.lib.primitive.list.LongList;
+import net.daporkchop.lib.primitive.list.array.LongArrayList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 
+import java.util.concurrent.atomic.AtomicLong;
+
+@Getter
 public class ChunkClaimWorldData extends WorldSavedData {
 
     private static final String CHUNK_POS_DATA_KEY = "ChunkKeys";
-    private final TIntList avalibleChunkKeys;
-    private int chunkKey;
-
-    public ChunkClaimWorldData(String key) {
-        super(key);
-        this.avalibleChunkKeys = new TIntArrayList();
-        this.markDirty();
-    }
+    private final LongList availableChunkKeys = new LongArrayList();
+    private final AtomicLong chunkKey = new AtomicLong(0L);
 
     public ChunkClaimWorldData() {
         super(CHUNK_POS_DATA_KEY);
-        this.avalibleChunkKeys = new TIntArrayList();
         this.markDirty();
     }
 
@@ -54,43 +52,24 @@ public class ChunkClaimWorldData extends WorldSavedData {
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        setChunkKey(nbt.getInteger("chunkKey"));
-        int[] array = nbt.getIntArray("avalibleChunkKeys");
-        for (int i : array) {
-            getAvalibleChunkKeys().add(i);
+        this.chunkKey.set(nbt.getLong("chunkKey"));
+        if (nbt.hasKey("availableChunkKeys")) {
+            //support for legacy format
+            nbt.removeTag("availableChunkKeys");
+        } else {
+            this.availableChunkKeys.addAll(ToBytes.toLongs(nbt.getByteArray("availableChunkKeys_v2")));
         }
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        nbt.setInteger("chunkKey", getChunkKey());
-        int[] array = new int[getAvalibleChunkKeys().size()];
-        for (int i = 0; i < getAvalibleChunkKeys().size(); i++) {
-            array[i] = getAvalibleChunkKeys().get(i);
+        nbt.setLong("chunkKey", this.chunkKey.get());
+        //porktodo: toArray method for PorkLib primitive arrays (and maybe maps too?)
+        long[] data = new long[this.availableChunkKeys.getSize()];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = this.availableChunkKeys.get(i);
         }
-        nbt.setIntArray("avalibleChunkKeys", array);
+        nbt.setByteArray("availableChunkKeys_v2", ToBytes.toBytes(data));
         return nbt;
     }
-
-    /**
-     * @return the avalibleChunkKeys
-     */
-    public TIntList getAvalibleChunkKeys() {
-        return avalibleChunkKeys;
-    }
-
-    /**
-     * @return the chunkKey
-     */
-    public int getChunkKey() {
-        return chunkKey;
-    }
-
-    /**
-     * @param chunkKey the chunkKey to set
-     */
-    public void setChunkKey(int chunkKey) {
-        this.chunkKey = chunkKey;
-    }
-
 }
