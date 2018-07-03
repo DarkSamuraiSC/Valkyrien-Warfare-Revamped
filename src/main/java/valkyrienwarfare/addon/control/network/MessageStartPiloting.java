@@ -40,24 +40,24 @@ public class MessageStartPiloting implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         PacketBuffer packetBuf = new PacketBuffer(buf);
-        posToStartPiloting = new BlockPos(
+        this.posToStartPiloting = new BlockPos(
                 packetBuf.readInt(),
                 packetBuf.readInt(),
                 packetBuf.readInt()
         );
-        setPhysicsWrapperEntityToPilot = packetBuf.readBoolean();
-        controlType = packetBuf.readEnumValue(ControllerInputType.class);
+        this.setPhysicsWrapperEntityToPilot = packetBuf.readBoolean();
+        this.controlType = packetBuf.readEnumValue(ControllerInputType.class);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         PacketBuffer packetBuf = new PacketBuffer(buf);
-        packetBuf.writeInt(posToStartPiloting.getX());
-        packetBuf.writeInt(posToStartPiloting.getY());
-        packetBuf.writeInt(posToStartPiloting.getZ());
+        packetBuf.writeInt(this.posToStartPiloting.getX());
+        packetBuf.writeInt(this.posToStartPiloting.getY());
+        packetBuf.writeInt(this.posToStartPiloting.getZ());
         //use absolute coordinates instead of writeBlockPos in case we ever add compatibility with cubic chunks
-        packetBuf.writeBoolean(setPhysicsWrapperEntityToPilot);
-        packetBuf.writeEnumValue(controlType);
+        packetBuf.writeBoolean(this.setPhysicsWrapperEntityToPilot);
+        packetBuf.writeEnumValue(this.controlType);
     }
 
 }

@@ -40,26 +40,26 @@ public class ThrustModulatorGuiInputMessage implements IMessage {
     public void fromBytes(ByteBuf buf) {
         PacketBuffer packetBuf = new PacketBuffer(buf);
 
-        tileEntityPos = new BlockPos(
+        this.tileEntityPos = new BlockPos(
                 packetBuf.readInt(),
                 packetBuf.readInt(),
                 packetBuf.readInt()
         );
-        idealYHeight = packetBuf.readFloat();
-        maximumYVelocity = packetBuf.readFloat();
+        this.idealYHeight = packetBuf.readFloat();
+        this.maximumYVelocity = packetBuf.readFloat();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         PacketBuffer packetBuf = new PacketBuffer(buf);
 
-        packetBuf.writeInt(tileEntityPos.getX());
-        packetBuf.writeInt(tileEntityPos.getY());
-        packetBuf.writeInt(tileEntityPos.getZ());
+        packetBuf.writeInt(this.tileEntityPos.getX());
+        packetBuf.writeInt(this.tileEntityPos.getY());
+        packetBuf.writeInt(this.tileEntityPos.getZ());
         //use absolute coordinates instead of writeBlockPos in case we ever add compatibility with cubic chunks
 
-        packetBuf.writeFloat(idealYHeight);
-        packetBuf.writeFloat(maximumYVelocity);
+        packetBuf.writeFloat(this.idealYHeight);
+        packetBuf.writeFloat(this.maximumYVelocity);
     }
 
 }

@@ -39,7 +39,7 @@ public abstract class BlockAirshipEngineLore extends BlockAirshipEngine {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> itemInformation, ITooltipFlag advanced) {
-        Collections.addAll(itemInformation, lore);
+        Collections.addAll(itemInformation, this.lore);
     }
 
     public abstract String getEnginePowerTooltip();
@@ -47,6 +47,6 @@ public abstract class BlockAirshipEngineLore extends BlockAirshipEngine {
     @Override
     public void setEnginePower(double power) {
         super.setEnginePower(power);
-        lore = new String[]{"" + TextFormatting.GRAY + TextFormatting.ITALIC + TextFormatting.BOLD + "Force:", "  " + this.getEnginePowerTooltip() + " Newtons"};
+        this.lore = new String[]{"" + TextFormatting.GRAY + TextFormatting.ITALIC + TextFormatting.BOLD + "Force:", "  " + this.getEnginePowerTooltip() + " Newtons"};
     }
 }

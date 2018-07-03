@@ -34,7 +34,7 @@ public class VWThreadManager {
 
     // Potential memory leak here, always be sure to call the killVWThread() method
     // once a world unloads.
-    private static final Map<World, VWThread> WORLDS_TO_THREADS = new HashMap<World, VWThread>();
+    private static final Map<World, VWThread> WORLDS_TO_THREADS = new HashMap<>();
 
     public static VWThread getVWThreadForWorld(World world) {
         return WORLDS_TO_THREADS.get(world);
@@ -56,7 +56,7 @@ public class VWThreadManager {
     // TODO: This doesn't really work yet.
     @Deprecated
     public static List<World> restartCrashedPhysicsThreads() {
-        List<World> crashedWorlds = new ArrayList<World>();
+        List<World> crashedWorlds = new ArrayList<>();
         for (World world : WORLDS_TO_THREADS.keySet()) {
             VWThread vwThread = WORLDS_TO_THREADS.get(world);
             if (vwThread.getState() == Thread.State.TERMINATED) {

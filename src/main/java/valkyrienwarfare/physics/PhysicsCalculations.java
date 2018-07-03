@@ -74,58 +74,58 @@ public class PhysicsCalculations {
     private double physX, physY, physZ;
 
     public PhysicsCalculations(PhysicsObject toProcess) {
-        parent = toProcess;
-        worldCollision = new WorldPhysicsCollider(this);
+        this.parent = toProcess;
+        this.worldCollision = new WorldPhysicsCollider(this);
 
-        gameMoITensor = RotationMatrices.getZeroMatrix(3);
-        physMOITensor = RotationMatrices.getZeroMatrix(3);
-        setPhysInvMOITensor(RotationMatrices.getZeroMatrix(3));
+        this.gameMoITensor = RotationMatrices.getZeroMatrix(3);
+        this.physMOITensor = RotationMatrices.getZeroMatrix(3);
+        this.setPhysInvMOITensor(RotationMatrices.getZeroMatrix(3));
 
-        gameTickCenterOfMass = new Vector(toProcess.getCenterCoord());
-        linearMomentum = new Vector();
-        physCenterOfMass = new Vector();
-        angularVelocity = new Vector();
-        torque = new Vector();
+        this.gameTickCenterOfMass = new Vector(toProcess.getCenterCoord());
+        this.linearMomentum = new Vector();
+        this.physCenterOfMass = new Vector();
+        this.angularVelocity = new Vector();
+        this.torque = new Vector();
         // We need thread safe access to this.
-        activeForcePositions = ConcurrentHashMap.newKeySet();
+        this.activeForcePositions = ConcurrentHashMap.newKeySet();
     }
 
     public PhysicsCalculations(PhysicsCalculations toCopy) {
-        parent = toCopy.getParent();
-        worldCollision = toCopy.getWorldCollision();
-        gameTickCenterOfMass = toCopy.gameTickCenterOfMass;
-        linearMomentum = toCopy.linearMomentum;
-        angularVelocity = toCopy.angularVelocity;
-        torque = toCopy.torque;
-        gameTickMass = toCopy.gameTickMass;
-        physTickTimeDelta = toCopy.physTickTimeDelta;
-        activeForcePositions = toCopy.activeForcePositions;
-        gameMoITensor = toCopy.gameMoITensor;
-        physMOITensor = toCopy.physMOITensor;
-        setPhysInvMOITensor(toCopy.getPhysInvMOITensor());
-        actAsArchimedes = toCopy.actAsArchimedes;
+        this.parent = toCopy.getParent();
+        this.worldCollision = toCopy.getWorldCollision();
+        this.gameTickCenterOfMass = toCopy.gameTickCenterOfMass;
+        this.linearMomentum = toCopy.linearMomentum;
+        this.angularVelocity = toCopy.angularVelocity;
+        this.torque = toCopy.torque;
+        this.gameTickMass = toCopy.gameTickMass;
+        this.physTickTimeDelta = toCopy.physTickTimeDelta;
+        this.activeForcePositions = toCopy.activeForcePositions;
+        this.gameMoITensor = toCopy.gameMoITensor;
+        this.physMOITensor = toCopy.physMOITensor;
+        this.setPhysInvMOITensor(toCopy.getPhysInvMOITensor());
+        this.actAsArchimedes = toCopy.actAsArchimedes;
     }
 
     public void onSetBlockState(IBlockState oldState, IBlockState newState, BlockPos pos) {
-        World worldObj = getParent().getWorldObj();
+        World worldObj = this.getParent().getWorldObj();
         if (!newState.equals(oldState)) {
             if (oldState.getBlock() == Blocks.AIR) {
                 if (BlockForce.basicForces.isBlockProvidingForce(newState, pos, worldObj)) {
-                    activeForcePositions.add(pos);
+                    this.activeForcePositions.add(pos);
                 }
             } else {
-                if (activeForcePositions.contains(pos)) {
+                if (this.activeForcePositions.contains(pos)) {
                     if (!BlockForce.basicForces.isBlockProvidingForce(newState, pos, worldObj)) {
-                        activeForcePositions.remove(pos);
+                        this.activeForcePositions.remove(pos);
                     }
                 } else {
                     if (BlockForce.basicForces.isBlockProvidingForce(newState, pos, worldObj)) {
-                        activeForcePositions.add(pos);
+                        this.activeForcePositions.add(pos);
                     }
                 }
             }
             if (newState.getBlock() == Blocks.AIR) {
-                activeForcePositions.remove(pos);
+                this.activeForcePositions.remove(pos);
             }
 
             double oldMass = BlockMass.basicMass.getMassFromState(oldState, pos, worldObj);
@@ -138,112 +138,112 @@ public class PhysicsCalculations {
                 double z = pos.getZ() + .5D;
 
                 deltaMass /= 9D;
-                addMassAt(x, y, z, deltaMass);
-                addMassAt(x + INERTIA_OFFSET, y + INERTIA_OFFSET, z + INERTIA_OFFSET, deltaMass);
-                addMassAt(x + INERTIA_OFFSET, y + INERTIA_OFFSET, z - INERTIA_OFFSET, deltaMass);
-                addMassAt(x + INERTIA_OFFSET, y - INERTIA_OFFSET, z + INERTIA_OFFSET, deltaMass);
-                addMassAt(x + INERTIA_OFFSET, y - INERTIA_OFFSET, z - INERTIA_OFFSET, deltaMass);
-                addMassAt(x - INERTIA_OFFSET, y + INERTIA_OFFSET, z + INERTIA_OFFSET, deltaMass);
-                addMassAt(x - INERTIA_OFFSET, y + INERTIA_OFFSET, z - INERTIA_OFFSET, deltaMass);
-                addMassAt(x - INERTIA_OFFSET, y - INERTIA_OFFSET, z + INERTIA_OFFSET, deltaMass);
-                addMassAt(x - INERTIA_OFFSET, y - INERTIA_OFFSET, z - INERTIA_OFFSET, deltaMass);
+                this.addMassAt(x, y, z, deltaMass);
+                this.addMassAt(x + INERTIA_OFFSET, y + INERTIA_OFFSET, z + INERTIA_OFFSET, deltaMass);
+                this.addMassAt(x + INERTIA_OFFSET, y + INERTIA_OFFSET, z - INERTIA_OFFSET, deltaMass);
+                this.addMassAt(x + INERTIA_OFFSET, y - INERTIA_OFFSET, z + INERTIA_OFFSET, deltaMass);
+                this.addMassAt(x + INERTIA_OFFSET, y - INERTIA_OFFSET, z - INERTIA_OFFSET, deltaMass);
+                this.addMassAt(x - INERTIA_OFFSET, y + INERTIA_OFFSET, z + INERTIA_OFFSET, deltaMass);
+                this.addMassAt(x - INERTIA_OFFSET, y + INERTIA_OFFSET, z - INERTIA_OFFSET, deltaMass);
+                this.addMassAt(x - INERTIA_OFFSET, y - INERTIA_OFFSET, z + INERTIA_OFFSET, deltaMass);
+                this.addMassAt(x - INERTIA_OFFSET, y - INERTIA_OFFSET, z - INERTIA_OFFSET, deltaMass);
             }
         }
     }
 
     private void addMassAt(double x, double y, double z, double addedMass) {
-        Vector prevCenterOfMass = new Vector(gameTickCenterOfMass);
-        if (gameTickMass > .0001D) {
-            gameTickCenterOfMass.multiply(gameTickMass);
-            gameTickCenterOfMass.add(new Vector(x, y, z).getProduct(addedMass));
-            gameTickCenterOfMass.multiply(1.0D / (gameTickMass + addedMass));
+        Vector prevCenterOfMass = new Vector(this.gameTickCenterOfMass);
+        if (this.gameTickMass > .0001D) {
+            this.gameTickCenterOfMass.multiply(this.gameTickMass);
+            this.gameTickCenterOfMass.add(new Vector(x, y, z).getProduct(addedMass));
+            this.gameTickCenterOfMass.multiply(1.0D / (this.gameTickMass + addedMass));
         } else {
-            gameTickCenterOfMass = new Vector(x, y, z);
-            gameMoITensor = RotationMatrices.getZeroMatrix(3);
+            this.gameTickCenterOfMass = new Vector(x, y, z);
+            this.gameMoITensor = RotationMatrices.getZeroMatrix(3);
         }
-        double cmShiftX = prevCenterOfMass.X - gameTickCenterOfMass.X;
-        double cmShiftY = prevCenterOfMass.Y - gameTickCenterOfMass.Y;
-        double cmShiftZ = prevCenterOfMass.Z - gameTickCenterOfMass.Z;
-        double rx = x - gameTickCenterOfMass.X;
-        double ry = y - gameTickCenterOfMass.Y;
-        double rz = z - gameTickCenterOfMass.Z;
+        double cmShiftX = prevCenterOfMass.X - this.gameTickCenterOfMass.X;
+        double cmShiftY = prevCenterOfMass.Y - this.gameTickCenterOfMass.Y;
+        double cmShiftZ = prevCenterOfMass.Z - this.gameTickCenterOfMass.Z;
+        double rx = x - this.gameTickCenterOfMass.X;
+        double ry = y - this.gameTickCenterOfMass.Y;
+        double rz = z - this.gameTickCenterOfMass.Z;
 
-        gameMoITensor[0] = gameMoITensor[0] + (cmShiftY * cmShiftY + cmShiftZ * cmShiftZ) * gameTickMass
+        this.gameMoITensor[0] = this.gameMoITensor[0] + (cmShiftY * cmShiftY + cmShiftZ * cmShiftZ) * this.gameTickMass
                 + (ry * ry + rz * rz) * addedMass;
-        gameMoITensor[1] = gameMoITensor[1] - cmShiftX * cmShiftY * gameTickMass - rx * ry * addedMass;
-        gameMoITensor[2] = gameMoITensor[2] - cmShiftX * cmShiftZ * gameTickMass - rx * rz * addedMass;
-        gameMoITensor[3] = gameMoITensor[1];
-        gameMoITensor[4] = gameMoITensor[4] + (cmShiftX * cmShiftX + cmShiftZ * cmShiftZ) * gameTickMass
+        this.gameMoITensor[1] = this.gameMoITensor[1] - cmShiftX * cmShiftY * this.gameTickMass - rx * ry * addedMass;
+        this.gameMoITensor[2] = this.gameMoITensor[2] - cmShiftX * cmShiftZ * this.gameTickMass - rx * rz * addedMass;
+        this.gameMoITensor[3] = this.gameMoITensor[1];
+        this.gameMoITensor[4] = this.gameMoITensor[4] + (cmShiftX * cmShiftX + cmShiftZ * cmShiftZ) * this.gameTickMass
                 + (rx * rx + rz * rz) * addedMass;
-        gameMoITensor[5] = gameMoITensor[5] - cmShiftY * cmShiftZ * gameTickMass - ry * rz * addedMass;
-        gameMoITensor[6] = gameMoITensor[2];
-        gameMoITensor[7] = gameMoITensor[5];
-        gameMoITensor[8] = gameMoITensor[8] + (cmShiftX * cmShiftX + cmShiftY * cmShiftY) * gameTickMass
+        this.gameMoITensor[5] = this.gameMoITensor[5] - cmShiftY * cmShiftZ * this.gameTickMass - ry * rz * addedMass;
+        this.gameMoITensor[6] = this.gameMoITensor[2];
+        this.gameMoITensor[7] = this.gameMoITensor[5];
+        this.gameMoITensor[8] = this.gameMoITensor[8] + (cmShiftX * cmShiftX + cmShiftY * cmShiftY) * this.gameTickMass
                 + (rx * rx + ry * ry) * addedMass;
 
         // Do this to avoid a mass of zero, which runs the risk of dividing by zero and
         // crashing the program.
-        if (gameTickMass + addedMass < .0001D) {
-            gameTickMass = .0001D;
-            getParent().setPhysicsEnabled(false);
+        if (this.gameTickMass + addedMass < .0001D) {
+            this.gameTickMass = .0001D;
+            this.getParent().setPhysicsEnabled(false);
         } else {
-            gameTickMass += addedMass;
+            this.gameTickMass += addedMass;
         }
     }
 
     public void rawPhysTickPreCol(double newPhysSpeed) {
-        if (getParent().getShipTransformationManager().getCurrentPhysicsTransform() == ShipTransformationManager.ZERO_TRANSFORM) {
+        if (this.getParent().getShipTransformationManager().getCurrentPhysicsTransform() == ShipTransformationManager.ZERO_TRANSFORM) {
             // Create a new physics transform.
-            physRoll = getParent().getWrapperEntity().getRoll();
-            physPitch = getParent().getWrapperEntity().getPitch();
-            physYaw = getParent().getWrapperEntity().getYaw();
-            physX = getParent().getWrapperEntity().posX;
-            physY = getParent().getWrapperEntity().posY;
-            physZ = getParent().getWrapperEntity().posZ;
-            physCenterOfMass.setValue(gameTickCenterOfMass);
-            ShipTransform physicsTransform = new PhysicsShipTransform(physX, physY, physZ, physPitch, physYaw, physRoll,
-                    physCenterOfMass, getParent().getShipBoundingBox(),
-                    getParent().getShipTransformationManager().getCurrentTickTransform());
-            getParent().getShipTransformationManager().setCurrentPhysicsTransform(physicsTransform);
-            getParent().getShipTransformationManager().updatePreviousPhysicsTransform();
+            this.physRoll = this.getParent().getWrapperEntity().getRoll();
+            this.physPitch = this.getParent().getWrapperEntity().getPitch();
+            this.physYaw = this.getParent().getWrapperEntity().getYaw();
+            this.physX = this.getParent().getWrapperEntity().posX;
+            this.physY = this.getParent().getWrapperEntity().posY;
+            this.physZ = this.getParent().getWrapperEntity().posZ;
+            this.physCenterOfMass.setValue(this.gameTickCenterOfMass);
+            ShipTransform physicsTransform = new PhysicsShipTransform(this.physX, this.physY, this.physZ, this.physPitch, this.physYaw, this.physRoll,
+                    this.physCenterOfMass, this.getParent().getShipBoundingBox(),
+                    this.getParent().getShipTransformationManager().getCurrentTickTransform());
+            this.getParent().getShipTransformationManager().setCurrentPhysicsTransform(physicsTransform);
+            this.getParent().getShipTransformationManager().updatePreviousPhysicsTransform();
         }
-        if (getParent().isPhysicsEnabled()) {
-            updatePhysSpeedAndIters(newPhysSpeed);
-            updateParentCenterOfMass();
-            calculateFramedMOITensor();
-            if (!actAsArchimedes) {
-                calculateForces();
+        if (this.getParent().isPhysicsEnabled()) {
+            this.updatePhysSpeedAndIters(newPhysSpeed);
+            this.updateParentCenterOfMass();
+            this.calculateFramedMOITensor();
+            if (!this.actAsArchimedes) {
+                this.calculateForces();
             } else {
-                calculateForcesArchimedes();
+                this.calculateForcesArchimedes();
             }
         }
     }
 
     public void rawPhysTickPostCol() {
-        if (!isPhysicsBroken()) {
-            if (getParent().isPhysicsEnabled()) {
-                enforceStaticFriction();
+        if (!this.isPhysicsBroken()) {
+            if (this.getParent().isPhysicsEnabled()) {
+                this.enforceStaticFriction();
                 if (PhysicsSettings.doAirshipRotation) {
-                    applyAngularVelocity();
+                    this.applyAngularVelocity();
                 }
                 if (PhysicsSettings.doAirshipMovement) {
-                    applyLinearVelocity();
+                    this.applyLinearVelocity();
                 }
             }
         } else {
-            getParent().setPhysicsEnabled(false);
-            linearMomentum.zero();
-            angularVelocity.zero();
+            this.getParent().setPhysicsEnabled(false);
+            this.linearMomentum.zero();
+            this.angularVelocity.zero();
         }
 
-        PhysicsShipTransform finalPhysTransform = new PhysicsShipTransform(physX, physY, physZ, physPitch, physYaw,
-                physRoll, physCenterOfMass, getParent().getShipBoundingBox(),
-                getParent().getShipTransformationManager().getCurrentTickTransform());
+        PhysicsShipTransform finalPhysTransform = new PhysicsShipTransform(this.physX, this.physY, this.physZ, this.physPitch, this.physYaw,
+                this.physRoll, this.physCenterOfMass, this.getParent().getShipBoundingBox(),
+                this.getParent().getShipTransformationManager().getCurrentTickTransform());
 
-        getParent().getShipTransformationManager().updatePreviousPhysicsTransform();
-        getParent().getShipTransformationManager().setCurrentPhysicsTransform(finalPhysTransform);
+        this.getParent().getShipTransformationManager().updatePreviousPhysicsTransform();
+        this.getParent().getShipTransformationManager().setCurrentPhysicsTransform(finalPhysTransform);
 
-        updatePhysCenterOfMass();
+        this.updatePhysCenterOfMass();
         // Moved out to VW Thread. Code run in this class should have no direct effect
         // on the physics object.
         // parent.coordTransform.updateAllTransforms(true, true);
@@ -252,7 +252,7 @@ public class PhysicsCalculations {
     // If the ship is moving at these speeds, its likely something in the physics
     // broke. This method helps detect that.
     private boolean isPhysicsBroken() {
-        if (angularVelocity.lengthSq() > 50000 || linearMomentum.lengthSq() * getInvMass() * getInvMass() > 50000) {
+        if (this.angularVelocity.lengthSq() > 50000 || this.linearMomentum.lengthSq() * this.getInvMass() * this.getInvMass() > 50000) {
             System.out.println("Ship tried moving too fast; freezing it and reseting velocities");
             return true;
         }
@@ -263,12 +263,12 @@ public class PhysicsCalculations {
      * This method will set the linear and angular velocities to zero if both are too small.
      */
     private void enforceStaticFriction() {
-        if (angularVelocity.lengthSq() < .001) {
-            double linearSpeedSq = linearMomentum.lengthSq() * this.getInvMass() * this.getInvMass();
+        if (this.angularVelocity.lengthSq() < .001) {
+            double linearSpeedSq = this.linearMomentum.lengthSq() * this.getInvMass() * this.getInvMass();
             if (linearSpeedSq < .05) {
-                angularVelocity.zero();
+                this.angularVelocity.zero();
                 if (linearSpeedSq < .0001) {
-                    linearMomentum.zero();
+                    this.linearMomentum.zero();
                 }
             }
         }
@@ -277,17 +277,17 @@ public class PhysicsCalculations {
     // The x/y/z variables need to be updated when the centerOfMass location
     // changes.
     public void updateParentCenterOfMass() {
-        Vector parentCM = getParent().getCenterCoord();
-        if (!getParent().getCenterCoord().equals(gameTickCenterOfMass)) {
-            Vector CMDif = gameTickCenterOfMass.getSubtraction(parentCM);
+        Vector parentCM = this.getParent().getCenterCoord();
+        if (!this.getParent().getCenterCoord().equals(this.gameTickCenterOfMass)) {
+            Vector CMDif = this.gameTickCenterOfMass.getSubtraction(parentCM);
             // RotationMatrices.doRotationOnly(parent.coordTransform.lToWTransform, CMDif);
 
-            getParent().getShipTransformationManager().getCurrentPhysicsTransform().rotate(CMDif, TransformType.SUBSPACE_TO_GLOBAL);
-            getParent().getWrapperEntity().posX -= CMDif.X;
-            getParent().getWrapperEntity().posY -= CMDif.Y;
-            getParent().getWrapperEntity().posZ -= CMDif.Z;
+            this.getParent().getShipTransformationManager().getCurrentPhysicsTransform().rotate(CMDif, TransformType.SUBSPACE_TO_GLOBAL);
+            this.getParent().getWrapperEntity().posX -= CMDif.X;
+            this.getParent().getWrapperEntity().posY -= CMDif.Y;
+            this.getParent().getWrapperEntity().posZ -= CMDif.Z;
 
-            getParent().getCenterCoord().setValue(gameTickCenterOfMass);
+            this.getParent().getCenterCoord().setValue(this.gameTickCenterOfMass);
             // parent.coordTransform.updateAllTransforms(false, false);
         }
     }
@@ -297,16 +297,16 @@ public class PhysicsCalculations {
      * any transformation updates on its own.
      */
     private void updatePhysCenterOfMass() {
-        if (!physCenterOfMass.equals(gameTickCenterOfMass)) {
-            Vector CMDif = physCenterOfMass.getSubtraction(gameTickCenterOfMass);
+        if (!this.physCenterOfMass.equals(this.gameTickCenterOfMass)) {
+            Vector CMDif = this.physCenterOfMass.getSubtraction(this.gameTickCenterOfMass);
             // RotationMatrices.doRotationOnly(parent.coordTransform.lToWTransform, CMDif);
 
-            getParent().getShipTransformationManager().getCurrentPhysicsTransform().rotate(CMDif, TransformType.SUBSPACE_TO_GLOBAL);
-            physX += CMDif.X;
-            physY += CMDif.Y;
-            physZ += CMDif.Z;
+            this.getParent().getShipTransformationManager().getCurrentPhysicsTransform().rotate(CMDif, TransformType.SUBSPACE_TO_GLOBAL);
+            this.physX += CMDif.X;
+            this.physY += CMDif.Y;
+            this.physZ += CMDif.Z;
 
-            physCenterOfMass.setValue(gameTickCenterOfMass);
+            this.physCenterOfMass.setValue(this.gameTickCenterOfMass);
         }
     }
 
@@ -318,7 +318,7 @@ public class PhysicsCalculations {
     private void calculateFramedMOITensor() {
         double[] framedMOI = RotationMatrices.getZeroMatrix(3);
 
-        double[] internalRotationMatrix = getParent().getShipTransformationManager().getCurrentPhysicsTransform()
+        double[] internalRotationMatrix = this.getParent().getShipTransformationManager().getCurrentPhysicsTransform()
                 .getInternalMatrix(TransformType.SUBSPACE_TO_GLOBAL);
 
         // Copy the rotation matrix, ignore the translation and scaling parts.
@@ -327,7 +327,7 @@ public class PhysicsCalculations {
                 internalRotationMatrix[6], internalRotationMatrix[8], internalRotationMatrix[9],
                 internalRotationMatrix[10]);
 
-        Matrix3d inertiaBodyFrame = new Matrix3d(gameMoITensor);
+        Matrix3d inertiaBodyFrame = new Matrix3d(this.gameMoITensor);
         // The product of the overall rotation matrix with the inertia tensor.
         inertiaBodyFrame.mul(rotationMatrix);
         rotationMatrix.transpose();
@@ -344,187 +344,187 @@ public class PhysicsCalculations {
         framedMOI[7] = inertiaBodyFrame.m21;
         framedMOI[8] = inertiaBodyFrame.m22;
 
-        physMOITensor = framedMOI;
-        setPhysInvMOITensor(RotationMatrices.inverse3by3(framedMOI));
+        this.physMOITensor = framedMOI;
+        this.setPhysInvMOITensor(RotationMatrices.inverse3by3(framedMOI));
     }
 
     protected void calculateForces() {
-        applyAirDrag();
-        applyGravity();
+        this.applyAirDrag();
+        this.applyGravity();
 
         // Collections.shuffle(activeForcePositions);
 
         Vector blockForce = new Vector();
         Vector inBodyWO = new Vector();
         Vector crossVector = new Vector();
-        World worldObj = getParent().getWorldObj();
+        World worldObj = this.getParent().getWorldObj();
 
-        if (PhysicsSettings.doPhysicsBlocks && getParent().areShipChunksFullyLoaded()) {
+        if (PhysicsSettings.doPhysicsBlocks && this.getParent().areShipChunksFullyLoaded()) {
             // We want to loop through all the physics nodes in a sorted order. Priority Queue handles that.
-            Queue<INodeController> nodesPriorityQueue = new PriorityQueue<INodeController>();
-            for (INodeController processor : parent.getPhysicsControllersInShip()) {
+            Queue<INodeController> nodesPriorityQueue = new PriorityQueue<>();
+            for (INodeController processor : this.parent.getPhysicsControllersInShip()) {
                 nodesPriorityQueue.add(processor);
             }
 
             while (nodesPriorityQueue.size() > 0) {
                 INodeController controller = nodesPriorityQueue.poll();
-                controller.onPhysicsTick(parent, this, this.getPhysicsTimeDeltaPerPhysTick());
+                controller.onPhysicsTick(this.parent, this, this.getPhysicsTimeDeltaPerPhysTick());
             }
 
-            for (BlockPos pos : activeForcePositions) {
-                IBlockState state = getParent().getChunkCache().getBlockState(pos);
+            for (BlockPos pos : this.activeForcePositions) {
+                IBlockState state = this.getParent().getChunkCache().getBlockState(pos);
                 Block blockAt = state.getBlock();
-                VWMath.getBodyPosWithOrientation(pos, physCenterOfMass, getParent().getShipTransformationManager()
+                VWMath.getBodyPosWithOrientation(pos, this.physCenterOfMass, this.getParent().getShipTransformationManager()
                         .getCurrentPhysicsTransform().getInternalMatrix(TransformType.SUBSPACE_TO_GLOBAL), inBodyWO);
 
-                BlockForce.basicForces.getForceFromState(state, pos, worldObj, getPhysicsTimeDeltaPerPhysTick(), getParent(),
+                BlockForce.basicForces.getForceFromState(state, pos, worldObj, this.getPhysicsTimeDeltaPerPhysTick(), this.getParent(),
                         blockForce);
 
                 if (blockForce != null) {
                     if (blockAt instanceof IBlockForceProvider) {
                         Vector otherPosition = ((IBlockForceProvider) blockAt).getCustomBlockForcePosition(worldObj,
-                                pos, state, getParent().getWrapperEntity(), getPhysicsTimeDeltaPerPhysTick());
+                                pos, state, this.getParent().getWrapperEntity(), this.getPhysicsTimeDeltaPerPhysTick());
                         if (otherPosition != null) {
-                            VWMath.getBodyPosWithOrientation(otherPosition, gameTickCenterOfMass, getParent().getShipTransformationManager()
+                            VWMath.getBodyPosWithOrientation(otherPosition, this.gameTickCenterOfMass, this.getParent().getShipTransformationManager()
                                             .getCurrentPhysicsTransform().getInternalMatrix(TransformType.SUBSPACE_TO_GLOBAL),
                                     inBodyWO);
                         }
                     }
-                    addForceAtPoint(inBodyWO, blockForce, crossVector);
+                    this.addForceAtPoint(inBodyWO, blockForce, crossVector);
                 }
             }
         }
 
-        convertTorqueToVelocity();
+        this.convertTorqueToVelocity();
     }
 
     public void applyGravity() {
         if (PhysicsSettings.doGravity) {
-            addForceAtPoint(new Vector(0, 0, 0),
-                    ValkyrienWarfareMod.gravity.getProduct(gameTickMass * getPhysicsTimeDeltaPerPhysTick()));
+            this.addForceAtPoint(new Vector(0, 0, 0),
+                    ValkyrienWarfareMod.gravity.getProduct(this.gameTickMass * this.getPhysicsTimeDeltaPerPhysTick()));
         }
     }
 
     public void calculateForcesArchimedes() {
-        applyAirDrag();
+        this.applyAirDrag();
     }
 
     protected void applyAirDrag() {
-        double drag = getDragForPhysTick();
-        linearMomentum.multiply(drag);
-        angularVelocity.multiply(drag);
+        double drag = this.getDragForPhysTick();
+        this.linearMomentum.multiply(drag);
+        this.angularVelocity.multiply(drag);
     }
 
     public void convertTorqueToVelocity() {
-        if (!torque.isZero()) {
-            angularVelocity.add(RotationMatrices.get3by3TransformedVec(getPhysInvMOITensor(), torque));
-            torque.zero();
+        if (!this.torque.isZero()) {
+            this.angularVelocity.add(RotationMatrices.get3by3TransformedVec(this.getPhysInvMOITensor(), this.torque));
+            this.torque.zero();
         }
     }
 
     public void addForceAtPoint(Vector inBodyWO, Vector forceToApply) {
         forceToApply.multiply(PHYSICS_SPEEDUP_FACTOR);
-        torque.add(inBodyWO.cross(forceToApply));
-        linearMomentum.add(forceToApply);
+        this.torque.add(inBodyWO.cross(forceToApply));
+        this.linearMomentum.add(forceToApply);
     }
 
     public void addForceAtPoint(Vector inBodyWO, Vector forceToApply, Vector crossVector) {
         forceToApply.multiply(PHYSICS_SPEEDUP_FACTOR);
         crossVector.setCross(inBodyWO, forceToApply);
-        torque.add(crossVector);
-        linearMomentum.add(forceToApply);
+        this.torque.add(crossVector);
+        this.linearMomentum.add(forceToApply);
     }
 
     public void updatePhysSpeedAndIters(double newPhysSpeed) {
-        physTickTimeDelta = newPhysSpeed;
+        this.physTickTimeDelta = newPhysSpeed;
     }
 
     public void applyAngularVelocity() {
-        ShipTransformationManager coordTrans = getParent().getShipTransformationManager();
+        ShipTransformationManager coordTrans = this.getParent().getShipTransformationManager();
 
-        double[] rotationChange = RotationMatrices.getRotationMatrix(angularVelocity.X, angularVelocity.Y,
-                angularVelocity.Z, angularVelocity.length() * getPhysicsTimeDeltaPerPhysTick());
+        double[] rotationChange = RotationMatrices.getRotationMatrix(this.angularVelocity.X, this.angularVelocity.Y,
+                this.angularVelocity.Z, this.angularVelocity.length() * this.getPhysicsTimeDeltaPerPhysTick());
         Quaternion finalTransform = Quaternion.QuaternionFromMatrix(RotationMatrices.getMatrixProduct(rotationChange,
                 coordTrans.getCurrentPhysicsTransform().getInternalMatrix(TransformType.SUBSPACE_TO_GLOBAL)));
 
         double[] radians = finalTransform.toRadians();
 
-        physPitch = Double.isNaN(radians[0]) ? 0.0f : (float) Math.toDegrees(radians[0]);
-        physYaw = Double.isNaN(radians[1]) ? 0.0f : (float) Math.toDegrees(radians[1]);
-        physRoll = Double.isNaN(radians[2]) ? 0.0f : (float) Math.toDegrees(radians[2]);
+        this.physPitch = Double.isNaN(radians[0]) ? 0.0f : (float) Math.toDegrees(radians[0]);
+        this.physYaw = Double.isNaN(radians[1]) ? 0.0f : (float) Math.toDegrees(radians[1]);
+        this.physRoll = Double.isNaN(radians[2]) ? 0.0f : (float) Math.toDegrees(radians[2]);
     }
 
     public void applyLinearVelocity() {
-        double momentMod = getPhysicsTimeDeltaPerPhysTick() * getInvMass();
+        double momentMod = this.getPhysicsTimeDeltaPerPhysTick() * this.getInvMass();
 
-        physX += (linearMomentum.X * momentMod);
-        physY += (linearMomentum.Y * momentMod);
-        physZ += (linearMomentum.Z * momentMod);
-        physY = Math.min(Math.max(physY, ValkyrienWarfareMod.shipLowerLimit), ValkyrienWarfareMod.shipUpperLimit);
+        this.physX += (this.linearMomentum.X * momentMod);
+        this.physY += (this.linearMomentum.Y * momentMod);
+        this.physZ += (this.linearMomentum.Z * momentMod);
+        this.physY = Math.min(Math.max(this.physY, ValkyrienWarfareMod.shipLowerLimit), ValkyrienWarfareMod.shipUpperLimit);
     }
 
     public Vector getVelocityAtPoint(Vector inBodyWO) {
-        Vector speed = angularVelocity.cross(inBodyWO);
-        double invMass = getInvMass();
-        speed.X += (linearMomentum.X * invMass);
-        speed.Y += (linearMomentum.Y * invMass);
-        speed.Z += (linearMomentum.Z * invMass);
+        Vector speed = this.angularVelocity.cross(inBodyWO);
+        double invMass = this.getInvMass();
+        speed.X += (this.linearMomentum.X * invMass);
+        speed.Y += (this.linearMomentum.Y * invMass);
+        speed.Z += (this.linearMomentum.Z * invMass);
         return speed;
     }
 
     public void setVectorToVelocityAtPoint(Vector inBodyWO, Vector toSet) {
-        toSet.setCross(angularVelocity, inBodyWO);
-        double invMass = getInvMass();
-        toSet.X += (linearMomentum.X * invMass);
-        toSet.Y += (linearMomentum.Y * invMass);
-        toSet.Z += (linearMomentum.Z * invMass);
+        toSet.setCross(this.angularVelocity, inBodyWO);
+        double invMass = this.getInvMass();
+        toSet.X += (this.linearMomentum.X * invMass);
+        toSet.Y += (this.linearMomentum.Y * invMass);
+        toSet.Z += (this.linearMomentum.Z * invMass);
     }
 
     public void writeToNBTTag(NBTTagCompound compound) {
-        compound.setDouble("mass", gameTickMass);
+        compound.setDouble("mass", this.gameTickMass);
 
-        NBTUtils.writeVectorToNBT("linear", linearMomentum, compound);
-        NBTUtils.writeVectorToNBT("angularVelocity", angularVelocity, compound);
-        NBTUtils.writeVectorToNBT("CM", gameTickCenterOfMass, compound);
+        NBTUtils.writeVectorToNBT("linear", this.linearMomentum, compound);
+        NBTUtils.writeVectorToNBT("angularVelocity", this.angularVelocity, compound);
+        NBTUtils.writeVectorToNBT("CM", this.gameTickCenterOfMass, compound);
 
-        NBTUtils.write3x3MatrixToNBT("MOI", gameMoITensor, compound);
+        NBTUtils.write3x3MatrixToNBT("MOI", this.gameMoITensor, compound);
     }
 
     public void readFromNBTTag(NBTTagCompound compound) {
-        gameTickMass = compound.getDouble("mass");
+        this.gameTickMass = compound.getDouble("mass");
 
-        linearMomentum = NBTUtils.readVectorFromNBT("linear", compound);
-        angularVelocity = NBTUtils.readVectorFromNBT("angularVelocity", compound);
-        gameTickCenterOfMass = NBTUtils.readVectorFromNBT("CM", compound);
+        this.linearMomentum = NBTUtils.readVectorFromNBT("linear", compound);
+        this.angularVelocity = NBTUtils.readVectorFromNBT("angularVelocity", compound);
+        this.gameTickCenterOfMass = NBTUtils.readVectorFromNBT("CM", compound);
 
-        gameMoITensor = NBTUtils.read3x3MatrixFromNBT("MOI", compound);
+        this.gameMoITensor = NBTUtils.read3x3MatrixFromNBT("MOI", compound);
     }
 
     // Called upon a Ship being created from the World, and generates the physics
     // data for it
     public void processInitialPhysicsData() {
         IBlockState air = Blocks.AIR.getDefaultState();
-        for (BlockPos pos : getParent().getBlockPositions()) {
-            onSetBlockState(air, getParent().getChunkCache().getBlockState(pos), pos);
+        for (BlockPos pos : this.getParent().getBlockPositions()) {
+            this.onSetBlockState(air, this.getParent().getChunkCache().getBlockState(pos), pos);
         }
     }
 
     // These getter methods guarantee that only code within this class can modify
     // the mass, preventing outside code from breaking things
     public double getMass() {
-        return gameTickMass;
+        return this.gameTickMass;
     }
 
     public double getInvMass() {
-        return 1D / gameTickMass;
+        return 1D / this.gameTickMass;
     }
 
     public double getPhysicsTimeDeltaPerPhysTick() {
-        return physTickTimeDelta;
+        return this.physTickTimeDelta;
     }
 
     public double getDragForPhysTick() {
-        return Math.pow(DRAG_CONSTANT, getPhysicsTimeDeltaPerPhysTick() * 20D);
+        return Math.pow(DRAG_CONSTANT, this.getPhysicsTimeDeltaPerPhysTick() * 20D);
     }
 
     public void addPotentialActiveForcePos(BlockPos pos) {
@@ -536,7 +536,7 @@ public class PhysicsCalculations {
      * is at the center of mass), but rotated into world coordinates.
      */
     public double[] getPhysInvMOITensor() {
-        return physInvMOITensor;
+        return this.physInvMOITensor;
     }
 
     /**
@@ -558,20 +558,20 @@ public class PhysicsCalculations {
      * @return the parent
      */
     public PhysicsObject getParent() {
-        return parent;
+        return this.parent;
     }
 
     /**
      * @return the worldCollision
      */
     public WorldPhysicsCollider getWorldCollision() {
-        return worldCollision;
+        return this.worldCollision;
     }
 
     public double getInertiaAlongRotationAxis() {
-        Vector rotationAxis = new Vector(angularVelocity);
+        Vector rotationAxis = new Vector(this.angularVelocity);
         rotationAxis.normalize();
-        RotationMatrices.applyTransform3by3(getPhysMOITensor(), rotationAxis);
+        RotationMatrices.applyTransform3by3(this.getPhysMOITensor(), rotationAxis);
         return rotationAxis.length();
     }
 

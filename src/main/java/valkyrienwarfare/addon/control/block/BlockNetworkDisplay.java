@@ -49,8 +49,8 @@ public class BlockNetworkDisplay extends Block implements ITileEntityProvider {
             if (tile instanceof TileEntityNetworkDisplay) {
                 TileEntityNetworkDisplay displayTile = (TileEntityNetworkDisplay) tile;
                 Iterable<IVWNode> networkedObjects = displayTile.getNetworkedConnections();
-                List<IVWNode> connectedNodes = new ArrayList<IVWNode>();
-                Map<String, Integer> networkedClassTypeCounts = new HashMap<String, Integer>();
+                List<IVWNode> connectedNodes = new ArrayList<>();
+                Map<String, Integer> networkedClassTypeCounts = new HashMap<>();
                 for (IVWNode node : networkedObjects) {
                     connectedNodes.add(node);
                     Class nodeClass = node.getParentTile().getClass();

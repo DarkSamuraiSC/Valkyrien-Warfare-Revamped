@@ -34,9 +34,9 @@ public class Vector {
     public double Z;
 
     public Vector(double x, double y, double z) {
-        X = x;
-        Y = y;
-        Z = z;
+        this.X = x;
+        this.Y = y;
+        this.Z = z;
     }
 
     public Vector() {
@@ -44,7 +44,7 @@ public class Vector {
 
     public Vector(double x, double y, double z, double[] rotationMatrix) {
         this(x, y, z);
-        transform(rotationMatrix);
+        this.transform(rotationMatrix);
     }
 
     public Vector(Vector v) {
@@ -53,7 +53,7 @@ public class Vector {
 
     public Vector(Vector v, double scale) {
         this(v);
-        multiply(scale);
+        this.multiply(scale);
     }
 
     public Vector(Vec3d vec3) {
@@ -75,22 +75,22 @@ public class Vector {
     public Vector(EnumFacing facing) {
         switch (facing) {
             case DOWN:
-                Y = 1d;
+                this.Y = 1d;
                 break;
             case UP:
-                Y = -1d;
+                this.Y = -1d;
                 break;
             case EAST:
-                X = -1d;
+                this.X = -1d;
                 break;
             case NORTH:
-                Z = 1d;
+                this.Z = 1d;
                 break;
             case WEST:
-                X = 1d;
+                this.X = 1d;
                 break;
             case SOUTH:
-                Z = -1d;
+                this.Z = -1d;
         }
     }
 
@@ -111,96 +111,96 @@ public class Vector {
     }
 
     public Vector getSubtraction(Vector v) {
-        return new Vector(v.X - X, v.Y - Y, v.Z - Z);
+        return new Vector(v.X - this.X, v.Y - this.Y, v.Z - this.Z);
     }
 
     public Vector getAddition(Vector v) {
-        return new Vector(v.X + X, v.Y + Y, v.Z + Z);
+        return new Vector(v.X + this.X, v.Y + this.Y, v.Z + this.Z);
     }
 
     public void subtract(Vector v) {
-        subtract(v.X, v.Y, v.Z);
+        this.subtract(v.X, v.Y, v.Z);
     }
 
     public void subtract(double x, double y, double z) {
-        X -= x;
-        Y -= y;
-        Z -= z;
+        this.X -= x;
+        this.Y -= y;
+        this.Z -= z;
     }
 
     public void add(Vector v) {
-        add(v.X, v.Y, v.Z);
+        this.add(v.X, v.Y, v.Z);
     }
 
     public void add(double x, double y, double z) {
-        X += x;
-        Y += y;
-        Z += z;
+        this.X += x;
+        this.Y += y;
+        this.Z += z;
     }
 
     public double dot(Vector v) {
-        return X * v.X + Y * v.Y + Z * v.Z;
+        return this.X * v.X + this.Y * v.Y + this.Z * v.Z;
     }
 
     public Vector cross(Vector v) {
-        return new Vector(Y * v.Z - v.Y * Z, Z * v.X - X * v.Z, X * v.Y - v.X * Y);
+        return new Vector(this.Y * v.Z - v.Y * this.Z, this.Z * v.X - this.X * v.Z, this.X * v.Y - v.X * this.Y);
     }
 
     public void setCross(Vector v1, Vector v2) {
-        X = v1.Y * v2.Z - v2.Y * v1.Z;
-        Y = v1.Z * v2.X - v1.X * v2.Z;
-        Z = v1.X * v2.Y - v2.X * v1.Y;
+        this.X = v1.Y * v2.Z - v2.Y * v1.Z;
+        this.Y = v1.Z * v2.X - v1.X * v2.Z;
+        this.Z = v1.X * v2.Y - v2.X * v1.Y;
     }
 
     public void multiply(double scale) {
-        X *= scale;
-        Y *= scale;
-        Z *= scale;
+        this.X *= scale;
+        this.Y *= scale;
+        this.Z *= scale;
     }
 
     public void divide(double scale) {
-        X /= scale;
-        Y /= scale;
-        Z /= scale;
+        this.X /= scale;
+        this.Y /= scale;
+        this.Z /= scale;
     }
 
     public Vector getProduct(double scale) {
-        return new Vector(X * scale, Y * scale, Z * scale);
+        return new Vector(this.X * scale, this.Y * scale, this.Z * scale);
     }
 
     public Vec3d toVec3d() {
-        return new Vec3d(X, Y, Z);
+        return new Vec3d(this.X, this.Y, this.Z);
     }
 
     public void normalize() {
-        double length = length();
+        double length = this.length();
         if (length > 1.0E-6D) {
-            divide(length);
+            this.divide(length);
         } else {
-            zero();
+            this.zero();
         }
     }
 
     public double length() {
-        return Math.sqrt(lengthSq());
+        return Math.sqrt(this.lengthSq());
     }
 
     public double lengthSq() {
-        return X * X + Y * Y + Z * Z;
+        return this.X * this.X + this.Y * this.Y + this.Z * this.Z;
     }
 
     public boolean isZero() {
-        return lengthSq() < 1.0E-12D;
+        return this.lengthSq() < 1.0E-12D;
     }
 
     public void zero() {
-        X = Y = Z = 0D;
+        this.X = this.Y = this.Z = 0D;
     }
 
     public void roundToWhole() {
-        X = Math.round(X);
-        Y = Math.round(Y);
-        Z = Math.round(Z);
+        this.X = Math.round(this.X);
+        this.Y = Math.round(this.Y);
+        this.Z = Math.round(this.Z);
     }
 
     @Override
@@ -209,39 +209,39 @@ public class Vector {
             return true;
         } else if (other instanceof Vector) {
             Vector vec = (Vector) other;
-            return vec.X == X && vec.Y == Y && vec.Z == Z;
+            return vec.X == this.X && vec.Y == this.Y && vec.Z == this.Z;
         }
         return false;
     }
 
     @Override
     public String toString() {
-        String coords = new String("<" + X + ", " + Y + ", " + Z + ">");
+        String coords = new String("<" + this.X + ", " + this.Y + ", " + this.Z + ">");
         return coords;
     }
 
     public String toRoundedString() {
-        String coords = new String("<" + Math.round(X * 100.0) / 100.0 + ", " + Math.round(Y * 100.0) / 100.0 + ", "
-                + Math.round(Z * 100.0) / 100.0 + ">");
+        String coords = new String("<" + Math.round(this.X * 100.0) / 100.0 + ", " + Math.round(this.Y * 100.0) / 100.0 + ", "
+                + Math.round(this.Z * 100.0) / 100.0 + ">");
         return coords;
     }
 
     public Vector crossAndUnit(Vector v) {
-        Vector crossProduct = cross(v);
+        Vector crossProduct = this.cross(v);
         crossProduct.normalize();
         return crossProduct;
     }
 
     public void writeToByteBuf(ByteBuf toWrite) {
-        toWrite.writeDouble(X);
-        toWrite.writeDouble(Y);
-        toWrite.writeDouble(Z);
+        toWrite.writeDouble(this.X);
+        toWrite.writeDouble(this.Y);
+        toWrite.writeDouble(this.Z);
     }
 
     public void setSubtraction(Vector inLocal, Vector centerCoord) {
-        X = inLocal.X - centerCoord.X;
-        Y = inLocal.Y - centerCoord.Y;
-        Z = inLocal.Z - centerCoord.Z;
+        this.X = inLocal.X - centerCoord.X;
+        this.Y = inLocal.Y - centerCoord.Y;
+        this.Z = inLocal.Z - centerCoord.Z;
     }
 
     public void transform(double[] rotationMatrix) {
@@ -249,13 +249,13 @@ public class Vector {
     }
 
     public void setValue(double x, double y, double z) {
-        X = x;
-        Y = y;
-        Z = z;
+        this.X = x;
+        this.Y = y;
+        this.Z = z;
     }
 
     public void setValue(Vector toCopy) {
-        setValue(toCopy.X, toCopy.Y, toCopy.Z);
+        this.setValue(toCopy.X, toCopy.Y, toCopy.Z);
     }
 
     public double angleBetween(Vector other) {

@@ -76,7 +76,7 @@ public class BlockShipPilotsChair extends BlockPilotableBasic {
                         // Only mount the player if they're standing on the ship.
                         if (entityDraggable.getWorldBelowFeet() == wrapper) {
                             playerIn.startRiding(wrapper);
-                            Vector localMountPos = getPlayerMountOffset(state, pos);
+                            Vector localMountPos = this.getPlayerMountOffset(state, pos);
                             wrapper.getPhysicsObject().fixEntity(playerIn, localMountPos);
                         }
 

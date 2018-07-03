@@ -33,7 +33,7 @@ public class ImplAirshipCounterCapability implements IAirshipCounterCapability {
 
     @Override
     public int getAirshipCountEver() {
-        return airshipCountEver;
+        return this.airshipCountEver;
     }
 
     @Override

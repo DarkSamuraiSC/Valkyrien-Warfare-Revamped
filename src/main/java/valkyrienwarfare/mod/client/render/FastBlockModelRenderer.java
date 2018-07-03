@@ -35,8 +35,8 @@ import java.util.Map;
 // vertex buffer based solution soon!
 public class FastBlockModelRenderer {
 
-    public static Map<IBlockState, BufferBuilder.State> blockstateToVertexData = new HashMap<IBlockState, BufferBuilder.State>();
-    public static Map<IBlockState, Map<Integer, Integer>> highRamGLList = new HashMap<IBlockState, Map<Integer, Integer>>();
+    public static Map<IBlockState, BufferBuilder.State> blockstateToVertexData = new HashMap<>();
+    public static Map<IBlockState, Map<Integer, Integer>> highRamGLList = new HashMap<>();
 
     public static void renderBlockModel(BufferBuilder BufferBuilder, Tessellator tessellator, World world, IBlockState blockstateToRender, int brightness) {
         renderBlockModelHighQualityHighRam(BufferBuilder, tessellator, world, blockstateToRender, brightness);
@@ -46,7 +46,7 @@ public class FastBlockModelRenderer {
         Map<Integer, Integer> brightnessToGLListMap = highRamGLList.get(blockstateToRender);
 
         if (brightnessToGLListMap == null) {
-            highRamGLList.put(blockstateToRender, new HashMap<Integer, Integer>());
+            highRamGLList.put(blockstateToRender, new HashMap<>());
             brightnessToGLListMap = highRamGLList.get(blockstateToRender);
         }
 

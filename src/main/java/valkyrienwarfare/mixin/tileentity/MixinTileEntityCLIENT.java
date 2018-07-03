@@ -37,9 +37,9 @@ public abstract class MixinTileEntityCLIENT {
 
     @Intrinsic(displace = true)
     public AxisAlignedBB vw$getRenderBoundingBox() {
-        AxisAlignedBB toReturn = thisAsTileEntity.getRenderBoundingBox();
+        AxisAlignedBB toReturn = this.thisAsTileEntity.getRenderBoundingBox();
         BlockPos pos = new BlockPos(toReturn.minX, toReturn.minY, toReturn.minZ);
-        PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(thisAsTileEntity.getWorld(), pos);
+        PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(this.thisAsTileEntity.getWorld(), pos);
         if (wrapper != null) {
             Polygon poly = new Polygon(toReturn, wrapper.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform(), TransformType.SUBSPACE_TO_GLOBAL);
             return poly.getEnclosedAABB();

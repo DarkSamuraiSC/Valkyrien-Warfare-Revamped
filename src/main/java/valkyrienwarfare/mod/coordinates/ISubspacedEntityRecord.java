@@ -43,34 +43,34 @@ public interface ISubspacedEntityRecord {
     VectorImmutable getVelocity();
 
     default VectorImmutable getPositionInGlobalCoordinates() {
-        if (getParentSubspace().getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
-            return getPosition();
+        if (this.getParentSubspace().getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
+            return this.getPosition();
         } else {
-            return getParentSubspace().getSubspaceTransform().transform(getPosition(), TransformType.SUBSPACE_TO_GLOBAL);
+            return this.getParentSubspace().getSubspaceTransform().transform(this.getPosition(), TransformType.SUBSPACE_TO_GLOBAL);
         }
     }
 
     default VectorImmutable getPositionLastTickInGlobalCoordinates() {
-        if (getParentSubspace().getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
-            return getPositionLastTick();
+        if (this.getParentSubspace().getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
+            return this.getPositionLastTick();
         } else {
-            return getParentSubspace().getSubspaceTransform().transform(getPositionLastTick(), TransformType.SUBSPACE_TO_GLOBAL);
+            return this.getParentSubspace().getSubspaceTransform().transform(this.getPositionLastTick(), TransformType.SUBSPACE_TO_GLOBAL);
         }
     }
 
     default VectorImmutable getLookDirectionInGlobalCoordinates() {
-        if (getParentSubspace().getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
-            return getLookDirection();
+        if (this.getParentSubspace().getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
+            return this.getLookDirection();
         } else {
-            return getParentSubspace().getSubspaceTransform().rotate(getLookDirection(), TransformType.SUBSPACE_TO_GLOBAL);
+            return this.getParentSubspace().getSubspaceTransform().rotate(this.getLookDirection(), TransformType.SUBSPACE_TO_GLOBAL);
         }
     }
 
     default VectorImmutable getVelocityInGlobalCoordinates() {
-        if (getParentSubspace().getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
-            return getVelocity();
+        if (this.getParentSubspace().getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
+            return this.getVelocity();
         } else {
-            return getParentSubspace().getSubspaceTransform().rotate(getVelocity(), TransformType.SUBSPACE_TO_GLOBAL);
+            return this.getParentSubspace().getSubspaceTransform().rotate(this.getVelocity(), TransformType.SUBSPACE_TO_GLOBAL);
         }
     }
 

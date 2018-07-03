@@ -27,7 +27,7 @@ public class GuiConfigValkyrienWarfare extends GuiConfig {
 
     public GuiConfigValkyrienWarfare(GuiScreen parent) {
         super(parent, new ConfigElement(ValkyrienWarfareMod.config.getCategory(Configuration.CATEGORY_GENERAL)).getChildElements(), ValkyrienWarfareMod.MODID, false, false, "Press Alt+F4 to enable debug features");
-        titleLine2 = ValkyrienWarfareMod.configFile.getAbsolutePath();
+        this.titleLine2 = ValkyrienWarfareMod.configFile.getAbsolutePath();
     }
 
     @Override

@@ -34,11 +34,11 @@ public class BlockAirMine extends Block {
 
     public BlockAirMine() {
         super(Material.IRON);
-        setHardness(0.5f);
-        setResistance(0.5f);
+        this.setHardness(0.5f);
+        this.setResistance(0.5f);
 
-        setUnlocalizedName(CannonModReference.ModBlocks.AIRMINE.getUnlocalizedName());
-        setRegistryName(CannonModReference.ModBlocks.AIRMINE.getRegistryName());
+        this.setUnlocalizedName(CannonModReference.ModBlocks.AIRMINE.getUnlocalizedName());
+        this.setRegistryName(CannonModReference.ModBlocks.AIRMINE.getRegistryName());
 
         this.setCreativeTab(CreativeTabs.COMBAT);
 

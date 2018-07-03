@@ -35,7 +35,7 @@ public class ShipHelmTileEntityRenderer extends TileEntitySpecialRenderer<TileEn
     private final Class renderedTileEntityClass;
 
     public ShipHelmTileEntityRenderer(Class toRender) {
-        renderedTileEntityClass = toRender;
+        this.renderedTileEntityClass = toRender;
     }
 
     @Override

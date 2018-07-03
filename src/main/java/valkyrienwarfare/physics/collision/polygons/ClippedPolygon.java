@@ -29,22 +29,22 @@ public class ClippedPolygon extends Polygon {
 
     public ClippedPolygon(Polygon other, Vector planeNormal, Vector planePos) {
         super(other);
-        this.clippedVertices = new ArrayList<Vector>();
+        this.clippedVertices = new ArrayList<>();
         for (Vector originalVertice : other.getVertices()) {
-            if (isVerticeInFrontOfCullingPlane(originalVertice, planeNormal, planePos)) {
+            if (this.isVerticeInFrontOfCullingPlane(originalVertice, planeNormal, planePos)) {
                 // If the vertice is in front of the culling plane, we do not need to cull it.
-                clippedVertices.add(originalVertice);
+                this.clippedVertices.add(originalVertice);
             } else {
                 // If its behind the culling plane, we do need to cull it.
                 // *Insert Culling Here*
             }
         }
         // Nothing else should be editing this list.
-        clippedVerticesUnmodifiable = Collections.unmodifiableList(clippedVertices);
+        this.clippedVerticesUnmodifiable = Collections.unmodifiableList(this.clippedVertices);
     }
 
     public List<Vector> getUnmodifiableClippedVertices() {
-        return clippedVerticesUnmodifiable;
+        return this.clippedVerticesUnmodifiable;
     }
 
     private boolean isVerticeInFrontOfCullingPlane(Vector vertice, Vector planeNormal, Vector planePos) {

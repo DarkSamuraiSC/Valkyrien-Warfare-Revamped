@@ -33,17 +33,17 @@ public class AntiGravityCapabilityProvider implements ICapabilitySerializable<NB
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        return capability == ValkyrienWarfareWorld.ANTI_GRAVITY_CAPABILITY ? ValkyrienWarfareWorld.ANTI_GRAVITY_CAPABILITY.cast(inst) : null;
+        return capability == ValkyrienWarfareWorld.ANTI_GRAVITY_CAPABILITY ? ValkyrienWarfareWorld.ANTI_GRAVITY_CAPABILITY.cast(this.inst) : null;
     }
 
     @Override
     public NBTTagDouble serializeNBT() {
-        return (NBTTagDouble) ValkyrienWarfareWorld.ANTI_GRAVITY_CAPABILITY.getStorage().writeNBT(ValkyrienWarfareWorld.ANTI_GRAVITY_CAPABILITY, inst, null);
+        return (NBTTagDouble) ValkyrienWarfareWorld.ANTI_GRAVITY_CAPABILITY.getStorage().writeNBT(ValkyrienWarfareWorld.ANTI_GRAVITY_CAPABILITY, this.inst, null);
     }
 
     @Override
     public void deserializeNBT(NBTTagDouble nbt) {
-        ValkyrienWarfareWorld.ANTI_GRAVITY_CAPABILITY.getStorage().readNBT(ValkyrienWarfareWorld.ANTI_GRAVITY_CAPABILITY, inst, null, nbt);
+        ValkyrienWarfareWorld.ANTI_GRAVITY_CAPABILITY.getStorage().readNBT(ValkyrienWarfareWorld.ANTI_GRAVITY_CAPABILITY, this.inst, null, nbt);
     }
 
 }

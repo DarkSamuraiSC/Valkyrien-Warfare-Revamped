@@ -89,7 +89,7 @@ public class BlockRammingManager {
         }
 
         public boolean getValue() {
-            return value;
+            return this.value;
         }
 
         public void setValue(boolean value) {

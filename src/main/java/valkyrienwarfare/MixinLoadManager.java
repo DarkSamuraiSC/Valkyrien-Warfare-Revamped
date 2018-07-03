@@ -88,7 +88,7 @@ public class MixinLoadManager implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
-        isSpongeEnabled = isSpongeEnabledSlow();
+        isSpongeEnabled = this.isSpongeEnabledSlow();
         if (isSpongeEnabled()) {
             FMLLog.bigWarning(
                     "SpongeForge has been detected. This will cause problems with Valkyrien Warfare, no doubt.");

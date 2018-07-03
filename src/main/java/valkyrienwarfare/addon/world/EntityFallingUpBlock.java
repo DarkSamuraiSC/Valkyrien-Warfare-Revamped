@@ -41,7 +41,7 @@ public class EntityFallingUpBlock extends EntityFallingBlock {
 
     public EntityFallingUpBlock(World worldIn) {
         super(worldIn);
-        fallTile = ValkyrienWarfareWorld.INSTANCE.etheriumOre.getDefaultState();
+        this.fallTile = ValkyrienWarfareWorld.INSTANCE.etheriumOre.getDefaultState();
     }
 
     public EntityFallingUpBlock(World worldIn, double x, double y, double z, IBlockState fallingBlockState) {
@@ -82,7 +82,7 @@ public class EntityFallingUpBlock extends EntityFallingBlock {
             if (!this.world.isRemote) {
                 BlockPos blockpos1 = new BlockPos(this);
 
-                if (!onGround && collidedVertically) {
+                if (!this.onGround && this.collidedVertically) {
                     IBlockState iblockstate = this.world.getBlockState(blockpos1);
 
                     if (this.world.isAirBlock(new BlockPos(this.posX, this.posY + 1.009999999776482582D, this.posZ))) // Forge: Don't indent below.
@@ -99,7 +99,7 @@ public class EntityFallingUpBlock extends EntityFallingBlock {
                         this.setDead();
 
                         if (!this.dontSetBlock) {
-                            if (this.world.mayPlace(block, blockpos1, true, EnumFacing.UP, null) && !BlockFalling.canFallThrough(this.world.getBlockState(blockpos1.up())) && world.setBlockState(blockpos1, this.fallTile, 3)) {
+                            if (this.world.mayPlace(block, blockpos1, true, EnumFacing.UP, null) && !BlockFalling.canFallThrough(this.world.getBlockState(blockpos1.up())) && this.world.setBlockState(blockpos1, this.fallTile, 3)) {
                                 if (block instanceof BlockFalling) {
                                     ((BlockFalling) block).onEndFalling(this.world, blockpos1,
                                             //not used by this xd

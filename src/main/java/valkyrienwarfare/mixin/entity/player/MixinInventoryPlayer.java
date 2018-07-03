@@ -34,6 +34,6 @@ public abstract class MixinInventoryPlayer implements IInventoryPlayerFix {
 
     @Override
     public List<NonNullList<ItemStack>> getAllInventories() {
-        return allInventories;
+        return this.allInventories;
     }
 }

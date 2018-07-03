@@ -49,14 +49,14 @@ public class PhysRenderChunk {
             ExtendedBlockStorage storage = renderChunk.storageArrays[i];
             if (storage != null) {
                 RenderLayer renderLayer = new RenderLayer(renderChunk, i * 16, i * 16 + 15, this);
-                layers[i] = renderLayer;
+                this.layers[i] = renderLayer;
             }
         }
     }
 
     public void renderBlockLayer(BlockRenderLayer layerToRender, double partialTicks, int pass) {
         for (int i = 0; i < 16; i++) {
-            RenderLayer layer = layers[i];
+            RenderLayer layer = this.layers[i];
             if (layer != null) {
                 layer.renderBlockLayer(layerToRender, partialTicks, pass);
             }
@@ -65,19 +65,19 @@ public class PhysRenderChunk {
 
     public void updateLayers(int minLayer, int maxLayer) {
         for (int layerY = minLayer; layerY <= maxLayer; layerY++) {
-            RenderLayer layer = layers[layerY];
+            RenderLayer layer = this.layers[layerY];
             if (layer != null) {
                 layer.markDirtyRenderLists();
             } else {
-                RenderLayer renderLayer = new RenderLayer(renderChunk, layerY * 16, layerY * 16 + 15, this);
-                layers[layerY] = renderLayer;
+                RenderLayer renderLayer = new RenderLayer(this.renderChunk, layerY * 16, layerY * 16 + 15, this);
+                this.layers[layerY] = renderLayer;
             }
         }
     }
 
     public void killRenderChunk() {
         for (int i = 0; i < 16; i++) {
-            RenderLayer layer = layers[i];
+            RenderLayer layer = this.layers[i];
             if (layer != null) {
                 layer.deleteRenderLayer();
             }
@@ -91,76 +91,76 @@ public class PhysRenderChunk {
         int glCallListCutout, glCallListCutoutMipped, glCallListSolid, glCallListTranslucent;
         PhysRenderChunk parent;
         boolean needsCutoutUpdate, needsCutoutMippedUpdate, needsSolidUpdate, needsTranslucentUpdate;
-        List<TileEntity> renderTiles = new ArrayList<TileEntity>();
+        List<TileEntity> renderTiles = new ArrayList<>();
 
         public RenderLayer(Chunk chunk, int yMin, int yMax, PhysRenderChunk parent) {
-            chunkToRender = chunk;
+            this.chunkToRender = chunk;
             this.yMin = yMin;
             this.yMax = yMax;
             this.parent = parent;
-            markDirtyRenderLists();
-            glCallListCutout = GLAllocation.generateDisplayLists(4);
-            glCallListCutoutMipped = glCallListCutout + 1;
-            glCallListSolid = glCallListCutout + 2;
-            glCallListTranslucent = glCallListCutout + 3;
+            this.markDirtyRenderLists();
+            this.glCallListCutout = GLAllocation.generateDisplayLists(4);
+            this.glCallListCutoutMipped = this.glCallListCutout + 1;
+            this.glCallListSolid = this.glCallListCutout + 2;
+            this.glCallListTranslucent = this.glCallListCutout + 3;
         }
 
         public void markDirtyRenderLists() {
-            needsCutoutUpdate = true;
-            needsCutoutMippedUpdate = true;
-            needsSolidUpdate = true;
-            needsTranslucentUpdate = true;
-            updateRenderTileEntities();
+            this.needsCutoutUpdate = true;
+            this.needsCutoutMippedUpdate = true;
+            this.needsSolidUpdate = true;
+            this.needsTranslucentUpdate = true;
+            this.updateRenderTileEntities();
         }
 
         // TODO: There's probably a faster way of doing this.
         public void updateRenderTileEntities() {
-            ITileEntitiesToRenderProvider provider = ITileEntitiesToRenderProvider.class.cast(chunkToRender);
-            List<TileEntity> updatedRenderTiles = provider.getTileEntitiesToRender(yMin >> 4);
+            ITileEntitiesToRenderProvider provider = ITileEntitiesToRenderProvider.class.cast(this.chunkToRender);
+            List<TileEntity> updatedRenderTiles = provider.getTileEntitiesToRender(this.yMin >> 4);
             if (updatedRenderTiles != null) {
-                Minecraft.getMinecraft().renderGlobal.updateTileEntities(renderTiles, updatedRenderTiles);
-                renderTiles = new ArrayList<TileEntity>(updatedRenderTiles);
+                Minecraft.getMinecraft().renderGlobal.updateTileEntities(this.renderTiles, updatedRenderTiles);
+                this.renderTiles = new ArrayList<>(updatedRenderTiles);
             }
         }
 
         public void deleteRenderLayer() {
-            clearRenderLists();
-            Minecraft.getMinecraft().renderGlobal.updateTileEntities(renderTiles, new ArrayList());
-            renderTiles.clear();
+            this.clearRenderLists();
+            Minecraft.getMinecraft().renderGlobal.updateTileEntities(this.renderTiles, new ArrayList());
+            this.renderTiles.clear();
         }
 
         private void clearRenderLists() {
-            GLAllocation.deleteDisplayLists(glCallListCutout);
-            GLAllocation.deleteDisplayLists(glCallListCutoutMipped);
-            GLAllocation.deleteDisplayLists(glCallListSolid);
-            GLAllocation.deleteDisplayLists(glCallListTranslucent);
+            GLAllocation.deleteDisplayLists(this.glCallListCutout);
+            GLAllocation.deleteDisplayLists(this.glCallListCutoutMipped);
+            GLAllocation.deleteDisplayLists(this.glCallListSolid);
+            GLAllocation.deleteDisplayLists(this.glCallListTranslucent);
         }
 
         public void renderBlockLayer(BlockRenderLayer layerToRender, double partialTicks, int pass) {
             switch (layerToRender) {
                 case CUTOUT:
-                    if (needsCutoutUpdate) {
-                        updateList(layerToRender);
+                    if (this.needsCutoutUpdate) {
+                        this.updateList(layerToRender);
                     }
-                    GL11.glCallList(glCallListCutout);
+                    GL11.glCallList(this.glCallListCutout);
                     break;
                 case CUTOUT_MIPPED:
-                    if (needsCutoutMippedUpdate) {
-                        updateList(layerToRender);
+                    if (this.needsCutoutMippedUpdate) {
+                        this.updateList(layerToRender);
                     }
-                    GL11.glCallList(glCallListCutoutMipped);
+                    GL11.glCallList(this.glCallListCutoutMipped);
                     break;
                 case SOLID:
-                    if (needsSolidUpdate) {
-                        updateList(layerToRender);
+                    if (this.needsSolidUpdate) {
+                        this.updateList(layerToRender);
                     }
-                    GL11.glCallList(glCallListSolid);
+                    GL11.glCallList(this.glCallListSolid);
                     break;
                 case TRANSLUCENT:
-                    if (needsTranslucentUpdate) {
-                        updateList(layerToRender);
+                    if (this.needsTranslucentUpdate) {
+                        this.updateList(layerToRender);
                     }
-                    GL11.glCallList(glCallListTranslucent);
+                    GL11.glCallList(this.glCallListTranslucent);
                     break;
                 default:
                     break;
@@ -168,10 +168,10 @@ public class PhysRenderChunk {
         }
 
         public void updateList(BlockRenderLayer layerToUpdate) {
-            if (parent.toRender.getShipRenderer() == null) {
+            if (this.parent.toRender.getShipRenderer() == null) {
                 return;
             }
-            BlockPos offsetPos = parent.toRender.getShipRenderer().offsetPos;
+            BlockPos offsetPos = this.parent.toRender.getShipRenderer().offsetPos;
             if (offsetPos == null) {
                 return;
             }
@@ -182,20 +182,20 @@ public class PhysRenderChunk {
             GL11.glPushMatrix();
             switch (layerToUpdate) {
                 case CUTOUT:
-                    GLAllocation.deleteDisplayLists(glCallListCutout);
-                    GL11.glNewList(glCallListCutout, GL11.GL_COMPILE);
+                    GLAllocation.deleteDisplayLists(this.glCallListCutout);
+                    GL11.glNewList(this.glCallListCutout, GL11.GL_COMPILE);
                     break;
                 case CUTOUT_MIPPED:
-                    GLAllocation.deleteDisplayLists(glCallListCutoutMipped);
-                    GL11.glNewList(glCallListCutoutMipped, GL11.GL_COMPILE);
+                    GLAllocation.deleteDisplayLists(this.glCallListCutoutMipped);
+                    GL11.glNewList(this.glCallListCutoutMipped, GL11.GL_COMPILE);
                     break;
                 case SOLID:
-                    GLAllocation.deleteDisplayLists(glCallListSolid);
-                    GL11.glNewList(glCallListSolid, GL11.GL_COMPILE);
+                    GLAllocation.deleteDisplayLists(this.glCallListSolid);
+                    GL11.glNewList(this.glCallListSolid, GL11.GL_COMPILE);
                     break;
                 case TRANSLUCENT:
-                    GLAllocation.deleteDisplayLists(glCallListTranslucent);
-                    GL11.glNewList(glCallListTranslucent, GL11.GL_COMPILE);
+                    GLAllocation.deleteDisplayLists(this.glCallListTranslucent);
+                    GL11.glNewList(this.glCallListTranslucent, GL11.GL_COMPILE);
                     break;
                 default:
                     break;
@@ -211,14 +211,14 @@ public class PhysRenderChunk {
             // }
             ForgeHooksClient.setRenderLayer(layerToUpdate);
             MutableBlockPos pos = new MutableBlockPos();
-            for (int x = chunkToRender.x * 16; x < chunkToRender.x * 16 + 16; x++) {
-                for (int z = chunkToRender.z * 16; z < chunkToRender.z * 16 + 16; z++) {
-                    for (int y = yMin; y <= yMax; y++) {
+            for (int x = this.chunkToRender.x * 16; x < this.chunkToRender.x * 16 + 16; x++) {
+                for (int z = this.chunkToRender.z * 16; z < this.chunkToRender.z * 16 + 16; z++) {
+                    for (int y = this.yMin; y <= this.yMax; y++) {
                         pos.setPos(x, y, z);
-                        iblockstate = chunkToRender.getBlockState(pos);
+                        iblockstate = this.chunkToRender.getBlockState(pos);
                         try {
                             if (iblockstate.getBlock().canRenderInLayer(iblockstate, layerToUpdate)) {
-                                Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(iblockstate, pos, chunkToRender.world, worldrenderer);
+                                Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(iblockstate, pos, this.chunkToRender.world, worldrenderer);
                             }
                         } catch (NullPointerException e) {
                             System.out.println("Something was null! LValkyrienWarfareBase/render/PhysRenderChunk#updateList");
@@ -236,16 +236,16 @@ public class PhysRenderChunk {
 
             switch (layerToUpdate) {
                 case CUTOUT:
-                    needsCutoutUpdate = false;
+                    this.needsCutoutUpdate = false;
                     break;
                 case CUTOUT_MIPPED:
-                    needsCutoutMippedUpdate = false;
+                    this.needsCutoutMippedUpdate = false;
                     break;
                 case SOLID:
-                    needsSolidUpdate = false;
+                    this.needsSolidUpdate = false;
                     break;
                 case TRANSLUCENT:
-                    needsTranslucentUpdate = false;
+                    this.needsTranslucentUpdate = false;
                     break;
                 default:
                     break;

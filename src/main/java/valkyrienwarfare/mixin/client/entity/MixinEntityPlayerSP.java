@@ -71,9 +71,9 @@ public class MixinEntityPlayerSP {
     private void preOnUpdateWalkingPlayer(CallbackInfo info) {
         IDraggable draggable = IDraggable.class.cast(this);
         if (draggable.getWorldBelowFeet() != null) {
-            draggable.getWorldBelowFeet().getPhysicsObject().getSubspace().snapshotSubspacedEntity(thisAsSubspaced);
+            draggable.getWorldBelowFeet().getPhysicsObject().getSubspace().snapshotSubspacedEntity(this.thisAsSubspaced);
             ISubspacedEntityRecord entityRecord = draggable.getWorldBelowFeet().getPhysicsObject().getSubspace()
-                    .getRecordForSubspacedEntity(thisAsSubspaced);
+                    .getRecordForSubspacedEntity(this.thisAsSubspaced);
             SubspacedEntityRecordMessage recordMessage = new SubspacedEntityRecordMessage(entityRecord);
             ValkyrienWarfareMod.physWrapperNetwork.sendToServer(recordMessage);
         }
@@ -86,76 +86,76 @@ public class MixinEntityPlayerSP {
 
         IDraggable draggable = IDraggable.class.cast(this);
         if (draggable.getWorldBelowFeet() != null) {
-            draggable.getWorldBelowFeet().getPhysicsObject().getSubspace().snapshotSubspacedEntity(thisAsSubspaced);
+            draggable.getWorldBelowFeet().getPhysicsObject().getSubspace().snapshotSubspacedEntity(this.thisAsSubspaced);
             ISubspacedEntityRecord entityRecord = draggable.getWorldBelowFeet().getPhysicsObject().getSubspace()
-                    .getRecordForSubspacedEntity(thisAsSubspaced);
+                    .getRecordForSubspacedEntity(this.thisAsSubspaced);
             SubspacedEntityRecordMessage recordMessage = new SubspacedEntityRecordMessage(entityRecord);
             ValkyrienWarfareMod.physWrapperNetwork.sendToServer(recordMessage);
         }
 
         // ===== Injection code ends here =====
 
-        boolean flag = player.isSprinting();
+        boolean flag = this.player.isSprinting();
 
-        if (flag != serverSprintState) {
+        if (flag != this.serverSprintState) {
             if (flag) {
-                player.connection.sendPacket(new CPacketEntityAction(player, CPacketEntityAction.Action.START_SPRINTING));
+                this.player.connection.sendPacket(new CPacketEntityAction(this.player, CPacketEntityAction.Action.START_SPRINTING));
             } else {
-                player.connection.sendPacket(new CPacketEntityAction(player, CPacketEntityAction.Action.STOP_SPRINTING));
+                this.player.connection.sendPacket(new CPacketEntityAction(this.player, CPacketEntityAction.Action.STOP_SPRINTING));
             }
 
-            serverSprintState = flag;
+            this.serverSprintState = flag;
         }
 
-        boolean flag1 = player.isSneaking();
+        boolean flag1 = this.player.isSneaking();
 
-        if (flag1 != serverSneakState) {
+        if (flag1 != this.serverSneakState) {
             if (flag1) {
-                player.connection.sendPacket(new CPacketEntityAction(player, CPacketEntityAction.Action.START_SNEAKING));
+                this.player.connection.sendPacket(new CPacketEntityAction(this.player, CPacketEntityAction.Action.START_SNEAKING));
             } else {
-                player.connection.sendPacket(new CPacketEntityAction(player, CPacketEntityAction.Action.STOP_SNEAKING));
+                this.player.connection.sendPacket(new CPacketEntityAction(this.player, CPacketEntityAction.Action.STOP_SNEAKING));
             }
 
-            serverSneakState = flag1;
+            this.serverSneakState = flag1;
         }
 
-        if (isCurrentViewEntity()) {
-            AxisAlignedBB axisalignedbb = player.getEntityBoundingBox();
-            double d0 = player.posX - lastReportedPosX;
-            double d1 = axisalignedbb.minY - lastReportedPosY;
-            double d2 = player.posZ - lastReportedPosZ;
-            double d3 = (double) (player.rotationYaw - lastReportedYaw);
-            double d4 = (double) (player.rotationPitch - lastReportedPitch);
-            ++positionUpdateTicks;
+        if (this.isCurrentViewEntity()) {
+            AxisAlignedBB axisalignedbb = this.player.getEntityBoundingBox();
+            double d0 = this.player.posX - this.lastReportedPosX;
+            double d1 = axisalignedbb.minY - this.lastReportedPosY;
+            double d2 = this.player.posZ - this.lastReportedPosZ;
+            double d3 = (double) (this.player.rotationYaw - this.lastReportedYaw);
+            double d4 = (double) (this.player.rotationPitch - this.lastReportedPitch);
+            ++this.positionUpdateTicks;
             // Always true because why not.
             boolean flag2 = true; // d0 * d0 + d1 * d1 + d2 * d2 > 9.0E-4D || positionUpdateTicks >= 20;
             boolean flag3 = true; // d3 != 0.0D || d4 != 0.0D;
 
-            if (player.isRiding()) {
-                player.connection.sendPacket(new CPacketPlayer.PositionRotation(player.motionX, -999.0D, player.motionZ, player.rotationYaw, player.rotationPitch, player.onGround));
+            if (this.player.isRiding()) {
+                this.player.connection.sendPacket(new CPacketPlayer.PositionRotation(this.player.motionX, -999.0D, this.player.motionZ, this.player.rotationYaw, this.player.rotationPitch, this.player.onGround));
                 flag2 = false;
             } else if (flag2 && flag3) {
-                player.connection.sendPacket(new CPacketPlayer.PositionRotation(player.posX, axisalignedbb.minY, player.posZ, player.rotationYaw, player.rotationPitch, player.onGround));
+                this.player.connection.sendPacket(new CPacketPlayer.PositionRotation(this.player.posX, axisalignedbb.minY, this.player.posZ, this.player.rotationYaw, this.player.rotationPitch, this.player.onGround));
             } else if (flag2) {
-                player.connection.sendPacket(new CPacketPlayer.Position(player.posX, axisalignedbb.minY, player.posZ, player.onGround));
+                this.player.connection.sendPacket(new CPacketPlayer.Position(this.player.posX, axisalignedbb.minY, this.player.posZ, this.player.onGround));
             } else if (flag3) {
-                player.connection.sendPacket(new CPacketPlayer.Rotation(player.rotationYaw, player.rotationPitch, player.onGround));
+                this.player.connection.sendPacket(new CPacketPlayer.Rotation(this.player.rotationYaw, this.player.rotationPitch, this.player.onGround));
             }
 
             if (flag2) {
-                lastReportedPosX = player.posX;
-                lastReportedPosY = axisalignedbb.minY;
-                lastReportedPosZ = player.posZ;
-                positionUpdateTicks = 0;
+                this.lastReportedPosX = this.player.posX;
+                this.lastReportedPosY = axisalignedbb.minY;
+                this.lastReportedPosZ = this.player.posZ;
+                this.positionUpdateTicks = 0;
             }
 
             if (flag3) {
-                lastReportedYaw = player.rotationYaw;
-                lastReportedPitch = player.rotationPitch;
+                this.lastReportedYaw = this.player.rotationYaw;
+                this.lastReportedPitch = this.player.rotationPitch;
             }
 
-            prevOnGround = player.onGround;
-            autoJumpEnabled = mc.gameSettings.autoJump;
+            this.prevOnGround = this.player.onGround;
+            this.autoJumpEnabled = this.mc.gameSettings.autoJump;
         }
     }
 

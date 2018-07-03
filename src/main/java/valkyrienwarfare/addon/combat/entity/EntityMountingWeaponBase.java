@@ -56,14 +56,14 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
         if (player.getLowestRidingEntity() == super.getLowestRidingEntity()) {
-            onRiderInteract(player, player.getHeldItem(hand), hand);
+            this.onRiderInteract(player, player.getHeldItem(hand), hand);
         } else {
             player.startRiding(this);
 
-            PhysicsWrapperEntity wrapper = getParentShip();
+            PhysicsWrapperEntity wrapper = this.getParentShip();
             if (wrapper != null) {
                 Vector posInLocal = new Vector(this);
-                Vector passengerOffset = getRiderPositionOffset();
+                Vector passengerOffset = this.getRiderPositionOffset();
 
 //				double[] rotationMatricesCompensation = RotationMatrices.getRotationMatrix(0, 45D, 0);
 
@@ -86,12 +86,12 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
     }
 
     public void setFacing(EnumFacing toSet) {
-        facing = toSet;
-        rotationYaw = -getBaseAngleOffset() + 90F;
+        this.facing = toSet;
+        this.rotationYaw = -this.getBaseAngleOffset() + 90F;
     }
 
     public float getBaseAngleOffset() {
-        switch (facing) {
+        switch (this.facing) {
             case WEST:
                 return 0F;
             case SOUTH:
@@ -171,7 +171,7 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
 
     @Override
     public boolean canBeCollidedWith() {
-        return !isDead;
+        return !this.isDead;
     }
 
     @Override
@@ -187,11 +187,11 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
     @Override
     public void setPositionAndRotationDirect(double x, double y, double z, float yaw, float pitch, int rotationSteps, boolean p_180426_10_) {
         if (p_180426_10_) {
-            posX = x;
-            posY = y;
-            posZ = z;
-            rotationYaw = yaw;
-            rotationPitch = pitch;
+            this.posX = x;
+            this.posY = y;
+            this.posZ = z;
+            this.rotationYaw = yaw;
+            this.rotationPitch = pitch;
         }
     }
 
@@ -199,20 +199,20 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
     public void onUpdate() {
         super.onUpdate();
 //		System.out.println("test");
-        Entity rider = getRider();
+        Entity rider = this.getRider();
         if (rider != null) {
-            rotationYaw = rider.getRotationYawHead();
-            rotationPitch = rider.rotationPitch;
+            this.rotationYaw = rider.getRotationYawHead();
+            this.rotationPitch = rider.rotationPitch;
         }
     }
 
     @Override
     public void updatePassenger(Entity passenger) {
         if (this.isPassenger(passenger)) {
-            if (getParentShip() == null) {
+            if (this.getParentShip() == null) {
                 //We're in the real world
-                Vector passengerOffset = getRiderPositionOffset();
-                passengerOffset.add(posX, posY, posZ);
+                Vector passengerOffset = this.getRiderPositionOffset();
+                passengerOffset.add(this.posX, this.posY, this.posZ);
 //				passenger.posX = passengerOffset.X;
 //				passenger.posY = passengerOffset.Y;
 //				passenger.posZ = passengerOffset.Z;
@@ -228,10 +228,10 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
         Vector riderOffset = new Vector(.55D, 0, 0);
 
         double[] rotMatrix = RotationMatrices.getDoubleIdentity();
-        rotMatrix = RotationMatrices.rotateOnly(rotMatrix, 0, getBaseAngleOffset(), 0);
+        rotMatrix = RotationMatrices.rotateOnly(rotMatrix, 0, this.getBaseAngleOffset(), 0);
         RotationMatrices.applyTransform(rotMatrix, riderOffset);
 
-        riderOffset.Y += getMountedYOffset();
+        riderOffset.Y += this.getMountedYOffset();
 
         return riderOffset;
     }
@@ -246,12 +246,12 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
 
     @Override
     public AxisAlignedBB getEntityBoundingBox() {
-        return boundingBox;
+        return this.boundingBox;
     }
 
     @Override
     public AxisAlignedBB getCollisionBox(Entity entityIn) {
-        return boundingBox;
+        return this.boundingBox;
     }
 
     @Nullable
@@ -287,7 +287,7 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
                 this.setDamage(this.getDamage() + amount * 10.0F);
                 boolean flag = source.getImmediateSource() instanceof EntityPlayer && ((EntityPlayer) source.getImmediateSource()).capabilities.isCreativeMode;
 
-                if (flag || this.getDamage() > getMaxDamage()) {
+                if (flag || this.getDamage() > this.getMaxDamage()) {
                     this.removePassengers();
 
                     if (flag && !this.hasCustomName()) {
@@ -306,7 +306,7 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
 
     @Override
     public void setPosition(double x, double y, double z) {
-        PhysicsWrapperEntity wrapper = getParentShip();
+        PhysicsWrapperEntity wrapper = this.getParentShip();
         float f = this.width / 2.0F;
         float f1 = this.height;
 
@@ -318,11 +318,11 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
     }
 
     public double getDamage() {
-        return damage;
+        return this.damage;
     }
 
     public void setDamage(double toSet) {
-        damage = toSet;
+        this.damage = toSet;
     }
 
     public double getMaxDamage() {
@@ -332,15 +332,15 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
     public void killWeapon(DamageSource source) {
         this.setDead();
         if (this.world.getGameRules().getBoolean("doEntityDrops")) {
-            doItemDrops();
+            this.doItemDrops();
         }
     }
 
     public abstract void doItemDrops();
 
     public PhysicsWrapperEntity getParentShip() {
-        if (ridingEntity instanceof PhysicsWrapperEntity) {
-            PhysicsWrapperEntity wrapper = (PhysicsWrapperEntity) ridingEntity;
+        if (this.ridingEntity instanceof PhysicsWrapperEntity) {
+            PhysicsWrapperEntity wrapper = (PhysicsWrapperEntity) this.ridingEntity;
             return wrapper;
         }
         return null;
@@ -348,23 +348,23 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
 
     @Override
     protected void readEntityFromNBT(NBTTagCompound tagCompund) {
-        facing = EnumFacing.getHorizontal(tagCompund.getInteger("facingOrdinal"));
+        this.facing = EnumFacing.getHorizontal(tagCompund.getInteger("facingOrdinal"));
     }
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setInteger("facingOrdinal", facing.getHorizontalIndex());
+        tagCompound.setInteger("facingOrdinal", this.facing.getHorizontalIndex());
     }
 
     @Override
     public void writeSpawnData(ByteBuf buffer) {
-        buffer.writeInt(facing.getHorizontalIndex());
+        buffer.writeInt(this.facing.getHorizontalIndex());
 
     }
 
     @Override
     public void readSpawnData(ByteBuf additionalData) {
-        facing = EnumFacing.getHorizontal(additionalData.readInt());
+        this.facing = EnumFacing.getHorizontal(additionalData.readInt());
     }
 
 }

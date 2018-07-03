@@ -33,17 +33,17 @@ public class LastNodeCapabilityProvider implements ICapabilitySerializable<NBTTa
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        return capability == ValkyrienWarfareControl.lastRelayCapability ? ValkyrienWarfareControl.lastRelayCapability.cast(inst) : null;
+        return capability == ValkyrienWarfareControl.lastRelayCapability ? ValkyrienWarfareControl.lastRelayCapability.cast(this.inst) : null;
     }
 
     @Override
     public NBTTagIntArray serializeNBT() {
-        return (NBTTagIntArray) ValkyrienWarfareControl.lastRelayCapability.getStorage().writeNBT(ValkyrienWarfareControl.lastRelayCapability, inst, null);
+        return (NBTTagIntArray) ValkyrienWarfareControl.lastRelayCapability.getStorage().writeNBT(ValkyrienWarfareControl.lastRelayCapability, this.inst, null);
     }
 
     @Override
     public void deserializeNBT(NBTTagIntArray nbt) {
-        ValkyrienWarfareControl.lastRelayCapability.getStorage().readNBT(ValkyrienWarfareControl.lastRelayCapability, inst, null, nbt);
+        ValkyrienWarfareControl.lastRelayCapability.getStorage().readNBT(ValkyrienWarfareControl.lastRelayCapability, this.inst, null, nbt);
     }
 
 }

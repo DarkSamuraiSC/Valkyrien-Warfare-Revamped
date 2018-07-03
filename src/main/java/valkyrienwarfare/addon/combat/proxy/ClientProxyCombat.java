@@ -48,10 +48,10 @@ public class ClientProxyCombat extends CommonProxyCombat {
     @Override
     public void postInit(FMLStateEvent e) {
         super.postInit(e);
-        registerItemModel(ValkyrienWarfareCombat.INSTANCE.basicCannonSpawner);
-        registerItemModel(ValkyrienWarfareCombat.INSTANCE.cannonBall);
-        registerItemModel(ValkyrienWarfareCombat.INSTANCE.powderPouch);
-        registerItemModel(ValkyrienWarfareCombat.INSTANCE.explosiveArrow);
+        this.registerItemModel(ValkyrienWarfareCombat.INSTANCE.basicCannonSpawner);
+        this.registerItemModel(ValkyrienWarfareCombat.INSTANCE.cannonBall);
+        this.registerItemModel(ValkyrienWarfareCombat.INSTANCE.powderPouch);
+        this.registerItemModel(ValkyrienWarfareCombat.INSTANCE.explosiveArrow);
 
         EntityCannonBallRenderer.instance.cacheStates();
         EntityCannonBasicRender.instance.cacheStates();

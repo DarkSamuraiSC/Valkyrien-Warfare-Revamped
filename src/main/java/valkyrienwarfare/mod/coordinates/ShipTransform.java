@@ -52,7 +52,7 @@ public class ShipTransform {
         double[] lToWTransform = RotationMatrices.getTranslationMatrix(posX, posY, posZ);
         lToWTransform = RotationMatrices.rotateAndTranslate(lToWTransform, pitch, yaw, roll, centerCoord);
         this.subspaceToGlobal = lToWTransform;
-        this.globalToSubspace = RotationMatrices.inverse(subspaceToGlobal);
+        this.globalToSubspace = RotationMatrices.inverse(this.subspaceToGlobal);
     }
 
     /**
@@ -73,33 +73,33 @@ public class ShipTransform {
     }
 
     public void transform(Vector vector, TransformType transformType) {
-        RotationMatrices.applyTransform(getInternalMatrix(transformType), vector);
+        RotationMatrices.applyTransform(this.getInternalMatrix(transformType), vector);
     }
 
     public void rotate(Vector vector, TransformType transformType) {
-        RotationMatrices.doRotationOnly(getInternalMatrix(transformType), vector);
+        RotationMatrices.doRotationOnly(this.getInternalMatrix(transformType), vector);
     }
 
     public Vec3d transform(Vec3d vec3d, TransformType transformType) {
         Vector vec3dAsVector = new Vector(vec3d);
-        transform(vec3dAsVector, transformType);
+        this.transform(vec3dAsVector, transformType);
         return vec3dAsVector.toVec3d();
     }
 
     public Vec3d rotate(Vec3d vec3d, TransformType transformType) {
         Vector vec3dAsVector = new Vector(vec3d);
-        rotate(vec3dAsVector, transformType);
+        this.rotate(vec3dAsVector, transformType);
         return vec3dAsVector.toVec3d();
     }
 
     public BlockPos transform(BlockPos pos, TransformType transformType) {
         Vector blockPosAsVector = new Vector(pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5);
-        transform(blockPosAsVector, transformType);
+        this.transform(blockPosAsVector, transformType);
         return new BlockPos(blockPosAsVector.X - .5D, blockPosAsVector.Y - .5D, blockPosAsVector.Z - .5D);
     }
 
     public Quaternion createRotationQuaternion(TransformType transformType) {
-        return Quaternion.QuaternionFromMatrix(getInternalMatrix(transformType));
+        return Quaternion.QuaternionFromMatrix(this.getInternalMatrix(transformType));
     }
 
     /**
@@ -113,9 +113,9 @@ public class ShipTransform {
     @Deprecated
     public double[] getInternalMatrix(TransformType transformType) {
         if (transformType == TransformType.SUBSPACE_TO_GLOBAL) {
-            return subspaceToGlobal;
+            return this.subspaceToGlobal;
         } else if (transformType == TransformType.GLOBAL_TO_SUBSPACE) {
-            return globalToSubspace;
+            return this.globalToSubspace;
         } else {
             throw new IllegalArgumentException("Unexpected TransformType Enum " + transformType + "!");
         }

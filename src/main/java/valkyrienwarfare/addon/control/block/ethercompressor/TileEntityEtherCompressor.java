@@ -28,9 +28,9 @@ public abstract class TileEntityEtherCompressor extends BasicForceNodeTileEntity
 
     public TileEntityEtherCompressor(Vector normalForceVector, double power) {
         super(normalForceVector, false, power);
-        validate();
-        etherGas = 0;
-        etherGasCapacity = 1000;
+        this.validate();
+        this.etherGas = 0;
+        this.etherGasCapacity = 1000;
     }
 
     public TileEntityEtherCompressor() {
@@ -40,15 +40,15 @@ public abstract class TileEntityEtherCompressor extends BasicForceNodeTileEntity
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        etherGas = compound.getInteger("etherGas");
-        etherGasCapacity = compound.getInteger("etherGasCapacity");
+        this.etherGas = compound.getInteger("etherGas");
+        this.etherGasCapacity = compound.getInteger("etherGasCapacity");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound toReturn = super.writeToNBT(compound);
-        toReturn.setInteger("etherGas", etherGas);
-        toReturn.setInteger("etherGasCapacity", etherGasCapacity);
+        toReturn.setInteger("etherGas", this.etherGas);
+        toReturn.setInteger("etherGasCapacity", this.etherGasCapacity);
         return toReturn;
     }
 
@@ -59,22 +59,22 @@ public abstract class TileEntityEtherCompressor extends BasicForceNodeTileEntity
 
     @Override
     public int getCurrentEtherGas() {
-        return etherGas;
+        return this.etherGas;
     }
 
     @Override
     public int getEtherGasCapacity() {
-        return etherGasCapacity;
+        return this.etherGasCapacity;
     }
 
     // pre : Throws an IllegalArgumentExcepion if more gas is added than there is
     // capacity for this engine.
     @Override
     public void addEtherGas(int gas) {
-        if (etherGas + gas > etherGasCapacity) {
+        if (this.etherGas + gas > this.etherGasCapacity) {
             throw new IllegalArgumentException();
         }
-        etherGas += gas;
+        this.etherGas += gas;
     }
 
 }

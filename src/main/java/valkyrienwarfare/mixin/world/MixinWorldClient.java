@@ -119,7 +119,7 @@ public abstract class MixinWorldClient {
         if (ValkyrienWarfareMod.accurateRain) {
             Vector traceStart = new Vector(pos.getX() + .5D, Minecraft.getMinecraft().player.posY + 50D, pos.getZ() + .5D);
             Vector traceEnd = new Vector(pos.getX() + .5D, pos.getY() + .5D, pos.getZ() + .5D);
-            RayTraceResult result = rayTraceBlocks(traceStart.toVec3d(), traceEnd.toVec3d(), true, true, false);
+            RayTraceResult result = this.rayTraceBlocks(traceStart.toVec3d(), traceEnd.toVec3d(), true, true, false);
 
             if (result != null && result.typeOfHit != RayTraceResult.Type.MISS && result.getBlockPos() != null) {
                 PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(World.class.cast(this), result.getBlockPos());

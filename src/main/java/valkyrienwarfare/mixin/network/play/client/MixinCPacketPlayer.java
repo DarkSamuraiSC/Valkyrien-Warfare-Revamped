@@ -52,12 +52,12 @@ public class MixinCPacketPlayer implements ITransformablePacket {
 
     @Override
     public void doPreProcessing(INetHandlerPlayServer server, boolean callingFromSponge) {
-        if (isPacketOnMainThread(server, callingFromSponge)) {
-            PhysicsWrapperEntity parent = getPacketParent((NetHandlerPlayServer) server);
+        if (this.isPacketOnMainThread(server, callingFromSponge)) {
+            PhysicsWrapperEntity parent = this.getPacketParent((NetHandlerPlayServer) server);
             if (parent != null) {
                 ISubspace parentSubspace = parent.getPhysicsObject().getSubspace();
                 ISubspacedEntityRecord entityRecord = parentSubspace
-                        .getRecordForSubspacedEntity(ISubspacedEntity.class.cast(getPacketPlayer(server)));
+                        .getRecordForSubspacedEntity(ISubspacedEntity.class.cast(this.getPacketPlayer(server)));
                 VectorImmutable positionGlobal = entityRecord.getPositionInGlobalCoordinates();
                 VectorImmutable lookVectorGlobal = entityRecord.getLookDirectionInGlobalCoordinates();
 
@@ -65,37 +65,37 @@ public class MixinCPacketPlayer implements ITransformablePacket {
                 float yaw = (float) VWMath.getYawFromVectorImmutable(lookVectorGlobal, pitch);
 
                 // ===== Set the proper position values for the player packet ====
-                thisPacket.moving = true;
-                thisPacket.onGround = true;
-                thisPacket.x = positionGlobal.getX();
-                thisPacket.y = positionGlobal.getY();
-                thisPacket.z = positionGlobal.getZ();
+                this.thisPacket.moving = true;
+                this.thisPacket.onGround = true;
+                this.thisPacket.x = positionGlobal.getX();
+                this.thisPacket.y = positionGlobal.getY();
+                this.thisPacket.z = positionGlobal.getZ();
 
                 // ===== Set the proper rotation values for the player packet =====
-                thisPacket.rotating = true;
-                thisPacket.yaw = yaw;
-                thisPacket.pitch = pitch;
+                this.thisPacket.rotating = true;
+                this.thisPacket.yaw = yaw;
+                this.thisPacket.pitch = pitch;
 
                 // ===== Dangerous code here =====
-                cachedPlayerGameType = getPacketPlayer(server).interactionManager.gameType;
-                getPacketPlayer(server).interactionManager.gameType = GameType.CREATIVE;
+                this.cachedPlayerGameType = this.getPacketPlayer(server).interactionManager.gameType;
+                this.getPacketPlayer(server).interactionManager.gameType = GameType.CREATIVE;
             }
         }
     }
 
     @Override
     public void doPostProcessing(INetHandlerPlayServer server, boolean callingFromSponge) {
-        if (isPacketOnMainThread(server, callingFromSponge)) {
+        if (this.isPacketOnMainThread(server, callingFromSponge)) {
             // ===== Dangerous code here =====
-            if (cachedPlayerGameType != null) {
-                getPacketPlayer(server).interactionManager.gameType = cachedPlayerGameType;
+            if (this.cachedPlayerGameType != null) {
+                this.getPacketPlayer(server).interactionManager.gameType = this.cachedPlayerGameType;
             }
-            PhysicsWrapperEntity parent = getPacketParent((NetHandlerPlayServer) server);
+            PhysicsWrapperEntity parent = this.getPacketParent((NetHandlerPlayServer) server);
             if (parent != null) {
                 parent.getPhysicsObject().getSubspace()
-                        .forceSubspaceRecord(ISubspacedEntity.class.cast(getPacketPlayer(server)), null);
+                        .forceSubspaceRecord(ISubspacedEntity.class.cast(this.getPacketPlayer(server)), null);
             }
-            IDraggable draggable = IDraggable.class.cast(getPacketPlayer(server));
+            IDraggable draggable = IDraggable.class.cast(this.getPacketPlayer(server));
             draggable.setForcedRelativeSubspace(null);
         }
     }

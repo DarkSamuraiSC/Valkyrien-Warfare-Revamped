@@ -69,7 +69,7 @@ public class BlockEtheriumOre extends Block {
 
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
         if (!worldIn.isRemote) {
-            tryFallingUp(worldIn, pos);
+            this.tryFallingUp(worldIn, pos);
         }
     }
 
@@ -90,7 +90,6 @@ public class BlockEtheriumOre extends Block {
                 BlockPos blockpos;
 
                 for (blockpos = pos.up(); (worldIn.isAirBlock(blockpos) || canFallThrough(worldIn.getBlockState(blockpos))) && blockpos.getY() < 255; blockpos = blockpos.up()) {
-                    ;
                 }
 
                 if (blockpos.getY() < 255) {

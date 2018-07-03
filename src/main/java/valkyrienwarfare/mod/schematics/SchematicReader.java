@@ -33,7 +33,7 @@ import java.util.HashMap;
 
 public class SchematicReader {
 
-    public static HashMap<String, Schematic> schematicCache = new HashMap<String, Schematic>();
+    public static HashMap<String, Schematic> schematicCache = new HashMap<>();
 
     public static Schematic get(String schemname) {
         if (schematicCache.containsKey(schemname)) {
@@ -111,12 +111,12 @@ public class SchematicReader {
         }
 
         public void placeBlockAndTilesInWorld(World worldObj, BlockPos centerDifference) {
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    for (int z = 0; z < length; z++) {
-                        int index = y * width * length + z * width + x;
-                        int id = blocksCombined[index];
-                        int dataVal = data[index];
+            for (int x = 0; x < this.width; x++) {
+                for (int y = 0; y < this.height; y++) {
+                    for (int z = 0; z < this.length; z++) {
+                        int index = y * this.width * this.length + z * this.width + x;
+                        int id = this.blocksCombined[index];
+                        int dataVal = this.data[index];
 
                         Block b = Block.getBlockById(id);
                         IBlockState state = b.getStateFromMeta(dataVal);
@@ -129,8 +129,8 @@ public class SchematicReader {
 
             PhysicsWrapperEntity wrapperEntity = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(worldObj, centerDifference);
 
-            for (int i = 0; i < tileentities.tagCount(); i++) {
-                NBTTagCompound tileData = tileentities.getCompoundTagAt(i).copy();
+            for (int i = 0; i < this.tileentities.tagCount(); i++) {
+                NBTTagCompound tileData = this.tileentities.getCompoundTagAt(i).copy();
 
                 int x = tileData.getInteger("x") + centerDifference.getX();
                 int y = tileData.getInteger("y") + centerDifference.getY();

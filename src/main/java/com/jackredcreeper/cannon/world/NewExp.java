@@ -70,21 +70,21 @@ public class NewExp extends Explosion {
 
     public NewExp(World worldIn, Entity entityIn, double x, double y, double z, float size, float power, float damage, float blast, boolean flaming, boolean smoking) {
         super(worldIn, entityIn, x, y, z, size, flaming, smoking);
-        explosionRNG = new Random();
-        affectedBlockPositions = Lists.<BlockPos>newArrayList();
-        playerKnockbackMap = Maps.<EntityPlayer, Vec3d>newHashMap();
-        worldObj = worldIn;
-        exploder = entityIn;
-        explosionSize = size;
-        explosionPower = power;
-        explosionDamage = damage;
-        explosionBlast = blast;
+        this.explosionRNG = new Random();
+        this.affectedBlockPositions = Lists.newArrayList();
+        this.playerKnockbackMap = Maps.newHashMap();
+        this.worldObj = worldIn;
+        this.exploder = entityIn;
+        this.explosionSize = size;
+        this.explosionPower = power;
+        this.explosionDamage = damage;
+        this.explosionBlast = blast;
         x = x;
         y = y;
         z = z;
-        isFlaming = flaming;
-        isSmoking = smoking;
-        position = new Vec3d(x, y, z);
+        this.isFlaming = flaming;
+        this.isSmoking = smoking;
+        this.position = new Vec3d(x, y, z);
 
     }
 
@@ -103,7 +103,7 @@ public class NewExp extends Explosion {
      * Does the first part of the explosion (destroy blocks)
      */
     public void doExplosionA() {
-        Set<BlockPos> set = Sets.<BlockPos>newHashSet();
+        Set<BlockPos> set = Sets.newHashSet();
         int i = 16;
 
         for (int j = 0; j < 16; ++j) {
@@ -127,7 +127,7 @@ public class NewExp extends Explosion {
                             IBlockState iblockstate = this.worldObj.getBlockState(blockpos);
 
                             if (iblockstate.getMaterial() != Material.AIR) {
-                                float f2 = this.exploder != null ? this.exploder.getExplosionResistance(this, this.worldObj, blockpos, iblockstate) : iblockstate.getBlock().getExplosionResistance(worldObj, blockpos, (Entity) null, this);
+                                float f2 = this.exploder != null ? this.exploder.getExplosionResistance(this, this.worldObj, blockpos, iblockstate) : iblockstate.getBlock().getExplosionResistance(this.worldObj, blockpos, null, this);
                                 //  f -= ((f2 + 0.3F) * 0.3F) / this.explosionPower ;
                                 f -= (f2 * this.explosionBlast) + this.explosionPower;
                             }
@@ -160,7 +160,7 @@ public class NewExp extends Explosion {
         Vec3d vec3d = new Vec3d(this.x, this.y, this.z);
 
         for (int k2 = 0; k2 < list.size(); ++k2) {
-            Entity entity = (Entity) list.get(k2);
+            Entity entity = list.get(k2);
 
             if (!entity.isImmuneToExplosions()) {
                 double d12 = entity.getDistance(this.x, this.y, this.z) / f3;
@@ -206,12 +206,12 @@ public class NewExp extends Explosion {
      */
     @Override
     public void doExplosionB(boolean spawnParticles) {
-        this.worldObj.playSound((EntityPlayer) null, this.x, this.y, this.z, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0F, (1.0F + (this.worldObj.rand.nextFloat() - this.worldObj.rand.nextFloat()) * 0.2F) * 0.7F);
+        this.worldObj.playSound(null, this.x, this.y, this.z, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0F, (1.0F + (this.worldObj.rand.nextFloat() - this.worldObj.rand.nextFloat()) * 0.2F) * 0.7F);
 
         if (this.explosionSize >= 2.0F) {
-            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, this.x, this.y, this.z, 1.0D, 0.0D, 0.0D, new int[0]);
+            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, this.x, this.y, this.z, 1.0D, 0.0D, 0.0D);
         } else {
-            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.x, this.y, this.z, 1.0D, 0.0D, 0.0D, new int[0]);
+            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.x, this.y, this.z, 1.0D, 0.0D, 0.0D);
         }
 
 
@@ -235,8 +235,8 @@ public class NewExp extends Explosion {
                 d3 = d3 * d7;
                 d4 = d4 * d7;
                 d5 = d5 * d7;
-                this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, (d0 + this.x) / 2.0D, (d1 + this.y) / 2.0D, (d2 + this.z) / 2.0D, d3, d4, d5, new int[0]);
-                this.worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0, d1, d2, d3, d4, d5, new int[0]);
+                this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, (d0 + this.x) / 2.0D, (d1 + this.y) / 2.0D, (d2 + this.z) / 2.0D, d3, d4, d5);
+                this.worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0, d1, d2, d3, d4, d5);
             }
 
             if (iblockstate.getMaterial() != Material.AIR) {

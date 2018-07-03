@@ -120,7 +120,7 @@ public abstract class MixinNetHandlerPlayServer {
                     VectorImmutable velocity = record.getVelocityInGlobalCoordinates();
 
                     Vector positionMutable = position.createMutibleVectorCopy();
-                    Vector playerPosition = new Vector(player);
+                    Vector playerPosition = new Vector(this.player);
                     positionMutable.subtract(playerPosition);
                     if (positionMutable.lengthSq() > 10000 || isVectorInvalid(position)
                             || isVectorInvalid(lookDirection) || isVectorInvalid(velocity)) {
@@ -138,15 +138,15 @@ public abstract class MixinNetHandlerPlayServer {
                         // position.getZ(), yaw,
                         // pitch);
 
-                        this.player.motionX = position.getX() - player.posX;
-                        this.player.motionY = position.getY() - player.posY;
-                        this.player.motionZ = position.getZ() - player.posZ;
+                        this.player.motionX = position.getX() - this.player.posX;
+                        this.player.motionY = position.getY() - this.player.posY;
+                        this.player.motionZ = position.getZ() - this.player.posZ;
 
                         // ===== NOW FIX THE PACKET =====
                         // CPacketPlayer fixed = new CPacketPlayer();
-                        player.posX = packetIn.x = position.getX();
-                        player.posY = packetIn.y = position.getY();
-                        player.posZ = packetIn.z = position.getZ();
+                        this.player.posX = packetIn.x = position.getX();
+                        this.player.posY = packetIn.y = position.getY();
+                        this.player.posZ = packetIn.z = position.getZ();
                         packetIn.moving = true;
                         packetIn.onGround = true;
                         // player.rotationYaw = yaw;
@@ -436,13 +436,13 @@ public abstract class MixinNetHandlerPlayServer {
     @Inject(method = "setPlayerLocation(DDDFFLjava/util/Set;)V", at = @At("HEAD"), cancellable = true)
     public void onSetPlayerLocation(double x, double y, double z, float yaw, float pitch,
                                     Set<SPacketPlayerPosLook.EnumFlags> relativeSet, CallbackInfo callbackInfo) {
-        if (!redirectingSetPlayerLocation) {
+        if (!this.redirectingSetPlayerLocation) {
             BlockPos pos = new BlockPos(x, y, z);
             // If the player is being teleported to ship space then we have to stop it.
             if (PhysicsChunkManager.isLikelyShipChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
                 callbackInfo.cancel();
-                redirectingSetPlayerLocation = true;
-                World world = player.getEntityWorld();
+                this.redirectingSetPlayerLocation = true;
+                World world = this.player.getEntityWorld();
                 PhysicsWrapperEntity physicsEntity = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(world,
                         pos);
                 if (physicsEntity != null) {
@@ -452,12 +452,12 @@ public abstract class MixinNetHandlerPlayServer {
                     // Now call this again with the transformed position.
                     // player.sendMessage(new TextComponentString("Transformed the player tp from <"
                     // + x + ":" + y + ":" + z + "> to" + tpPos));
-                    thisAsNetHandler.setPlayerLocation(tpPos.X, tpPos.Y, tpPos.Z, yaw, pitch, relativeSet);
+                    this.thisAsNetHandler.setPlayerLocation(tpPos.X, tpPos.Y, tpPos.Z, yaw, pitch, relativeSet);
                 } else {
-                    player.sendMessage(new TextComponentString(
+                    this.player.sendMessage(new TextComponentString(
                             "Tried teleporting you to an unloaded ship; teleportation canceled."));
                 }
-                redirectingSetPlayerLocation = false;
+                this.redirectingSetPlayerLocation = false;
             }
         }
     }

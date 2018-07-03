@@ -53,11 +53,11 @@ public interface ITransformablePacket {
      * @param callingFromSponge
      */
     default void doPreProcessing(INetHandlerPlayServer server, boolean callingFromSponge) {
-        if (isPacketOnMainThread(server, callingFromSponge)) {
+        if (this.isPacketOnMainThread(server, callingFromSponge)) {
             // System.out.println("Pre packet process");
             NetHandlerPlayServer serverHandler = (NetHandlerPlayServer) server;
             EntityPlayerMP player = serverHandler.player;
-            PhysicsWrapperEntity wrapper = getPacketParent(serverHandler);
+            PhysicsWrapperEntity wrapper = this.getPacketParent(serverHandler);
             if (wrapper != null && wrapper.getPhysicsObject().getShipTransformationManager() != null) {
                 ISubspaceProvider worldProvider = ISubspaceProvider.class.cast(player.getServerWorld());
                 ISubspace worldSubspace = worldProvider.getSubspace();
@@ -77,10 +77,10 @@ public interface ITransformablePacket {
      * @param callingFromSponge
      */
     default void doPostProcessing(INetHandlerPlayServer server, boolean callingFromSponge) {
-        if (isPacketOnMainThread(server, callingFromSponge)) {
+        if (this.isPacketOnMainThread(server, callingFromSponge)) {
             NetHandlerPlayServer serverHandler = (NetHandlerPlayServer) server;
             EntityPlayerMP player = serverHandler.player;
-            PhysicsWrapperEntity wrapper = getPacketParent(serverHandler);
+            PhysicsWrapperEntity wrapper = this.getPacketParent(serverHandler);
             // I don't care what happened to that ship in the time between, we must restore
             // the player to their proper coordinates.
             ISubspaceProvider worldProvider = ISubspaceProvider.class.cast(player.getServerWorld());

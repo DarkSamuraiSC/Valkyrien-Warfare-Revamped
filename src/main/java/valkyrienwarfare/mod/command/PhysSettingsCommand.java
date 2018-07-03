@@ -35,7 +35,7 @@ import java.util.List;
 
 public class PhysSettingsCommand extends CommandBase {
 
-    public static final List<String> COMPLETED_OPTIONS = new ArrayList<String>();
+    public static final List<String> COMPLETED_OPTIONS = new ArrayList<>();
 
     static {
         COMPLETED_OPTIONS.add("gravityvector");
@@ -193,7 +193,7 @@ public class PhysSettingsCommand extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
         if (args.length == 1) {
-            List<String> possibleArgs = new ArrayList<String>(COMPLETED_OPTIONS);
+            List<String> possibleArgs = new ArrayList<>(COMPLETED_OPTIONS);
             for (Iterator<String> iterator = possibleArgs.iterator(); iterator.hasNext(); ) { //Don't like this, but I have to because concurrentmodificationexception
                 if (!iterator.next().startsWith(args[0])) {
                     iterator.remove();

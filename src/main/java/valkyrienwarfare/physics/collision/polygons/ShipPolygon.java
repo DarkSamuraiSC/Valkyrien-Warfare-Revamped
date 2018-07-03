@@ -29,8 +29,8 @@ public class ShipPolygon extends Polygon {
 
     public ShipPolygon(AxisAlignedBB bb, ShipTransform transformation, TransformType type, Vector[] norms, PhysicsObject shipFor) {
         super(bb, transformation, type);
-        normals = norms;
-        shipFrom = shipFor;
+        this.normals = norms;
+        this.shipFrom = shipFor;
     }
 
 }

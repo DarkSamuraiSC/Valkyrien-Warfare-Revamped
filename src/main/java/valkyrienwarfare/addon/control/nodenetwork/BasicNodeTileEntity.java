@@ -34,26 +34,26 @@ public abstract class BasicNodeTileEntity extends TileEntity implements IVWNodeP
     private boolean firstUpdate;
 
     public BasicNodeTileEntity() {
-        this.tileNode = new VWNode_TileEntity(this, getMaximumConnections());
+        this.tileNode = new VWNode_TileEntity(this, this.getMaximumConnections());
         this.firstUpdate = true;
-        Graph.integrate(tileNode, Collections.EMPTY_LIST, (graph) -> new GraphData());
+        Graph.integrate(this.tileNode, Collections.EMPTY_LIST, (graph) -> new GraphData());
     }
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
-        SPacketUpdateTileEntity packet = new SPacketUpdateTileEntity(pos, 0, writeToNBT(new NBTTagCompound()));
+        SPacketUpdateTileEntity packet = new SPacketUpdateTileEntity(this.pos, 0, this.writeToNBT(new NBTTagCompound()));
         return packet;
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtCompound());
+        this.readFromNBT(pkt.getNbtCompound());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        tileNode.readFromNBT(compound);
+        this.tileNode.readFromNBT(compound);
     }
 
     @Override
@@ -64,25 +64,25 @@ public abstract class BasicNodeTileEntity extends TileEntity implements IVWNodeP
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound toReturn = super.getUpdateTag();
-        return writeToNBT(toReturn);
+        return this.writeToNBT(toReturn);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        tileNode.writeToNBT(compound);
+        this.tileNode.writeToNBT(compound);
         return super.writeToNBT(compound);
     }
 
     @Override
     public VWNode_TileEntity getNode() {
-        return tileNode;
+        return this.tileNode;
     }
 
     @Override
     public void invalidate() {
         // The Node just got destroyed
         this.tileEntityInvalid = true;
-        VWNode_TileEntity toInvalidate = getNode();
+        VWNode_TileEntity toInvalidate = this.getNode();
         toInvalidate.breakAllConnections();
         toInvalidate.invalidate();
         Graph graph = toInvalidate.getGraph();
@@ -97,14 +97,14 @@ public abstract class BasicNodeTileEntity extends TileEntity implements IVWNodeP
     @Override
     public void validate() {
         this.tileEntityInvalid = false;
-        getNode().validate();
+        this.getNode().validate();
     }
 
     @Override
     public void update() {
-        if (firstUpdate) {
-            firstUpdate = false;
-            init();
+        if (this.firstUpdate) {
+            this.firstUpdate = false;
+            this.init();
         }
     }
 
@@ -116,12 +116,12 @@ public abstract class BasicNodeTileEntity extends TileEntity implements IVWNodeP
     }
 
     private void init() {
-        tileNode.getGraph().addNeighours(tileNode, tileNode.getNeighbours());
+        this.tileNode.getGraph().addNeighours(this.tileNode, this.tileNode.getNeighbours());
     }
 
     @Override
     public Iterable<IVWNode> getNetworkedConnections() {
-        Iterator<GraphObject> objects = tileNode.getGraph().getObjects().iterator();
+        Iterator<GraphObject> objects = this.tileNode.getGraph().getObjects().iterator();
         Iterator<IVWNode> nodes = new IteratorCaster(objects);
         return new Iterable<IVWNode>() {
             @Override
@@ -137,7 +137,7 @@ public abstract class BasicNodeTileEntity extends TileEntity implements IVWNodeP
         private final int uid;
 
         public GraphData() {
-            uid = ++sUid;
+            this.uid = ++sUid;
         }
 
         public GraphData(int uid) {
@@ -146,7 +146,7 @@ public abstract class BasicNodeTileEntity extends TileEntity implements IVWNodeP
 
         @Override
         public GraphData mergeWith(GraphData other) {
-            return new GraphData(uid + other.uid);
+            return new GraphData(this.uid + other.uid);
         }
 
         @Override
@@ -155,7 +155,7 @@ public abstract class BasicNodeTileEntity extends TileEntity implements IVWNodeP
         }
 
         public int getUid() {
-            return uid;
+            return this.uid;
         }
     }
 
@@ -168,12 +168,12 @@ public abstract class BasicNodeTileEntity extends TileEntity implements IVWNodeP
 
         @Override
         public boolean hasNext() {
-            return toCast.hasNext();
+            return this.toCast.hasNext();
         }
 
         @Override
         public IVWNode next() {
-            return (IVWNode) toCast.next();
+            return (IVWNode) this.toCast.next();
         }
     }
 

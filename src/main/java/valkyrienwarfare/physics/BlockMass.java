@@ -31,11 +31,11 @@ public class BlockMass {
     // 80N, Something like ~ 20lbs
     private final static double defaultMass = 50D;
     public static BlockMass basicMass = new BlockMass();
-    public HashMap<Block, Double> blockToMass = new HashMap<Block, Double>();
-    public HashMap<Material, Double> materialMass = new HashMap<Material, Double>();
+    public HashMap<Block, Double> blockToMass = new HashMap<>();
+    public HashMap<Material, Double> materialMass = new HashMap<>();
 
     public BlockMass() {
-        generateMaterialMasses();
+        this.generateMaterialMasses();
     }
 
     public static void registerBlockMass(Block block, double mass) {
@@ -43,42 +43,42 @@ public class BlockMass {
     }
 
     private void generateMaterialMasses() {
-        materialMass.put(Material.AIR, 0D);
-        materialMass.put(Material.ANVIL, 200D);
-        materialMass.put(Material.BARRIER, 0D);
-        materialMass.put(Material.CACTUS, 15D);
-        materialMass.put(Material.CAKE, 10D);
-        materialMass.put(Material.CARPET, 5D);
-        materialMass.put(Material.CIRCUITS, 15D);
-        materialMass.put(Material.CLAY, 40D);
-        materialMass.put(Material.CLOTH, 20D);
-        materialMass.put(Material.CORAL, 70D);
-        materialMass.put(Material.CRAFTED_SNOW, 20D);
-        materialMass.put(Material.DRAGON_EGG, 20D);
-        materialMass.put(Material.FIRE, 0D);
-        materialMass.put(Material.GLASS, 20D);
-        materialMass.put(Material.GOURD, 50D);
-        materialMass.put(Material.GRASS, 30D);
-        materialMass.put(Material.GROUND, 70D);
-        materialMass.put(Material.ICE, 50D);
-        materialMass.put(Material.IRON, 250D);
-        materialMass.put(Material.LAVA, 0D);
-        materialMass.put(Material.LEAVES, 10D);
-        materialMass.put(Material.PACKED_ICE, 40D);
-        materialMass.put(Material.PISTON, 15D);
-        materialMass.put(Material.PLANTS, 10D);
-        materialMass.put(Material.PORTAL, 0D);
-        materialMass.put(Material.REDSTONE_LIGHT, 10D);
-        materialMass.put(Material.ROCK, 220D);
-        materialMass.put(Material.SAND, 45D);
-        materialMass.put(Material.SNOW, 20D);
-        materialMass.put(Material.SPONGE, 20D);
-        materialMass.put(Material.STRUCTURE_VOID, 0D);
-        materialMass.put(Material.TNT, 30D);
-        materialMass.put(Material.VINE, 5D);
-        materialMass.put(Material.WATER, 0D);
-        materialMass.put(Material.WEB, 10D);
-        materialMass.put(Material.WOOD, 25D);
+        this.materialMass.put(Material.AIR, 0D);
+        this.materialMass.put(Material.ANVIL, 200D);
+        this.materialMass.put(Material.BARRIER, 0D);
+        this.materialMass.put(Material.CACTUS, 15D);
+        this.materialMass.put(Material.CAKE, 10D);
+        this.materialMass.put(Material.CARPET, 5D);
+        this.materialMass.put(Material.CIRCUITS, 15D);
+        this.materialMass.put(Material.CLAY, 40D);
+        this.materialMass.put(Material.CLOTH, 20D);
+        this.materialMass.put(Material.CORAL, 70D);
+        this.materialMass.put(Material.CRAFTED_SNOW, 20D);
+        this.materialMass.put(Material.DRAGON_EGG, 20D);
+        this.materialMass.put(Material.FIRE, 0D);
+        this.materialMass.put(Material.GLASS, 20D);
+        this.materialMass.put(Material.GOURD, 50D);
+        this.materialMass.put(Material.GRASS, 30D);
+        this.materialMass.put(Material.GROUND, 70D);
+        this.materialMass.put(Material.ICE, 50D);
+        this.materialMass.put(Material.IRON, 250D);
+        this.materialMass.put(Material.LAVA, 0D);
+        this.materialMass.put(Material.LEAVES, 10D);
+        this.materialMass.put(Material.PACKED_ICE, 40D);
+        this.materialMass.put(Material.PISTON, 15D);
+        this.materialMass.put(Material.PLANTS, 10D);
+        this.materialMass.put(Material.PORTAL, 0D);
+        this.materialMass.put(Material.REDSTONE_LIGHT, 10D);
+        this.materialMass.put(Material.ROCK, 220D);
+        this.materialMass.put(Material.SAND, 45D);
+        this.materialMass.put(Material.SNOW, 20D);
+        this.materialMass.put(Material.SPONGE, 20D);
+        this.materialMass.put(Material.STRUCTURE_VOID, 0D);
+        this.materialMass.put(Material.TNT, 30D);
+        this.materialMass.put(Material.VINE, 5D);
+        this.materialMass.put(Material.WATER, 0D);
+        this.materialMass.put(Material.WEB, 10D);
+        this.materialMass.put(Material.WOOD, 25D);
     }
 
     public double getMassFromState(IBlockState state, BlockPos pos, World world) {
@@ -86,22 +86,22 @@ public class BlockMass {
         if (block instanceof IBlockMassProvider) {
             return ((IBlockMassProvider) block).getBlockMass(world, pos, state);
         } else {
-            Double fromMap = blockToMass.get(block);
+            Double fromMap = this.blockToMass.get(block);
             if (fromMap != null) {
                 return fromMap.doubleValue();
             } else {
-                Double newMass = generateMassForBlock(block);
-                blockToMass.put(block, newMass);
+                Double newMass = this.generateMassForBlock(block);
+                this.blockToMass.put(block, newMass);
                 return newMass;
             }
         }
     }
 
     public double getMassFromMaterial(Material material) {
-        Double mass = materialMass.get(material);
+        Double mass = this.materialMass.get(material);
         if (mass == null) {
             mass = defaultMass;
-            materialMass.put(material, mass);
+            this.materialMass.put(material, mass);
         }
         return mass;
     }
@@ -112,7 +112,7 @@ public class BlockMass {
         }
         Material material = block.blockMaterial;
 
-        return getMassFromMaterial(material);
+        return this.getMassFromMaterial(material);
         //Old formula
 //		double hardness = block.blockHardness;
 //		double resistance = block.blockResistance;

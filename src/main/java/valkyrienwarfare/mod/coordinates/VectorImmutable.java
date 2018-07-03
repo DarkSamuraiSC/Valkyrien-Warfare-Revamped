@@ -50,19 +50,19 @@ public class VectorImmutable {
     }
 
     public double getX() {
-        return x;
+        return this.x;
     }
 
     public double getY() {
-        return y;
+        return this.y;
     }
 
     public double getZ() {
-        return z;
+        return this.z;
     }
 
     public Vector createMutibleVectorCopy() {
-        return new Vector(x, y, z);
+        return new Vector(this.x, this.y, this.z);
     }
 
     public void writeToByteBuf(ByteBuf bufToWrite) {

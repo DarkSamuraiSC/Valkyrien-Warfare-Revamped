@@ -34,12 +34,12 @@ public abstract class ImplNodeControllerTileEntity extends BasicNodeTileEntity i
 
     @Override
     public int getPriority() {
-        return priority;
+        return this.priority;
     }
 
     @Override
     public void setPriority(int newPriority) {
-        priority = newPriority;
+        this.priority = newPriority;
     }
 
     @Override
@@ -50,18 +50,18 @@ public abstract class ImplNodeControllerTileEntity extends BasicNodeTileEntity i
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        priority = compound.getInteger("priority");
+        this.priority = compound.getInteger("priority");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound = super.writeToNBT(compound);
-        compound.setInteger("priority", priority);
+        compound.setInteger("priority", this.priority);
         return compound;
     }
 
     @Override
     public int hashCode() {
-        return getNodePos().hashCode();
+        return this.getNodePos().hashCode();
     }
 }

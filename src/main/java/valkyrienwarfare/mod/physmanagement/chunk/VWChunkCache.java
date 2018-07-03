@@ -39,48 +39,48 @@ public class VWChunkCache {
     private boolean allLoaded = true;
 
     public VWChunkCache(World world, int mnX, int mnZ, int mxX, int mxZ) {
-        worldFor = world;
-        minChunkX = mnX >> 4;
-        minChunkZ = mnZ >> 4;
-        maxChunkX = mxX >> 4;
-        maxChunkZ = mxZ >> 4;
-        cachedChunks = new Chunk[maxChunkX - minChunkX + 1][maxChunkZ - minChunkZ + 1];
-        isChunkLoaded = new boolean[maxChunkX - minChunkX + 1][maxChunkZ - minChunkZ + 1];
-        for (int x = minChunkX; x <= maxChunkX; x++) {
-            for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                cachedChunks[x - minChunkX][z - minChunkZ] = world.getChunkFromChunkCoords(x, z);
-                isChunkLoaded[x - minChunkX][z - minChunkZ] = !cachedChunks[x - minChunkX][z - minChunkZ].isEmpty();
-                if (!isChunkLoaded[x - minChunkX][z - minChunkZ]) {
-                    allLoaded = false;
+        this.worldFor = world;
+        this.minChunkX = mnX >> 4;
+        this.minChunkZ = mnZ >> 4;
+        this.maxChunkX = mxX >> 4;
+        this.maxChunkZ = mxZ >> 4;
+        this.cachedChunks = new Chunk[this.maxChunkX - this.minChunkX + 1][this.maxChunkZ - this.minChunkZ + 1];
+        this.isChunkLoaded = new boolean[this.maxChunkX - this.minChunkX + 1][this.maxChunkZ - this.minChunkZ + 1];
+        for (int x = this.minChunkX; x <= this.maxChunkX; x++) {
+            for (int z = this.minChunkZ; z <= this.maxChunkZ; z++) {
+                this.cachedChunks[x - this.minChunkX][z - this.minChunkZ] = world.getChunkFromChunkCoords(x, z);
+                this.isChunkLoaded[x - this.minChunkX][z - this.minChunkZ] = !this.cachedChunks[x - this.minChunkX][z - this.minChunkZ].isEmpty();
+                if (!this.isChunkLoaded[x - this.minChunkX][z - this.minChunkZ]) {
+                    this.allLoaded = false;
                 }
             }
         }
     }
 
     public VWChunkCache(World world, Chunk[][] toCache) {
-        worldFor = world;
-        minChunkX = toCache[0][0].x;
-        minChunkZ = toCache[0][0].z;
-        maxChunkX = toCache[toCache.length - 1][toCache[0].length - 1].x;
-        maxChunkZ = toCache[toCache.length - 1][toCache[0].length - 1].z;
-        isChunkLoaded = new boolean[maxChunkX - minChunkX + 1][maxChunkZ - minChunkZ + 1];
-        cachedChunks = toCache.clone();
+        this.worldFor = world;
+        this.minChunkX = toCache[0][0].x;
+        this.minChunkZ = toCache[0][0].z;
+        this.maxChunkX = toCache[toCache.length - 1][toCache[0].length - 1].x;
+        this.maxChunkZ = toCache[toCache.length - 1][toCache[0].length - 1].z;
+        this.isChunkLoaded = new boolean[this.maxChunkX - this.minChunkX + 1][this.maxChunkZ - this.minChunkZ + 1];
+        this.cachedChunks = toCache.clone();
     }
 
     @Nullable
     public TileEntity getTileEntity(BlockPos pos) {
-        return getTileEntity(pos, Chunk.EnumCreateEntityType.QUEUED);
+        return this.getTileEntity(pos, Chunk.EnumCreateEntityType.QUEUED);
     }
 
     @Nullable
     public TileEntity getTileEntity(BlockPos pos, Chunk.EnumCreateEntityType type) {
         int i = (pos.getX() >> 4) - this.minChunkX;
         int j = (pos.getZ() >> 4) - this.minChunkZ;
-        if (i < 0 || i >= cachedChunks.length || j < 0 || j >= cachedChunks[i].length)
+        if (i < 0 || i >= this.cachedChunks.length || j < 0 || j >= this.cachedChunks[i].length)
             return null;
-        if (cachedChunks[i][j] == null)
+        if (this.cachedChunks[i][j] == null)
             return null;
-        TileEntity tileEntity = cachedChunks[i][j].getTileEntity(pos, type);
+        TileEntity tileEntity = this.cachedChunks[i][j].getTileEntity(pos, type);
         if (tileEntity == null) {
             // TODO: Re-enable this for debug testing
             // System.err.println("Physics Thread got a null TileEntity! Maybe it wasn't supposed to?");
@@ -89,25 +89,25 @@ public class VWChunkCache {
     }
 
     private boolean hasChunkAt(int chunkX, int chunkZ) {
-        int relX = chunkX - minChunkX;
-        int relZ = chunkZ - minChunkZ;
-        return relX >= 0 && relX < cachedChunks.length && relZ >= 0 && relZ < cachedChunks[0].length;
+        int relX = chunkX - this.minChunkX;
+        int relZ = chunkZ - this.minChunkZ;
+        return relX >= 0 && relX < this.cachedChunks.length && relZ >= 0 && relZ < this.cachedChunks[0].length;
     }
 
     public Chunk getChunkAt(int x, int z) {
-        return cachedChunks[x - minChunkX][z - minChunkZ];
+        return this.cachedChunks[x - this.minChunkX][z - this.minChunkZ];
     }
 
     public IBlockState getBlockState(BlockPos pos) {
-        Chunk chunkForPos = cachedChunks[(pos.getX() >> 4) - minChunkX][(pos.getZ() >> 4) - minChunkZ];
+        Chunk chunkForPos = this.cachedChunks[(pos.getX() >> 4) - this.minChunkX][(pos.getZ() >> 4) - this.minChunkZ];
         return chunkForPos.getBlockState(pos);
     }
 
     public IBlockState getBlockState(int x, int y, int z) {
-        if (!hasChunkAt(x >> 4, z >> 4)) {
+        if (!this.hasChunkAt(x >> 4, z >> 4)) {
             return Blocks.AIR.getDefaultState();
         }
-        Chunk chunkForPos = cachedChunks[(x >> 4) - minChunkX][(z >> 4) - minChunkZ];
+        Chunk chunkForPos = this.cachedChunks[(x >> 4) - this.minChunkX][(z >> 4) - this.minChunkZ];
         return chunkForPos.getBlockState(x, y, z);
     }
 

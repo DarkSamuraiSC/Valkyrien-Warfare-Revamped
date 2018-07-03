@@ -61,20 +61,20 @@ public class PhysObjectRenderManager {
     }
 
     public void updateOffsetPos(BlockPos newPos) {
-        offsetPos = newPos;
+        this.offsetPos = newPos;
     }
 
     public void renderBlockLayer(BlockRenderLayer layerToRender, double partialTicks, int pass) {
-        if (renderChunks == null) {
-            if (!parent.areShipChunksFullyLoaded()) {
+        if (this.renderChunks == null) {
+            if (!this.parent.areShipChunksFullyLoaded()) {
                 return;
             }
-            renderChunks = new PhysRenderChunk[parent.getOwnedChunks().getChunkLengthX()][parent.getOwnedChunks()
+            this.renderChunks = new PhysRenderChunk[this.parent.getOwnedChunks().getChunkLengthX()][this.parent.getOwnedChunks()
                     .getChunkLengthZ()];
-            for (int xChunk = 0; xChunk < parent.getOwnedChunks().getChunkLengthX(); xChunk++) {
-                for (int zChunk = 0; zChunk < parent.getOwnedChunks().getChunkLengthZ(); zChunk++) {
-                    renderChunks[xChunk][zChunk] = new PhysRenderChunk(parent, parent.getChunkCache()
-                            .getChunkAt(xChunk + parent.getOwnedChunks().getMinX(), zChunk + parent.getOwnedChunks().getMinZ()));
+            for (int xChunk = 0; xChunk < this.parent.getOwnedChunks().getChunkLengthX(); xChunk++) {
+                for (int zChunk = 0; zChunk < this.parent.getOwnedChunks().getChunkLengthZ(); zChunk++) {
+                    this.renderChunks[xChunk][zChunk] = new PhysRenderChunk(this.parent, this.parent.getChunkCache()
+                            .getChunkAt(xChunk + this.parent.getOwnedChunks().getMinX(), zChunk + this.parent.getOwnedChunks().getMinZ()));
                 }
             }
         }
@@ -89,8 +89,8 @@ public class PhysObjectRenderManager {
         // j, (float) k);
         // GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-        setupTranslation(partialTicks);
-        for (PhysRenderChunk[] chunkArray : renderChunks) {
+        this.setupTranslation(partialTicks);
+        for (PhysRenderChunk[] chunkArray : this.renderChunks) {
             for (PhysRenderChunk renderChunk : chunkArray) {
                 renderChunk.renderBlockLayer(layerToRender, partialTicks, pass);
             }
@@ -101,8 +101,8 @@ public class PhysObjectRenderManager {
     }
 
     public void killRenderers() {
-        if (renderChunks != null) {
-            for (PhysRenderChunk[] chunks : renderChunks) {
+        if (this.renderChunks != null) {
+            for (PhysRenderChunk[] chunks : this.renderChunks) {
                 for (PhysRenderChunk chunk : chunks) {
                     chunk.killRenderChunk();
                 }
@@ -111,7 +111,7 @@ public class PhysObjectRenderManager {
     }
 
     public void updateRange(int minX, int minY, int minZ, int maxX, int maxY, int maxZ, boolean updateImmediately) {
-        if (renderChunks == null || parent == null || parent.getOwnedChunks() == null) {
+        if (this.renderChunks == null || this.parent == null || this.parent.getOwnedChunks() == null) {
             return;
         }
 
@@ -133,11 +133,11 @@ public class PhysObjectRenderManager {
             for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
                 // TODO: Fix this render bug
                 try {
-                    if (chunkX >= parent.getOwnedChunks().getMinX() && chunkZ >= parent.getOwnedChunks().getMinZ()
-                            && chunkX - parent.getOwnedChunks().getMinX() < renderChunks.length
-                            && chunkZ - parent.getOwnedChunks().getMinZ() < renderChunks[0].length) {
-                        PhysRenderChunk renderChunk = renderChunks[chunkX - parent.getOwnedChunks().getMinX()][chunkZ
-                                - parent.getOwnedChunks().getMinZ()];
+                    if (chunkX >= this.parent.getOwnedChunks().getMinX() && chunkZ >= this.parent.getOwnedChunks().getMinZ()
+                            && chunkX - this.parent.getOwnedChunks().getMinX() < this.renderChunks.length
+                            && chunkZ - this.parent.getOwnedChunks().getMinZ() < this.renderChunks[0].length) {
+                        PhysRenderChunk renderChunk = this.renderChunks[chunkX - this.parent.getOwnedChunks().getMinX()][chunkZ
+                                - this.parent.getOwnedChunks().getMinZ()];
                         if (renderChunk != null) {
                             renderChunk.updateLayers(minBlockArrayY, maxBlockArrayY);
                         } else {
@@ -157,11 +157,11 @@ public class PhysObjectRenderManager {
 
     public boolean shouldRender() {
         ICamera camera = ClientProxy.lastCamera;
-        return camera == null || camera.isBoundingBoxInFrustum(parent.getShipBoundingBox());
+        return camera == null || camera.isBoundingBoxInFrustum(this.parent.getShipBoundingBox());
     }
 
     public void setupTranslation(double partialTicks) {
-        updateTranslation(partialTicks);
+        this.updateTranslation(partialTicks);
         // if(curPartialTick!=partialTicks){
         // updateTranslation(partialTicks);
         // }else{
@@ -171,9 +171,9 @@ public class PhysObjectRenderManager {
     }
 
     public void updateTranslation(double partialTicks) {
-        PhysicsWrapperEntity entity = parent.getWrapperEntity();
+        PhysicsWrapperEntity entity = this.parent.getWrapperEntity();
         Vector centerOfRotation = entity.getPhysicsObject().getCenterCoord();
-        curPartialTick = partialTicks;
+        this.curPartialTick = partialTicks;
 
         double moddedX = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks;
         double moddedY = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks;
@@ -188,19 +188,19 @@ public class PhysObjectRenderManager {
         double p2 = Minecraft.getMinecraft().player.lastTickPosZ
                 + (Minecraft.getMinecraft().player.posZ - Minecraft.getMinecraft().player.lastTickPosZ) * partialTicks;
 
-        Quaternion smoothRotation = getSmoothRotationQuat(partialTicks);
+        Quaternion smoothRotation = this.getSmoothRotationQuat(partialTicks);
         double[] radians = smoothRotation.toRadians();
 
         double moddedPitch = Math.toDegrees(radians[0]);
         double moddedYaw = Math.toDegrees(radians[1]);
         double moddedRoll = Math.toDegrees(radians[2]);
 
-        parent.getShipTransformationManager().updateRenderTransform(moddedX, moddedY, moddedZ, moddedPitch, moddedYaw, moddedRoll);
+        this.parent.getShipTransformationManager().updateRenderTransform(moddedX, moddedY, moddedZ, moddedPitch, moddedYaw, moddedRoll);
 
-        if (offsetPos != null) {
-            double offsetX = offsetPos.getX() - centerOfRotation.X;
-            double offsetY = offsetPos.getY() - centerOfRotation.Y;
-            double offsetZ = offsetPos.getZ() - centerOfRotation.Z;
+        if (this.offsetPos != null) {
+            double offsetX = this.offsetPos.getX() - centerOfRotation.X;
+            double offsetY = this.offsetPos.getY() - centerOfRotation.Y;
+            double offsetZ = this.offsetPos.getZ() - centerOfRotation.Z;
 
             GlStateManager.translate(-p0 + moddedX, -p1 + moddedY, -p2 + moddedZ);
             GL11.glRotated(moddedPitch, 1D, 0, 0);
@@ -212,17 +212,17 @@ public class PhysObjectRenderManager {
     }
 
     public Quaternion getSmoothRotationQuat(double partialTick) {
-        Quaternion oneTickBefore = parent.getShipTransformationManager().getPrevTickTransform()
+        Quaternion oneTickBefore = this.parent.getShipTransformationManager().getPrevTickTransform()
                 .createRotationQuaternion(TransformType.SUBSPACE_TO_GLOBAL);
-        Quaternion nextQuat = parent.getShipTransformationManager().getCurrentTickTransform()
+        Quaternion nextQuat = this.parent.getShipTransformationManager().getCurrentTickTransform()
                 .createRotationQuaternion(TransformType.SUBSPACE_TO_GLOBAL);
         return Quaternion.slerpInterpolate(oneTickBefore, nextQuat, partialTick);
     }
 
     public void inverseTransform(double partialTicks) {
-        PhysicsWrapperEntity entity = parent.getWrapperEntity();
+        PhysicsWrapperEntity entity = this.parent.getWrapperEntity();
         Vector centerOfRotation = entity.getPhysicsObject().getCenterCoord();
-        curPartialTick = partialTicks;
+        this.curPartialTick = partialTicks;
 
         double moddedX = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks;
         double moddedY = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks;
@@ -234,7 +234,7 @@ public class PhysObjectRenderManager {
         double p2 = Minecraft.getMinecraft().player.lastTickPosZ
                 + (Minecraft.getMinecraft().player.posZ - Minecraft.getMinecraft().player.lastTickPosZ) * partialTicks;
 
-        Quaternion smoothRotation = getSmoothRotationQuat(partialTicks);
+        Quaternion smoothRotation = this.getSmoothRotationQuat(partialTicks);
         double[] radians = smoothRotation.toRadians();
 
         double moddedPitch = Math.toDegrees(radians[0]);
@@ -244,10 +244,10 @@ public class PhysObjectRenderManager {
         // parent.coordTransform.updateRenderMatrices(moddedX, moddedY, moddedZ,
         // moddedPitch, moddedYaw, moddedRoll);
 
-        if (offsetPos != null) {
-            double offsetX = offsetPos.getX() - centerOfRotation.X;
-            double offsetY = offsetPos.getY() - centerOfRotation.Y;
-            double offsetZ = offsetPos.getZ() - centerOfRotation.Z;
+        if (this.offsetPos != null) {
+            double offsetX = this.offsetPos.getX() - centerOfRotation.X;
+            double offsetY = this.offsetPos.getY() - centerOfRotation.Y;
+            double offsetZ = this.offsetPos.getZ() - centerOfRotation.Z;
 
             GL11.glTranslated(-offsetX, -offsetY, -offsetZ);
             GL11.glRotated(-moddedRoll, 0, 0, 1D);

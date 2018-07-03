@@ -38,16 +38,16 @@ public class EntityCollisionObject {
     private double velDot;
 
     public EntityCollisionObject(Polygon movable_, Polygon stationary, Vector axes, Vector entityVel) {
-        axis = axes;
-        movable = movable_;
-        fixed = stationary;
-        entityVelocity = entityVel;
-        originallyCollided = false;
-        generateCollision();
+        this.axis = axes;
+        this.movable = movable_;
+        this.fixed = stationary;
+        this.entityVelocity = entityVel;
+        this.originallyCollided = false;
+        this.generateCollision();
     }
 
     public void generateCollision() {
-        velDot = -entityVelocity.dot(axis);
+        this.velDot = -this.entityVelocity.dot(this.axis);
         // playerMinMax =
         // BigBastardMath.getMinMaxOfArray(movable.getProjectionOnVector(axis));
         // blockMinMax =
@@ -56,10 +56,10 @@ public class EntityCollisionObject {
         // double movMinFixMax = playerMinMax[1]-blockMinMax[0];
 
         // NOTE: This code isnt compatible or readable, but its faster
-        double dot = axis.dot(movable.getVertices()[0]);
+        double dot = this.axis.dot(this.movable.getVertices()[0]);
         double playerMin = dot, playerMax = dot;
-        for (int i = 1; i < movable.getVertices().length; i++) {
-            dot = axis.dot(movable.getVertices()[i]);
+        for (int i = 1; i < this.movable.getVertices().length; i++) {
+            dot = this.axis.dot(this.movable.getVertices()[i]);
             if (dot < playerMin) {
                 playerMin = dot;
             }
@@ -68,10 +68,10 @@ public class EntityCollisionObject {
             }
         }
 
-        dot = axis.dot(fixed.getVertices()[0]);
+        dot = this.axis.dot(this.fixed.getVertices()[0]);
         double blockMin = dot, blockMax = dot;
-        for (int i = 1; i < fixed.getVertices().length; i++) {
-            dot = axis.dot(fixed.getVertices()[i]);
+        for (int i = 1; i < this.fixed.getVertices().length; i++) {
+            dot = this.axis.dot(this.fixed.getVertices()[i]);
             if (dot < blockMin) {
                 blockMin = dot;
             }
@@ -88,56 +88,56 @@ public class EntityCollisionObject {
             // Original position not colliding, use velocity based bastards
             useDefault = false;
         } else {
-            originallyCollided = true;
+            this.originallyCollided = true;
         }
-        if (velDot > 0) {
-            movMaxFixMin -= velDot;
+        if (this.velDot > 0) {
+            movMaxFixMin -= this.velDot;
         } else {
-            movMinFixMax -= velDot;
+            movMinFixMax -= this.velDot;
         }
         if (movMaxFixMin > 0 || movMinFixMax < 0) {
-            seperated = true;
-            penetrationDistance = 0.0D;
+            this.seperated = true;
+            this.penetrationDistance = 0.0D;
             return;
         }
         // Set the penetration to be the smaller distance
-        if (useDefault || velDot == 0D) {
+        if (useDefault || this.velDot == 0D) {
             if (Math.abs(movMaxFixMin) < Math.abs(movMinFixMax)) {
-                penetrationDistance = movMaxFixMin;
+                this.penetrationDistance = movMaxFixMin;
             } else {
-                penetrationDistance = movMinFixMax;
+                this.penetrationDistance = movMinFixMax;
             }
         } else {
-            if (Math.signum(velDot) != Math.signum(movMinFixMax)) {
-                penetrationDistance = movMinFixMax;
+            if (Math.signum(this.velDot) != Math.signum(movMinFixMax)) {
+                this.penetrationDistance = movMinFixMax;
             } else {
-                penetrationDistance = movMaxFixMin;
+                this.penetrationDistance = movMaxFixMin;
             }
         }
-        seperated = false;
+        this.seperated = false;
     }
 
     public Vector getResponse() {
-        return axis.getProduct(-penetrationDistance);
+        return this.axis.getProduct(-this.penetrationDistance);
     }
 
     public Vector getCollisionNormal() {
-        return axis;
+        return this.axis;
     }
 
     public double getCollisionPenetrationDistance() {
-        return penetrationDistance;
+        return this.penetrationDistance;
     }
 
     public boolean arePolygonsSeperated() {
-        return seperated;
+        return this.seperated;
     }
 
     public boolean werePolygonsInitiallyColliding() {
-        return originallyCollided;
+        return this.originallyCollided;
     }
 
     public double getVelDot() {
-        return velDot;
+        return this.velDot;
     }
 }

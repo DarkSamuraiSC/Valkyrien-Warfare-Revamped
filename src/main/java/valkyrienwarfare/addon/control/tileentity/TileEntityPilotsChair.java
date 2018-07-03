@@ -34,14 +34,14 @@ public class TileEntityPilotsChair extends ImplTileEntityPilotable {
 
     @Override
     void processControlMessage(PilotControlsMessage message, EntityPlayerMP sender) {
-        IBlockState blockState = getWorld().getBlockState(getPos());
+        IBlockState blockState = this.getWorld().getBlockState(this.getPos());
         if (blockState.getBlock() == ValkyrienWarfareControl.INSTANCE.vwControlBlocks.pilotsChair) {
-            PhysicsWrapperEntity wrapper = getParentPhysicsEntity();
+            PhysicsWrapperEntity wrapper = this.getParentPhysicsEntity();
             if (wrapper != null) {
-                processCalculationsForControlMessageAndApplyCalculations(wrapper, message, blockState);
+                this.processCalculationsForControlMessageAndApplyCalculations(wrapper, message, blockState);
             }
         } else {
-            setPilotEntity(null);
+            this.setPilotEntity(null);
         }
     }
 
@@ -57,16 +57,16 @@ public class TileEntityPilotsChair extends ImplTileEntityPilotable {
 
     @Override
     public final void onStartTileUsage(EntityPlayer player) {
-        getParentPhysicsEntity().getPhysicsObject().getPhysicsProcessor().actAsArchimedes = true;
+        this.getParentPhysicsEntity().getPhysicsObject().getPhysicsProcessor().actAsArchimedes = true;
     }
 
     @Override
     public final void onStopTileUsage() {
-        getParentPhysicsEntity().getPhysicsObject().getPhysicsProcessor().actAsArchimedes = false;
+        this.getParentPhysicsEntity().getPhysicsObject().getPhysicsProcessor().actAsArchimedes = false;
     }
 
     private final void processCalculationsForControlMessageAndApplyCalculations(PhysicsWrapperEntity wrapper, PilotControlsMessage message, IBlockState state) {
-        BlockPos chairPosition = getPos();
+        BlockPos chairPosition = this.getPos();
         PhysicsObject controlledShip = wrapper.getPhysicsObject();
 
         double pilotPitch = 0D;

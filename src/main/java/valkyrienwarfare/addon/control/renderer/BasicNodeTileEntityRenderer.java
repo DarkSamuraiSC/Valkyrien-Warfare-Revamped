@@ -32,7 +32,7 @@ public class BasicNodeTileEntityRenderer extends TileEntitySpecialRenderer {
     private final Class renderedTileEntityClass;
 
     public BasicNodeTileEntityRenderer(Class toRender) {
-        renderedTileEntityClass = toRender;
+        this.renderedTileEntityClass = toRender;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class BasicNodeTileEntityRenderer extends TileEntitySpecialRenderer {
                     double endY = (startY * 2) - otherPos.getY() - 1.5;
                     double endZ = (startZ * 2) - otherPos.getZ();
 
-                    renderWire(x, y, z, startX, startY, startZ, endX, endY, endZ);
+                    this.renderWire(x, y, z, startX, startY, startZ, endX, endY, endZ);
 
                     // GL11.glEnd();
                     GL11.glPopMatrix();

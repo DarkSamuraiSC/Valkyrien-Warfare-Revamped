@@ -55,8 +55,8 @@ public class EntitySolidball extends EntitySnowball {
             explosion.newBoom(this.getEntityWorld(), null, x, y, z, size, power, damage, blast, false, true);
             explosion.newBoom(this.getEntityWorld(), null, x2, y2, z2, size, power, damage, blast, false, true);
 
-            Pen++;
-            if (Pen > 4) {
+            this.Pen++;
+            if (this.Pen > 4) {
                 this.setDead();
             }
         }
@@ -67,7 +67,7 @@ public class EntitySolidball extends EntitySnowball {
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 
         super.writeToNBT(compound);
-        compound.setInteger("Penetration", Pen);
+        compound.setInteger("Penetration", this.Pen);
         return compound;
     }
 
@@ -75,7 +75,7 @@ public class EntitySolidball extends EntitySnowball {
     public void readFromNBT(NBTTagCompound compound) {
 
         super.readFromNBT(compound);
-        Pen = compound.getInteger("Penetration");
+        this.Pen = compound.getInteger("Penetration");
     }
 
 

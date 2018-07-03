@@ -90,7 +90,7 @@ public class ValkyrienWarfareFTBUtil extends Module {
     public void registerItems(RegistryEvent.Register<Item> event) {
         if (Loader.isModLoaded("ftbutilities")) {
             LOADED = true;
-            event.getRegistry().register(this.airshipClaimer = (ItemAirshipClaimer) new ItemAirshipClaimer().setUnlocalizedName("airshipclaimer").setRegistryName(new ResourceLocation(getModID(), "airshipclaimer")).setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(16));
+            event.getRegistry().register(this.airshipClaimer = (ItemAirshipClaimer) new ItemAirshipClaimer().setUnlocalizedName("airshipclaimer").setRegistryName(new ResourceLocation(this.getModID(), "airshipclaimer")).setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(16));
         } else {
             System.out.println("FTB Utilities not found, skipping integration!");
         }

@@ -47,18 +47,18 @@ public abstract class MixinWorldClient extends World {
             at = @At("HEAD"),
             cancellable = true)
     public void preDoVoidParticles(int posX, int posY, int posZ, CallbackInfo callbackInfo) {
-        if (!hasChanged) {
+        if (!this.hasChanged) {
             int range = 15;
             AxisAlignedBB aabb = new AxisAlignedBB(posX - range, posY - range, posZ - range, posX + range, posY + range, posZ + range);
             List<PhysicsWrapperEntity> physEntities = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getManagerForWorld(WorldClient.class.cast(this)).getNearbyPhysObjects(aabb);
-            hasChanged = true;
+            this.hasChanged = true;
             for (PhysicsWrapperEntity wrapper : physEntities) {
                 Vector playPosInShip = new Vector(posX + .5D, posY + .5D, posZ + .5D);
 //                RotationMatrices.applyTransform(wrapper.wrapping.coordTransform.wToLTransform, playPosInShip);
                 wrapper.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().transform(playPosInShip, TransformType.GLOBAL_TO_SUBSPACE);
                 this.doVoidFogParticles(MathHelper.floor(playPosInShip.X), MathHelper.floor(playPosInShip.Y), MathHelper.floor(playPosInShip.Z));
             }
-            hasChanged = false;
+            this.hasChanged = false;
             callbackInfo.cancel();
         }
     }

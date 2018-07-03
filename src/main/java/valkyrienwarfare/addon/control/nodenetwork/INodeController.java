@@ -46,11 +46,11 @@ public interface INodeController extends Comparable<INodeController> {
     // have equal priorities, then we use the BlockPos as a tiebreaker.
     @Override
     default int compareTo(INodeController other) {
-        if (getPriority() != other.getPriority()) {
-            return getPriority() - other.getPriority();
+        if (this.getPriority() != other.getPriority()) {
+            return this.getPriority() - other.getPriority();
         } else {
             // break the tie
-            return getNodePos().compareTo(other.getNodePos());
+            return this.getNodePos().compareTo(other.getNodePos());
         }
     }
 }

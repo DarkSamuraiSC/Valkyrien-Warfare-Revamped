@@ -28,12 +28,12 @@ public class SingeBlockPosDetector extends SpatialDetector {
 
     public SingeBlockPosDetector(BlockPos start, World worldIn, int maximum, boolean checkCorners) {
         super(start, worldIn, maximum, false);
-        startDetection();
+        this.startDetection();
     }
 
     @Override
     public boolean isValidExpansion(int x, int y, int z) {
-        return x == firstBlock.getX() && y == firstBlock.getY() && z == firstBlock.getZ();
+        return x == this.firstBlock.getX() && y == this.firstBlock.getY() && z == this.firstBlock.getZ();
     }
 
 }

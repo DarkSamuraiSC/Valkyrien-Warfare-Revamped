@@ -82,7 +82,7 @@ public class FileHelper {
     }
 
     private static ArrayList<File> files(File dir) {
-        ArrayList<File> files = new ArrayList<File>();
+        ArrayList<File> files = new ArrayList<>();
 
         if (!dir.isDirectory())
             throw new IllegalArgumentException("dir Isn't a Directory! " + dir);
@@ -104,7 +104,7 @@ public class FileHelper {
      * @return The Lines of the given file
      */
     public static String[] getFileContents(String fileName) {
-        ArrayList<String> lines = new ArrayList<String>();
+        ArrayList<String> lines = new ArrayList<>();
         String line = "";
         BufferedReader reader = getFileReader(fileName);
 

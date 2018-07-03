@@ -55,31 +55,31 @@ public class ShipUUIDToPosData extends WorldSavedData {
     }
 
     public ShipPositionData getShipPositionData(UUID shipID) {
-        return dataMap.get(shipID.getMostSignificantBits());
+        return this.dataMap.get(shipID.getMostSignificantBits());
     }
 
     public ShipPositionData getShipPositionData(long mostSigBits) {
-        return dataMap.get(mostSigBits);
+        return this.dataMap.get(mostSigBits);
     }
 
     public void updateShipPosition(PhysicsWrapperEntity wrapper) {
         UUID entityID = wrapper.getPersistentID();
         long key = entityID.getMostSignificantBits();
-        ShipPositionData data = dataMap.get(key);
+        ShipPositionData data = this.dataMap.get(key);
         if (data != null) {
             data.updateData(wrapper);
         } else {
             data = new ShipPositionData(wrapper);
-            dataMap.put(key, data);
+            this.dataMap.put(key, data);
         }
-        markDirty();
+        this.markDirty();
     }
 
     public void removeShipFromMap(PhysicsWrapperEntity wrapper) {
         UUID entityID = wrapper.getPersistentID();
         // TODO: Check if this is safe / correct.
-        dataMap.remove(entityID.getMostSignificantBits());
-        markDirty();
+        this.dataMap.remove(entityID.getMostSignificantBits());
+        this.markDirty();
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ShipUUIDToPosData extends WorldSavedData {
         while (buffer.hasRemaining()) {
             long mostBits = buffer.getLong();
             ShipPositionData data = new ShipPositionData(buffer);
-            dataMap.put(mostBits, data);
+            this.dataMap.put(mostBits, data);
         }
     }
 
@@ -96,9 +96,9 @@ public class ShipUUIDToPosData extends WorldSavedData {
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         // Each ship has 19 floats, and 1 long; that comes out (19 * 4 + 1 * 8) = 84
         // bytes per ship
-        int byteArraySize = dataMap.size() * 84;
+        int byteArraySize = this.dataMap.size() * 84;
         ByteBuffer buffer = ByteBuffer.allocate(byteArraySize);
-        dataMap.forEachEntry((k, v) -> {
+        this.dataMap.forEachEntry((k, v) -> {
             buffer.putLong(k);
             v.writeToByteBuffer(buffer);
             return true;
@@ -113,49 +113,49 @@ public class ShipUUIDToPosData extends WorldSavedData {
         private final float[] lToWTransform;
 
         private ShipPositionData(PhysicsWrapperEntity wrapper) {
-            shipPosition = new Vector(wrapper.posX, wrapper.posY, wrapper.posZ);
-            lToWTransform = RotationMatrices.convertToFloat(wrapper.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().getInternalMatrix(TransformType.SUBSPACE_TO_GLOBAL));
+            this.shipPosition = new Vector(wrapper.posX, wrapper.posY, wrapper.posZ);
+            this.lToWTransform = RotationMatrices.convertToFloat(wrapper.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().getInternalMatrix(TransformType.SUBSPACE_TO_GLOBAL));
         }
 
         private ShipPositionData(ByteBuffer buffer) {
-            shipPosition = new Vector(buffer.getFloat(), buffer.getFloat(), buffer.getFloat());
-            lToWTransform = new float[16];
+            this.shipPosition = new Vector(buffer.getFloat(), buffer.getFloat(), buffer.getFloat());
+            this.lToWTransform = new float[16];
             for (int i = 0; i < 16; i++) {
-                lToWTransform[i] = buffer.getFloat();
+                this.lToWTransform[i] = buffer.getFloat();
             }
         }
 
         private void writeToByteBuffer(ByteBuffer buffer) {
-            buffer.putFloat((float) shipPosition.X);
-            buffer.putFloat((float) shipPosition.Y);
-            buffer.putFloat((float) shipPosition.Z);
+            buffer.putFloat((float) this.shipPosition.X);
+            buffer.putFloat((float) this.shipPosition.Y);
+            buffer.putFloat((float) this.shipPosition.Z);
             for (int i = 0; i < 16; i++) {
-                buffer.putFloat(lToWTransform[i]);
+                buffer.putFloat(this.lToWTransform[i]);
             }
         }
 
         private void updateData(PhysicsWrapperEntity wrapper) {
-            shipPosition.X = wrapper.posX;
-            shipPosition.Y = wrapper.posY;
-            shipPosition.Z = wrapper.posZ;
-            RotationMatrices.convertToFloat(wrapper.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().getInternalMatrix(TransformType.SUBSPACE_TO_GLOBAL), lToWTransform);
+            this.shipPosition.X = wrapper.posX;
+            this.shipPosition.Y = wrapper.posY;
+            this.shipPosition.Z = wrapper.posZ;
+            RotationMatrices.convertToFloat(wrapper.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().getInternalMatrix(TransformType.SUBSPACE_TO_GLOBAL), this.lToWTransform);
         }
 
         public double getPosX() {
-            return shipPosition.X;
+            return this.shipPosition.X;
         }
 
         public double getPosY() {
-            return shipPosition.Y;
+            return this.shipPosition.Y;
         }
 
         public double getPosZ() {
-            return shipPosition.Z;
+            return this.shipPosition.Z;
         }
 
         // Returns a copy of of the lToWTransform as a double array.
         public double[] getLToWTransform() {
-            return RotationMatrices.convertToDouble(lToWTransform);
+            return RotationMatrices.convertToDouble(this.lToWTransform);
         }
     }
 

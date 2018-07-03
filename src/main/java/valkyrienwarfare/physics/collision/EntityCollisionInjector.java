@@ -385,7 +385,7 @@ public class EntityCollisionInjector {
      * with
      */
     public static ArrayList<Polygon> getCollidingPolygonsAndDoBlockCols(Entity entity, Vec3d velocity) {
-        ArrayList<Polygon> collisions = new ArrayList<Polygon>();
+        ArrayList<Polygon> collisions = new ArrayList<>();
         AxisAlignedBB entityBB = entity.getEntityBoundingBox().offset(velocity.x, velocity.y, velocity.z).expand(1, 1,
                 1);
 

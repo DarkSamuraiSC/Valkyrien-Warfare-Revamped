@@ -71,8 +71,8 @@ public abstract class MixinEntity implements IDraggable, ISubspacedEntity {
 
     @Override
     public CoordinateSpaceType currentSubspaceType() {
-        int entityChunkXPosition = ((int) posX) >> 4;
-        int entityChunkZPosition = ((int) posZ) >> 4;
+        int entityChunkXPosition = ((int) this.posX) >> 4;
+        int entityChunkZPosition = ((int) this.posZ) >> 4;
         boolean isInShipChunks = PhysicsChunkManager.isLikelyShipChunk(entityChunkXPosition, entityChunkZPosition);
         if (isInShipChunks) {
             return CoordinateSpaceType.SUBSPACE_COORDINATES;
@@ -83,22 +83,22 @@ public abstract class MixinEntity implements IDraggable, ISubspacedEntity {
 
     @Override
     public Vector createCurrentPositionVector() {
-        return new Vector(posX, posY, posZ);
+        return new Vector(this.posX, this.posY, this.posZ);
     }
 
     @Override
     public Vector createLastTickPositionVector() {
-        return new Vector(thisAsEntity.lastTickPosX, thisAsEntity.lastTickPosY, thisAsEntity.lastTickPosZ);
+        return new Vector(this.thisAsEntity.lastTickPosX, this.thisAsEntity.lastTickPosY, this.thisAsEntity.lastTickPosZ);
     }
 
     @Override
     public Vector createCurrentLookVector() {
-        return new Vector(thisAsEntity.getLookVec());
+        return new Vector(this.thisAsEntity.getLookVec());
     }
 
     @Override
     public Vector createCurrentVelocityVector() {
-        return new Vector(thisAsEntity.motionX, thisAsEntity.motionY, thisAsEntity.motionZ);
+        return new Vector(this.thisAsEntity.motionX, this.thisAsEntity.motionY, this.thisAsEntity.motionZ);
     }
 
     @Override
@@ -108,9 +108,9 @@ public abstract class MixinEntity implements IDraggable, ISubspacedEntity {
         VectorImmutable lookVector = record.getLookDirection();
         VectorImmutable velocityVector = record.getVelocity();
 
-        thisAsEntity.lastTickPosX = coordinatesLastTick.getX();
-        thisAsEntity.lastTickPosY = coordinatesLastTick.getY();
-        thisAsEntity.lastTickPosZ = coordinatesLastTick.getZ();
+        this.thisAsEntity.lastTickPosX = coordinatesLastTick.getX();
+        this.thisAsEntity.lastTickPosY = coordinatesLastTick.getY();
+        this.thisAsEntity.lastTickPosZ = coordinatesLastTick.getZ();
 
         double pitch = VWMath.getPitchFromVectorImmutable(lookVector);
         double yaw = VWMath.getYawFromVectorImmutable(lookVector, pitch);
@@ -118,57 +118,57 @@ public abstract class MixinEntity implements IDraggable, ISubspacedEntity {
         this.rotationPitch = (float) pitch;
         this.rotationYaw = (float) yaw;
 
-        thisAsEntity.setPosition(coordinates.getX(), coordinates.getY(), coordinates.getZ());
+        this.thisAsEntity.setPosition(coordinates.getX(), coordinates.getY(), coordinates.getZ());
     }
 
     @Override
     public int getSubspacedEntityID() {
-        return thisAsEntity.getEntityId();
+        return this.thisAsEntity.getEntityId();
     }
 
     @Override
     public PhysicsWrapperEntity getWorldBelowFeet() {
-        return worldBelowFeet;
+        return this.worldBelowFeet;
     }
 
     @Override
     public void setWorldBelowFeet(PhysicsWrapperEntity toSet) {
-        worldBelowFeet = toSet;
+        this.worldBelowFeet = toSet;
     }
 
     @Override
     public Vector getVelocityAddedToPlayer() {
-        return velocityAddedToPlayer;
+        return this.velocityAddedToPlayer;
     }
 
     @Override
     public void setVelocityAddedToPlayer(Vector toSet) {
-        velocityAddedToPlayer = toSet;
+        this.velocityAddedToPlayer = toSet;
     }
 
     @Override
     public double getYawDifVelocity() {
-        return yawDifVelocity;
+        return this.yawDifVelocity;
     }
 
     @Override
     public void setYawDifVelocity(double toSet) {
-        yawDifVelocity = toSet;
+        this.yawDifVelocity = toSet;
     }
 
     @Override
     public void setCancelNextMove(boolean toSet) {
-        cancelNextMove = toSet;
+        this.cancelNextMove = toSet;
     }
 
     @Override
     public void setForcedRelativeSubspace(PhysicsWrapperEntity toSet) {
-        forcedRelativeWorldBelowFeet = toSet;
+        this.forcedRelativeWorldBelowFeet = toSet;
     }
 
     @Override
     public PhysicsWrapperEntity getForcedSubspaceBelowFeet() {
-        return forcedRelativeWorldBelowFeet;
+        return this.forcedRelativeWorldBelowFeet;
     }
 
     /**
@@ -266,7 +266,7 @@ public abstract class MixinEntity implements IDraggable, ISubspacedEntity {
      */
     @Overwrite
     public double getDistanceSq(BlockPos pos) {
-        double vanilla = pos.getDistance((int) posX, (int) posY, (int) posZ);
+        double vanilla = pos.getDistance((int) this.posX, (int) this.posY, (int) this.posZ);
         if (vanilla < 64.0D) {
             return vanilla;
         } else {
@@ -287,34 +287,34 @@ public abstract class MixinEntity implements IDraggable, ISubspacedEntity {
 
     @Redirect(method = "createRunningParticles", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;floor(D)I", ordinal = 0))
     public int runningParticlesFirstFloor(double d) {
-        PhysicsWrapperEntity worldBelow = thisAsDraggable.getWorldBelowFeet();
+        PhysicsWrapperEntity worldBelow = this.thisAsDraggable.getWorldBelowFeet();
 
         if (worldBelow == null) {
-            searchVector = null;
+            this.searchVector = null;
             return MathHelper.floor(d);
         } else {
-            searchVector = new Vector(this.posX, this.posY - 0.20000000298023224D, this.posZ);
+            this.searchVector = new Vector(this.posX, this.posY - 0.20000000298023224D, this.posZ);
 //            searchVector.transform(worldBelow.wrapping.coordTransform.wToLTransform);
-            worldBelow.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().transform(searchVector, TransformType.GLOBAL_TO_SUBSPACE);
-            return MathHelper.floor(searchVector.X);
+            worldBelow.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().transform(this.searchVector, TransformType.GLOBAL_TO_SUBSPACE);
+            return MathHelper.floor(this.searchVector.X);
         }
     }
 
     @Redirect(method = "createRunningParticles", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;floor(D)I", ordinal = 1))
     public int runningParticlesSecondFloor(double d) {
-        if (searchVector == null) {
+        if (this.searchVector == null) {
             return MathHelper.floor(d);
         } else {
-            return MathHelper.floor(searchVector.Y);
+            return MathHelper.floor(this.searchVector.Y);
         }
     }
 
     @Redirect(method = "createRunningParticles", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;floor(D)I", ordinal = 2))
     public int runningParticlesThirdFloor(double d) {
-        if (searchVector == null) {
+        if (this.searchVector == null) {
             return MathHelper.floor(d);
         } else {
-            return MathHelper.floor(searchVector.Z);
+            return MathHelper.floor(this.searchVector.Z);
         }
     }
 }

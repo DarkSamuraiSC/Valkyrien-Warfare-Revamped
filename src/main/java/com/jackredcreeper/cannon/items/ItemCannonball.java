@@ -31,8 +31,8 @@ public class ItemCannonball extends Item {
 
     public ItemCannonball() {
 
-        setUnlocalizedName(CannonModReference.ModItems.CANNONBALL.getUnlocalizedName());
-        setRegistryName(CannonModReference.ModItems.CANNONBALL.getRegistryName());
+        this.setUnlocalizedName(CannonModReference.ModItems.CANNONBALL.getUnlocalizedName());
+        this.setRegistryName(CannonModReference.ModItems.CANNONBALL.getRegistryName());
 
         this.setCreativeTab(CreativeTabs.COMBAT);
     }

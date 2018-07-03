@@ -71,17 +71,17 @@ public abstract class MixinWorld implements IWorldVW, ISubspaceProvider {
 
     @Override
     public ISubspace getSubspace() {
-        return worldSubspace;
+        return this.worldSubspace;
     }
 
     @Inject(method = "getBiomeForCoordsBody", at = @At("HEAD"), cancellable = true, remap = false)
     public void preGetBiomeForCoordsBody(BlockPos pos, CallbackInfoReturnable callbackInfo) {
-        PhysicsWrapperEntity physEntity = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(thisClassAsWorld,
+        PhysicsWrapperEntity physEntity = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(this.thisClassAsWorld,
                 pos);
         if (physEntity != null) {
             BlockPos posInGlobalCoordinates = physEntity.getPhysicsObject().getShipTransformationManager()
                     .getCurrentTickTransform().transform(pos, TransformType.SUBSPACE_TO_GLOBAL);
-            Biome biomeInGlobal = thisClassAsWorld.getBiomeForCoordsBody(posInGlobalCoordinates);
+            Biome biomeInGlobal = this.thisClassAsWorld.getBiomeForCoordsBody(posInGlobalCoordinates);
             // Cancel the rest of the method and return the biome from the global
             // coordinates.
             callbackInfo.setReturnValue(biomeInGlobal);
@@ -90,10 +90,10 @@ public abstract class MixinWorld implements IWorldVW, ISubspaceProvider {
 
     @Inject(method = "setBlockState", at = @At("HEAD"))
     public void preSetBlockState(BlockPos pos, IBlockState newState, int flags, CallbackInfoReturnable callbackInfo) {
-        PhysicsWrapperEntity physEntity = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(thisClassAsWorld,
+        PhysicsWrapperEntity physEntity = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(this.thisClassAsWorld,
                 pos);
         if (physEntity != null) {
-            IBlockState oldState = thisClassAsWorld.getBlockState(pos);
+            IBlockState oldState = this.thisClassAsWorld.getBlockState(pos);
             physEntity.getPhysicsObject().onSetBlockState(oldState, newState, pos);
         }
     }
@@ -267,14 +267,14 @@ public abstract class MixinWorld implements IWorldVW, ISubspaceProvider {
 
     @Intrinsic(displace = true)
     public Iterator<Chunk> vw$getPersistentChunkIterable(Iterator<Chunk> chunkIterator) {
-        ArrayList<Chunk> persistantChunks = new ArrayList<Chunk>();
+        ArrayList<Chunk> persistantChunks = new ArrayList<>();
         while (chunkIterator.hasNext()) {
             Chunk chunk = chunkIterator.next();
             persistantChunks.add(chunk);
         }
         Iterator<Chunk> replacementIterator = persistantChunks.iterator();
 
-        return getPersistentChunkIterable(replacementIterator);
+        return this.getPersistentChunkIterable(replacementIterator);
     }
 
     // This is a forge method not vanilla, so we don't remap this.
@@ -287,8 +287,8 @@ public abstract class MixinWorld implements IWorldVW, ISubspaceProvider {
     @Inject(method = "rayTraceBlocks(Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;ZZZ)Lnet/minecraft/util/math/RayTraceResult;", at = @At("HEAD"), cancellable = true)
     public void preRayTraceBlocks(Vec3d vec31, Vec3d vec32, boolean stopOnLiquid, boolean ignoreBlockWithoutBoundingBox,
                                   boolean returnLastUncollidableBlock, CallbackInfoReturnable<RayTraceResult> callbackInfo) {
-        if (!isRaytracingRecursive) {
-            callbackInfo.setReturnValue(rayTraceBlocksIgnoreShip(vec31, vec32, stopOnLiquid,
+        if (!this.isRaytracingRecursive) {
+            callbackInfo.setReturnValue(this.rayTraceBlocksIgnoreShip(vec31, vec32, stopOnLiquid,
                     ignoreBlockWithoutBoundingBox, returnLastUncollidableBlock, null));
         }
     }
@@ -296,8 +296,8 @@ public abstract class MixinWorld implements IWorldVW, ISubspaceProvider {
     @Override
     public RayTraceResult rayTraceBlocksIgnoreShip(Vec3d vec31, Vec3d vec32, boolean stopOnLiquid,
                                                    boolean ignoreBlockWithoutBoundingBox, boolean returnLastUncollidableBlock, PhysicsWrapperEntity toIgnore) {
-        isRaytracingRecursive = true;
-        RayTraceResult vanillaTrace = thisClassAsWorld.rayTraceBlocks(vec31, vec32, stopOnLiquid,
+        this.isRaytracingRecursive = true;
+        RayTraceResult vanillaTrace = this.thisClassAsWorld.rayTraceBlocks(vec31, vec32, stopOnLiquid,
                 ignoreBlockWithoutBoundingBox, returnLastUncollidableBlock);
         WorldPhysObjectManager physManager = ValkyrienWarfareMod.VW_PHYSICS_MANAGER
                 .getManagerForWorld(World.class.cast(this));
@@ -337,7 +337,7 @@ public abstract class MixinWorld implements IWorldVW, ISubspaceProvider {
 
             Vec3d playerEyesReachAdded = playerEyesPos.addVector(playerReachVector.x * reachDistance,
                     playerReachVector.y * reachDistance, playerReachVector.z * reachDistance);
-            RayTraceResult resultInShip = thisClassAsWorld.rayTraceBlocks(playerEyesPos, playerEyesReachAdded,
+            RayTraceResult resultInShip = this.thisClassAsWorld.rayTraceBlocks(playerEyesPos, playerEyesReachAdded,
                     stopOnLiquid, ignoreBlockWithoutBoundingBox, returnLastUncollidableBlock);
             if (resultInShip != null && resultInShip.hitVec != null
                     && resultInShip.typeOfHit == RayTraceResult.Type.BLOCK) {
@@ -359,7 +359,7 @@ public abstract class MixinWorld implements IWorldVW, ISubspaceProvider {
             vanillaTrace.hitVec = hitVec2;
         }
 
-        isRaytracingRecursive = false;
+        this.isRaytracingRecursive = false;
         return vanillaTrace;
     }
 }

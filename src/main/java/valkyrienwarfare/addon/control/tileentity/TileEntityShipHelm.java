@@ -45,56 +45,56 @@ public class TileEntityShipHelm extends ImplTileEntityPilotable implements ITick
     @Override
     public void update() {
         if (this.getWorld().isRemote) {
-            calculateCompassAngle();
-            lastWheelRotation = wheelRotation;
-            wheelRotation += (nextWheelRotation - wheelRotation) * .25D;
+            this.calculateCompassAngle();
+            this.lastWheelRotation = this.wheelRotation;
+            this.wheelRotation += (this.nextWheelRotation - this.wheelRotation) * .25D;
         } else {
             double friction = .05D;
             double toOriginRate = .05D;
-            if (Math.abs(wheelRotation) < toOriginRate) {
-                wheelRotation = 0;
+            if (Math.abs(this.wheelRotation) < toOriginRate) {
+                this.wheelRotation = 0;
             } else {
                 // wheelRotation -= math.signum(wheelRotation) * wheelRotation;
-                double deltaForce = Math.max(Math.abs(wheelRotation * toOriginRate) - friction, 0);
-                wheelRotation += deltaForce * -1 * Math.signum(wheelRotation);
+                double deltaForce = Math.max(Math.abs(this.wheelRotation * toOriginRate) - friction, 0);
+                this.wheelRotation += deltaForce * -1 * Math.signum(this.wheelRotation);
             }
 
-            sendUpdatePacketToAllNearby();
+            this.sendUpdatePacketToAllNearby();
         }
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        nextWheelRotation = pkt.getNbtCompound().getDouble("wheelRotation");
+        this.nextWheelRotation = pkt.getNbtCompound().getDouble("wheelRotation");
     }
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tagToSend = new NBTTagCompound();
-        tagToSend.setDouble("wheelRotation", wheelRotation);
+        tagToSend.setDouble("wheelRotation", this.wheelRotation);
         return new SPacketUpdateTileEntity(this.getPos(), 0, tagToSend);
     }
 
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound toReturn = super.getUpdateTag();
-        toReturn.setDouble("wheelRotation", wheelRotation);
+        toReturn.setDouble("wheelRotation", this.wheelRotation);
         return toReturn;
     }
 
     public void calculateCompassAngle() {
-        lastCompassAngle = compassAngle;
+        this.lastCompassAngle = this.compassAngle;
 
-        IBlockState helmState = getWorld().getBlockState(getPos());
+        IBlockState helmState = this.getWorld().getBlockState(this.getPos());
         EnumFacing enumfacing = helmState.getValue(BlockShipHelm.FACING);
         double wheelAndCompassStateRotation = enumfacing.getHorizontalAngle();
 
-        BlockPos spawnPos = getWorld().getSpawnPoint();
-        Vector compassPoint = new Vector(getPos().getX(), getPos().getY(), getPos().getZ());
+        BlockPos spawnPos = this.getWorld().getSpawnPoint();
+        Vector compassPoint = new Vector(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
         compassPoint.add(1D, 2D, 1D);
 
-        PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(getWorld(),
-                getPos());
+        PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(this.getWorld(),
+                this.getPos());
         if (wrapper != null) {
             wrapper.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().transform(compassPoint,
                     TransformType.SUBSPACE_TO_GLOBAL);
@@ -113,21 +113,21 @@ public class TileEntityShipHelm extends ImplTileEntityPilotable implements ITick
         }
 
         compassDirection.normalize();
-        compassAngle = Math.toDegrees(Math.atan2(compassDirection.X, compassDirection.Z))
+        this.compassAngle = Math.toDegrees(Math.atan2(compassDirection.X, compassDirection.Z))
                 - wheelAndCompassStateRotation;
-        compassAngle = (compassAngle + 360D) % 360D;
+        this.compassAngle = (this.compassAngle + 360D) % 360D;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        lastWheelRotation = wheelRotation = compound.getDouble("wheelRotation");
+        this.lastWheelRotation = this.wheelRotation = compound.getDouble("wheelRotation");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound toReturn = super.writeToNBT(compound);
-        compound.setDouble("wheelRotation", wheelRotation);
+        compound.setDouble("wheelRotation", this.wheelRotation);
         return toReturn;
     }
 
@@ -145,13 +145,13 @@ public class TileEntityShipHelm extends ImplTileEntityPilotable implements ITick
         if (message.airshipRight_KeyDown) {
             rotationDelta += 15D;
         }
-        IBlockState blockState = this.getWorld().getBlockState(getPos());
+        IBlockState blockState = this.getWorld().getBlockState(this.getPos());
         if (blockState.getBlock() instanceof BlockShipHelm) {
             EnumFacing facing = blockState.getValue(BlockShipHelm.FACING);
             if (this.isPlayerInFront(sender, facing)) {
-                wheelRotation += rotationDelta;
+                this.wheelRotation += rotationDelta;
             } else {
-                wheelRotation -= rotationDelta;
+                this.wheelRotation -= rotationDelta;
             }
         }
     }

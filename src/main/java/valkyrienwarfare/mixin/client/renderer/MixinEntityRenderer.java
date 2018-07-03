@@ -267,7 +267,7 @@ public abstract class MixinEntityRenderer {
                     target = "Lnet/minecraft/util/math/Vec3d;distanceTo(Lnet/minecraft/util/math/Vec3d;)D",
                     ordinal = 0))
     public double betterMouseOver(Vec3d vec, Vec3d in) {
-        PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(mc.world, mc.objectMouseOver.getBlockPos());
+        PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(this.mc.world, this.mc.objectMouseOver.getBlockPos());
 
         if (wrapper == null) {
             return vec.distanceTo(in);

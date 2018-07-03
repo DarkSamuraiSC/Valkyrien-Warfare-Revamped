@@ -41,8 +41,8 @@ public class GPSTileEntity extends TileEntity implements SimpleComponent {
     @Callback
     @Optional.Method(modid = "opencomputers")
     public Object[] getPosition(Context context, Arguments args) {
-        if (ValkyrienWarfareHooks.isBlockPartOfShip(world, pos)) {
-            BlockPos pos = ValkyrienWarfareHooks.getShipEntityManagingPos(getWorld(), getPos()).getPosition();
+        if (ValkyrienWarfareHooks.isBlockPartOfShip(this.world, this.pos)) {
+            BlockPos pos = ValkyrienWarfareHooks.getShipEntityManagingPos(this.getWorld(), this.getPos()).getPosition();
             return new Object[]{pos.getX(), pos.getY(), pos.getZ()};
         }
         return null;
@@ -51,8 +51,8 @@ public class GPSTileEntity extends TileEntity implements SimpleComponent {
     @Callback
     @Optional.Method(modid = "opencomputers")
     public Object[] getRotation(Context context, Arguments args) {
-        if (ValkyrienWarfareHooks.isBlockPartOfShip(world, pos)) {
-            PhysicsWrapperEntity ship = ValkyrienWarfareHooks.getShipEntityManagingPos(getWorld(), getPos());
+        if (ValkyrienWarfareHooks.isBlockPartOfShip(this.world, this.pos)) {
+            PhysicsWrapperEntity ship = ValkyrienWarfareHooks.getShipEntityManagingPos(this.getWorld(), this.getPos());
             return new Object[]{ship.getYaw(), ship.getPitch(), ship.getRoll()};
         }
         return null;

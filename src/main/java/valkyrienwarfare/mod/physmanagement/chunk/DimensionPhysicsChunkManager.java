@@ -32,22 +32,22 @@ public class DimensionPhysicsChunkManager {
     private final Map<World, PhysicsChunkManager> managerPerWorld;
 
     public DimensionPhysicsChunkManager() {
-        managerPerWorld = new HashMap<>();
+        this.managerPerWorld = new HashMap<>();
     }
 
     public void initWorld(World world) {
-        if (!managerPerWorld.containsKey(world)) {
+        if (!this.managerPerWorld.containsKey(world)) {
             System.out.println("Physics Chunk Manager Initialized");
-            managerPerWorld.put(world, new PhysicsChunkManager(world));
+            this.managerPerWorld.put(world, new PhysicsChunkManager(world));
         }
     }
 
     public PhysicsChunkManager getManagerForWorld(World world) {
-        return managerPerWorld.get(world);
+        return this.managerPerWorld.get(world);
     }
 
     public void removeWorld(World world) {
-        managerPerWorld.remove(world);
+        this.managerPerWorld.remove(world);
     }
 
     public void registerChunksForShip(PhysicsWrapperEntity wrapper) {

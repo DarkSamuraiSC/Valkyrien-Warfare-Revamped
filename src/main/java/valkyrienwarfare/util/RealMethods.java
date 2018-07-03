@@ -83,7 +83,7 @@ public class RealMethods implements DummyMethods {
 
     @Override
     public boolean isBlockPartOfShip(World worldObj, BlockPos pos) {
-        return getShipEntityManagingPos(worldObj, pos) != null;
+        return this.getShipEntityManagingPos(worldObj, pos) != null;
     }
 
     @Override

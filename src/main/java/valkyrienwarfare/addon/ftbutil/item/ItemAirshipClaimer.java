@@ -46,7 +46,7 @@ public class ItemAirshipClaimer extends Item {
 
     public void initialClaim(@NonNull PhysicsObject object) {
         //unclaim all existing chunks (this shouldn't ever do anything, but you never know)
-        handleUnclaim(object);
+        this.handleUnclaim(object);
         int dim = object.getWrapperEntity().dimension;
         ForgePlayer player = ClaimedChunks.instance.universe.getPlayer(object.getOwner());
         if (player == null) {
@@ -62,7 +62,7 @@ public class ItemAirshipClaimer extends Item {
                     Chunk chunk = chunks1d[z];
                     ClaimResult result = ClaimedChunks.instance.claimChunk(player, new ChunkDimPos(chunk.x, chunk.z, dim));
                     if (result != ClaimResult.SUCCESS) {
-                        handleUnclaim(object);
+                        this.handleUnclaim(object);
                         player.entityPlayer.sendMessage(new TextComponentString("Unable to claim chunks! Error at (" + chunk.x + ", " + chunk.z + "): " + result.name()));
                         object.setOwner(null);
                         return;
@@ -120,7 +120,7 @@ public class ItemAirshipClaimer extends Item {
                 }
             }
             object.setOwner(new GameProfile(player.gameProfile.getId(), player.gameProfile.getName()));
-            initialClaim(object);
+            this.initialClaim(object);
             return null;
         }
     }

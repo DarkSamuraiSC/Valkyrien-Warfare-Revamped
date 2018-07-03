@@ -44,7 +44,7 @@ public abstract class MixinMovementInputFromOptions extends MovementInput {
             if (inputTypeEnum != null) {
                 if (inputTypeEnum.shouldLockPlayerMovement()) {
                     // Then don't let the player move anymore while it's piloting this bastard
-                    zeroAllPlayerMovements();
+                    this.zeroAllPlayerMovements();
                     callbackInfo.cancel();
                 }
             }

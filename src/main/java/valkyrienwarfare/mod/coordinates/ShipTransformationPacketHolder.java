@@ -40,20 +40,20 @@ public class ShipTransformationPacketHolder {
     private final long creationTimeNano;
 
     public ShipTransformationPacketHolder(PhysWrapperPositionMessage wrapperMessage) {
-        posX = wrapperMessage.getPosX();
-        posY = wrapperMessage.getPosY();
-        posZ = wrapperMessage.getPosZ();
+        this.posX = wrapperMessage.getPosX();
+        this.posY = wrapperMessage.getPosY();
+        this.posZ = wrapperMessage.getPosZ();
 
-        pitch = wrapperMessage.getPitch();
-        yaw = wrapperMessage.getYaw();
-        roll = wrapperMessage.getRoll();
+        this.pitch = wrapperMessage.getPitch();
+        this.yaw = wrapperMessage.getYaw();
+        this.roll = wrapperMessage.getRoll();
 
-        centerOfRotation = wrapperMessage.getCenterOfMass();
+        this.centerOfRotation = wrapperMessage.getCenterOfMass();
 
-        relativeTick = wrapperMessage.getRelativeTick();
-        shipBB = wrapperMessage.getShipBB();
+        this.relativeTick = wrapperMessage.getRelativeTick();
+        this.shipBB = wrapperMessage.getShipBB();
         // System.out.println(wrapperMessage.shipBB);
-        creationTimeNano = System.nanoTime();
+        this.creationTimeNano = System.nanoTime();
     }
 
     public ShipTransformationPacketHolder(ShipTransformationPacketHolder[] transformations, double[] weights) {
@@ -87,7 +87,7 @@ public class ShipTransformationPacketHolder {
         this.centerOfRotation = transformations[0].centerOfRotation;
         this.relativeTick = -1;
         this.shipBB = transformations[0].shipBB;
-        creationTimeNano = -1;
+        this.creationTimeNano = -1;
     }
 
     /**
@@ -99,7 +99,7 @@ public class ShipTransformationPacketHolder {
      *                   and 1 applies all of it. A number around .7 or .8 is ideal here.
      */
     public void applySmoothLerp(PhysicsObject physObj, double lerpFactor) {
-        Vector CMDif = centerOfRotation.getSubtraction(physObj.getCenterCoord());
+        Vector CMDif = this.centerOfRotation.getSubtraction(physObj.getCenterCoord());
         physObj.getShipTransformationManager().getCurrentTickTransform().rotate(CMDif, TransformType.SUBSPACE_TO_GLOBAL);
         // CMDif.multiply(lerpFactor);
 
@@ -111,23 +111,23 @@ public class ShipTransformationPacketHolder {
         physObj.getWrapperEntity().lastTickPosY = physObj.getWrapperEntity().posY;
         physObj.getWrapperEntity().lastTickPosZ = physObj.getWrapperEntity().posZ;
 
-        physObj.getWrapperEntity().posX += (posX - physObj.getWrapperEntity().posX) * lerpFactor;
-        physObj.getWrapperEntity().posY += (posY - physObj.getWrapperEntity().posY) * lerpFactor;
-        physObj.getWrapperEntity().posZ += (posZ - physObj.getWrapperEntity().posZ) * lerpFactor;
+        physObj.getWrapperEntity().posX += (this.posX - physObj.getWrapperEntity().posX) * lerpFactor;
+        physObj.getWrapperEntity().posY += (this.posY - physObj.getWrapperEntity().posY) * lerpFactor;
+        physObj.getWrapperEntity().posZ += (this.posZ - physObj.getWrapperEntity().posZ) * lerpFactor;
 
         Quaternion prevRotation = physObj.getShipTransformationManager().getCurrentTickTransform()
                 .createRotationQuaternion(TransformType.SUBSPACE_TO_GLOBAL);
-        Quaternion newRotation = Quaternion.fromEuler(pitch, yaw, roll);
+        Quaternion newRotation = Quaternion.fromEuler(this.pitch, this.yaw, this.roll);
         Quaternion lerpedRotation = Quaternion.slerpInterpolate(prevRotation, newRotation, lerpFactor);
         double[] lerpedRotationAngles = lerpedRotation.toRadians();
 
         physObj.getWrapperEntity().setPhysicsEntityRotation(Math.toDegrees(lerpedRotationAngles[0]), Math.toDegrees(lerpedRotationAngles[1]), Math.toDegrees(lerpedRotationAngles[2]));
 
-        physObj.setCenterCoord(centerOfRotation);
+        physObj.setCenterCoord(this.centerOfRotation);
 
         // Create an AABB that contains both the previous AABB and the new one, bigger
         // is always better!
-        AxisAlignedBB expandedBB = physObj.getShipBoundingBox().union(shipBB);
+        AxisAlignedBB expandedBB = physObj.getShipBoundingBox().union(this.shipBB);
         physObj.setShipBoundingBox(expandedBB);
     }
 }

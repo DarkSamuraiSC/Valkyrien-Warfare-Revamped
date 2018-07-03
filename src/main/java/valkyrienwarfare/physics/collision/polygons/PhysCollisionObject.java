@@ -32,51 +32,51 @@ public class PhysCollisionObject {
     private Vector firstContactPoint;
 
     public PhysCollisionObject(Polygon movable_, Polygon stationary, Vector axes) {
-        collision_normal = axes;
-        movable = movable_;
-        fixed = stationary;
-        generateCollision();
+        this.collision_normal = axes;
+        this.movable = movable_;
+        this.fixed = stationary;
+        this.generateCollision();
     }
 
     public void generateCollision() {
-        playerMinMax = VWMath.getMinMaxOfArray(movable.getProjectionOnVector(collision_normal));
-        blockMinMax = VWMath.getMinMaxOfArray(fixed.getProjectionOnVector(collision_normal));
-        movMaxFixMin = playerMinMax[0] - blockMinMax[1];
-        movMinFixMax = playerMinMax[1] - blockMinMax[0];
-        if (movMaxFixMin > 0 || movMinFixMax < 0) {
-            seperated = true;
-            penetrationDistance = 0.0D;
+        this.playerMinMax = VWMath.getMinMaxOfArray(this.movable.getProjectionOnVector(this.collision_normal));
+        this.blockMinMax = VWMath.getMinMaxOfArray(this.fixed.getProjectionOnVector(this.collision_normal));
+        this.movMaxFixMin = this.playerMinMax[0] - this.blockMinMax[1];
+        this.movMinFixMax = this.playerMinMax[1] - this.blockMinMax[0];
+        if (this.movMaxFixMin > 0 || this.movMinFixMax < 0) {
+            this.seperated = true;
+            this.penetrationDistance = 0.0D;
             return;
         }
         // Set the penetration to be the smaller distance
-        if (Math.abs(movMaxFixMin) > Math.abs(movMinFixMax)) {
-            penetrationDistance = movMinFixMax;
-            for (Vector v : movable.getVertices()) {
-                if (v.dot(collision_normal) == playerMinMax[1]) {
-                    firstContactPoint = v;
+        if (Math.abs(this.movMaxFixMin) > Math.abs(this.movMinFixMax)) {
+            this.penetrationDistance = this.movMinFixMax;
+            for (Vector v : this.movable.getVertices()) {
+                if (v.dot(this.collision_normal) == this.playerMinMax[1]) {
+                    this.firstContactPoint = v;
                 }
             }
         } else {
-            penetrationDistance = movMaxFixMin;
-            for (Vector v : movable.getVertices()) {
-                if (v.dot(collision_normal) == playerMinMax[0]) {
-                    firstContactPoint = v;
+            this.penetrationDistance = this.movMaxFixMin;
+            for (Vector v : this.movable.getVertices()) {
+                if (v.dot(this.collision_normal) == this.playerMinMax[0]) {
+                    this.firstContactPoint = v;
                 }
             }
         }
-        seperated = false;
+        this.seperated = false;
     }
 
     public Vector getSecondContactPoint() {
-        if (Math.abs(movMaxFixMin) > Math.abs(movMinFixMax)) {
-            for (Vector v : fixed.getVertices()) {
-                if (v.dot(collision_normal) == blockMinMax[0]) {
+        if (Math.abs(this.movMaxFixMin) > Math.abs(this.movMinFixMax)) {
+            for (Vector v : this.fixed.getVertices()) {
+                if (v.dot(this.collision_normal) == this.blockMinMax[0]) {
                     return v;
                 }
             }
         } else {
-            for (Vector v : fixed.getVertices()) {
-                if (v.dot(collision_normal) == blockMinMax[1]) {
+            for (Vector v : this.fixed.getVertices()) {
+                if (v.dot(this.collision_normal) == this.blockMinMax[1]) {
                     return v;
                 }
             }
@@ -85,12 +85,12 @@ public class PhysCollisionObject {
     }
 
     public Vector getResponse() {
-        return collision_normal.getProduct(penetrationDistance);
+        return this.collision_normal.getProduct(this.penetrationDistance);
     }
 
     public void setResponse(Vector v) {
-        v.X = collision_normal.X * penetrationDistance;
-        v.Y = collision_normal.Y * penetrationDistance;
-        v.Z = collision_normal.Z * penetrationDistance;
+        v.X = this.collision_normal.X * this.penetrationDistance;
+        v.Y = this.collision_normal.Y * this.penetrationDistance;
+        v.Z = this.collision_normal.Z * this.penetrationDistance;
     }
 }

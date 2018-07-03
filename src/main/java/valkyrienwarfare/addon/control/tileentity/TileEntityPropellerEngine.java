@@ -27,28 +27,28 @@ public class TileEntityPropellerEngine extends BasicForceNodeTileEntity {
     public TileEntityPropellerEngine(Vector normalVeclocityUnoriented, boolean isForceOutputOriented, double maxThrust) {
         super(normalVeclocityUnoriented, isForceOutputOriented, maxThrust);
         this.propellerAngle = Math.random() * 90D;
-        this.prevPropellerAngle = propellerAngle;
+        this.prevPropellerAngle = this.propellerAngle;
     }
 
     public TileEntityPropellerEngine() {
         this.propellerAngle = Math.random() * 90D;
-        this.prevPropellerAngle = propellerAngle;
+        this.prevPropellerAngle = this.propellerAngle;
     }
 
     public double getPropellerAngle(double partialTicks) {
-        double delta = propellerAngle - prevPropellerAngle;
+        double delta = this.propellerAngle - this.prevPropellerAngle;
         if (Math.abs(delta) > 180D) {
             delta %= 180D;
             delta += 180D;
         }
-        return prevPropellerAngle + delta * partialTicks;
+        return this.prevPropellerAngle + delta * partialTicks;
     }
 
     @Override
     public void update() {
         super.update();
-        prevPropellerAngle = propellerAngle;
-        propellerAngle += 25D;
-        propellerAngle %= 360D;
+        this.prevPropellerAngle = this.propellerAngle;
+        this.propellerAngle += 25D;
+        this.propellerAngle %= 360D;
     }
 }

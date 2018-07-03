@@ -48,10 +48,10 @@ public class TileEntityCannon extends TileEntity {
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 
         super.writeToNBT(compound);
-        compound.setInteger("CannonCooldown", CannonCooldown);
-        compound.setBoolean("CannonReady", CannonReady);
-        compound.setFloat("Angle", Angle);
-        compound.setInteger("Ammo", Ammo);
+        compound.setInteger("CannonCooldown", this.CannonCooldown);
+        compound.setBoolean("CannonReady", this.CannonReady);
+        compound.setFloat("Angle", this.Angle);
+        compound.setInteger("Ammo", this.Ammo);
         return compound;
     }
 
@@ -59,18 +59,18 @@ public class TileEntityCannon extends TileEntity {
     public void readFromNBT(NBTTagCompound compound) {
 
         super.readFromNBT(compound);
-        CannonCooldown = compound.getInteger("CannonCooldown");
-        CannonReady = compound.getBoolean("CannonReady");
-        Angle = compound.getFloat("Angle");
-        Ammo = compound.getInteger("Ammo");
+        this.CannonCooldown = compound.getInteger("CannonCooldown");
+        this.CannonReady = compound.getBoolean("CannonReady");
+        this.Angle = compound.getFloat("Angle");
+        this.Ammo = compound.getInteger("Ammo");
     }
 
     public void fireCannon(World worldIn, EntityPlayer playerIn, BlockPos pos, IBlockState state, EnumFacing side) {
 
-        if (CannonReady) {
-            firecannon(worldIn, pos, side, state);
-            CannonReady = false;
-            CannonCooldown = 0;
+        if (this.CannonReady) {
+            this.firecannon(worldIn, pos, side, state);
+            this.CannonReady = false;
+            this.CannonCooldown = 0;
         } else {
             playerIn.sendMessage(new TextComponentString("Cannon needs to be loaded!"));
         }
@@ -78,13 +78,13 @@ public class TileEntityCannon extends TileEntity {
 
 
     public void loadCannon(World worldIn, EntityPlayer playerIn) {
-        if (Ammo != 0) {
+        if (this.Ammo != 0) {
 
-            if (CannonCooldown == CC) {
-                CannonReady = true;
-                worldIn.playSound((EntityPlayer) null, pos, SoundEvents.BLOCK_DISPENSER_DISPENSE, SoundCategory.BLOCKS, 3, 1);
+            if (this.CannonCooldown == this.CC) {
+                this.CannonReady = true;
+                worldIn.playSound(null, this.pos, SoundEvents.BLOCK_DISPENSER_DISPENSE, SoundCategory.BLOCKS, 3, 1);
             } else {
-                CannonCooldown++;
+                this.CannonCooldown++;
             }
         } else {
             playerIn.sendMessage(new TextComponentString("Cannon needs ammo!"));
@@ -97,7 +97,7 @@ public class TileEntityCannon extends TileEntity {
     public void firecannon(World worldIn, BlockPos pos, EnumFacing side, IBlockState state) {
 
         //direction
-        EnumFacing enumfacing = (EnumFacing) state.getValue(BlockCannon.LOOKING);
+        EnumFacing enumfacing = state.getValue(BlockCannon.LOOKING);
         double d0 = pos.getX() + 0.5D + (float) enumfacing.getFrontOffsetX();
         double d1 = pos.getY() + 0.4D + (float) enumfacing.getFrontOffsetY();
         double d2 = pos.getZ() + 0.5D + (float) enumfacing.getFrontOffsetZ();
@@ -112,35 +112,35 @@ public class TileEntityCannon extends TileEntity {
         EntitySolidball entitysolidball = new EntitySolidball(worldIn, d0, d1, d2);
 
 
-        if (Ammo == 1) {
-            entitycannonball.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 1);
+        if (this.Ammo == 1) {
+            entitycannonball.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (this.Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 1);
             worldIn.spawnEntity(entitycannonball);
         }
-        if (Ammo == 2) {
-            entityexplosiveball.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 1);
+        if (this.Ammo == 2) {
+            entityexplosiveball.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (this.Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 1);
             worldIn.spawnEntity(entityexplosiveball);
         }
-        if (Ammo == 3) {
-            entitygrapeshot5.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 4.0F);
-            entitygrapeshot4.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 4.0F);
-            entitygrapeshot3.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 4.0F);
-            entitygrapeshot2.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 4.0F);
-            entitygrapeshot1.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 4.0F);
+        if (this.Ammo == 3) {
+            entitygrapeshot5.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (this.Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 4.0F);
+            entitygrapeshot4.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (this.Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 4.0F);
+            entitygrapeshot3.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (this.Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 4.0F);
+            entitygrapeshot2.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (this.Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 4.0F);
+            entitygrapeshot1.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (this.Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 3, 4.0F);
             worldIn.spawnEntity(entitygrapeshot1);
             worldIn.spawnEntity(entitygrapeshot2);
             worldIn.spawnEntity(entitygrapeshot3);
             worldIn.spawnEntity(entitygrapeshot4);
             worldIn.spawnEntity(entitygrapeshot5);
         }
-        if (Ammo == 4) {
-            entitysolidball.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 2, 1);
+        if (this.Ammo == 4) {
+            entitysolidball.shoot((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + (this.Angle / 100)), (double) enumfacing.getFrontOffsetZ(), 2, 1);
             worldIn.spawnEntity(entitysolidball);
         }
 
 
-        worldIn.playSound((EntityPlayer) null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 2, 1.5F);
+        worldIn.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 2, 1.5F);
 
-        Ammo = 0;
+        this.Ammo = 0;
 
     }
 
@@ -149,35 +149,35 @@ public class TileEntityCannon extends TileEntity {
 /////////////////////////////////////// Angle 'n' ammo
 
     public void setAngle(EntityPlayer playerIn, double angle) {
-        Angle += angle;
-        if (Angle > 15F) {
-            Angle = -15F;
+        this.Angle += angle;
+        if (this.Angle > 15F) {
+            this.Angle = -15F;
         }
-        if (Angle < -15F) {
-            Angle = 15F;
+        if (this.Angle < -15F) {
+            this.Angle = 15F;
         }
-        playerIn.sendMessage(new TextComponentString("Extra Y velocity = " + Float.toString(Angle / 100)));
+        playerIn.sendMessage(new TextComponentString("Extra Y velocity = " + Float.toString(this.Angle / 100)));
     }
 
     public void setAmmo(ItemStack heldItem) {
         Item item = heldItem.getItem();
         if (item == ModItems.cannonball) {
-            Ammo = 1;
-            CC = 7;
+            this.Ammo = 1;
+            this.CC = 7;
         }
         if (item == ModItems.explosiveball) {
-            Ammo = 2;
-            CC = 14;
+            this.Ammo = 2;
+            this.CC = 14;
         }
         if (item == ModItems.grapeshot) {
-            Ammo = 3;
-            CC = 7;
+            this.Ammo = 3;
+            this.CC = 7;
         }
         if (item == ModItems.solidball) {
-            Ammo = 4;
-            CC = 7;
+            this.Ammo = 4;
+            this.CC = 7;
         }
-        CannonReady = false;
+        this.CannonReady = false;
     }
 
 

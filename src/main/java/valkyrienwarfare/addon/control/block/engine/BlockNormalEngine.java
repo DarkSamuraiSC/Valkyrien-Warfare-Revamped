@@ -26,6 +26,6 @@ public class BlockNormalEngine extends BlockAirshipEngineLore {
 
     @Override
     public String getEnginePowerTooltip() {
-        return String.valueOf(enginePower);
+        return String.valueOf(this.enginePower);
     }
 }

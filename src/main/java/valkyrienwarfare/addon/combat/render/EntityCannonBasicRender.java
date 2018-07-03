@@ -51,7 +51,7 @@ public class EntityCannonBasicRender extends Render<EntityCannonBasic> implement
         double renderYaw = -paritalTickYaw + 90f;
         double renderPitch = paritalTickPitch;
 
-        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
 //		entity.posX += 15;
 
@@ -81,7 +81,7 @@ public class EntityCannonBasicRender extends Render<EntityCannonBasic> implement
         GL11.glPushMatrix();
 
         GL11.glTranslated(-.1D, 0, 0);
-        renderBase(entity, x, y, z, entityYaw, partialTicks);
+        this.renderBase(entity, x, y, z, entityYaw, partialTicks);
 
         GL11.glPopMatrix();
 
@@ -93,7 +93,7 @@ public class EntityCannonBasicRender extends Render<EntityCannonBasic> implement
         GL11.glTranslated(-.8D, 0, -0.25);
 
         GL11.glPushMatrix();
-        renderHead(entity, x, y, z, entityYaw, partialTicks);
+        this.renderHead(entity, x, y, z, entityYaw, partialTicks);
         GL11.glPopMatrix();
 
         if (this.renderOutlines) {
@@ -116,7 +116,7 @@ public class EntityCannonBasicRender extends Render<EntityCannonBasic> implement
         BufferBuilder BufferBuilder = tessellator.getBuffer();
         GL11.glPushMatrix();
         GL11.glTranslated(-0.5D, 0, -0.5D);
-        FastBlockModelRenderer.renderBlockModel(BufferBuilder, tessellator, entity.world, baseState, entity.getBrightnessForRender());
+        FastBlockModelRenderer.renderBlockModel(BufferBuilder, tessellator, entity.world, this.baseState, entity.getBrightnessForRender());
         GL11.glPopMatrix();
     }
 
@@ -125,7 +125,7 @@ public class EntityCannonBasicRender extends Render<EntityCannonBasic> implement
         BufferBuilder BufferBuilder = tessellator.getBuffer();
         GL11.glPushMatrix();
         GL11.glTranslated(-0.5D, 0, -0.5D);
-        FastBlockModelRenderer.renderBlockModel(BufferBuilder, tessellator, entity.world, headState, entity.getBrightnessForRender());
+        FastBlockModelRenderer.renderBlockModel(BufferBuilder, tessellator, entity.world, this.headState, entity.getBrightnessForRender());
         GL11.glPopMatrix();
     }
 
@@ -136,7 +136,7 @@ public class EntityCannonBasicRender extends Render<EntityCannonBasic> implement
 
     @Override
     public void cacheStates() {
-        baseState = ValkyrienWarfareCombat.INSTANCE.fakecannonblock.getStateFromMeta(0);
-        headState = ValkyrienWarfareCombat.INSTANCE.fakecannonblock.getStateFromMeta(1);
+        this.baseState = ValkyrienWarfareCombat.INSTANCE.fakecannonblock.getStateFromMeta(0);
+        this.headState = ValkyrienWarfareCombat.INSTANCE.fakecannonblock.getStateFromMeta(1);
     }
 }

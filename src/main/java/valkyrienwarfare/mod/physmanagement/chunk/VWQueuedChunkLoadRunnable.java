@@ -39,15 +39,15 @@ public class VWQueuedChunkLoadRunnable implements Runnable {
     }
 
     public boolean isChunkLoaded() {
-        return isChunkLoaded;
+        return this.isChunkLoaded;
     }
 
     public int getQueuedChunkX() {
-        return chunkX;
+        return this.chunkX;
     }
 
     public int getQueuedChunkZ() {
-        return chunkZ;
+        return this.chunkZ;
     }
 
 }

@@ -39,62 +39,62 @@ public class SoundFixWrapper implements ISound {
 
     @Override
     public ResourceLocation getSoundLocation() {
-        return wrappedSound.getSoundLocation();
+        return this.wrappedSound.getSoundLocation();
     }
 
     @Override
     public SoundEventAccessor createAccessor(SoundHandler handler) {
-        return wrappedSound.createAccessor(handler);
+        return this.wrappedSound.createAccessor(handler);
     }
 
     @Override
     public Sound getSound() {
-        return wrappedSound.getSound();
+        return this.wrappedSound.getSound();
     }
 
     @Override
     public SoundCategory getCategory() {
-        return wrappedSound.getCategory();
+        return this.wrappedSound.getCategory();
     }
 
     @Override
     public boolean canRepeat() {
-        return wrappedSound.canRepeat();
+        return this.wrappedSound.canRepeat();
     }
 
     @Override
     public int getRepeatDelay() {
-        return wrappedSound.getRepeatDelay();
+        return this.wrappedSound.getRepeatDelay();
     }
 
     @Override
     public float getVolume() {
-        return wrappedSound.getVolume();
+        return this.wrappedSound.getVolume();
     }
 
     @Override
     public float getPitch() {
-        return wrappedSound.getPitch();
+        return this.wrappedSound.getPitch();
     }
 
     @Override
     public float getXPosF() {
-        return (float) soundLocation.X;
+        return (float) this.soundLocation.X;
     }
 
     @Override
     public float getYPosF() {
-        return (float) soundLocation.Y;
+        return (float) this.soundLocation.Y;
     }
 
     @Override
     public float getZPosF() {
-        return (float) soundLocation.Z;
+        return (float) this.soundLocation.Z;
     }
 
     @Override
     public AttenuationType getAttenuationType() {
-        return wrappedSound.getAttenuationType();
+        return this.wrappedSound.getAttenuationType();
     }
 
 }

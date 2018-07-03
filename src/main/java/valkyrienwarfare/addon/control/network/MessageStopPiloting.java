@@ -26,7 +26,7 @@ public class MessageStopPiloting implements IMessage {
     public BlockPos posToStopPiloting;
 
     public MessageStopPiloting(BlockPos pos) {
-        posToStopPiloting = pos;
+        this.posToStopPiloting = pos;
     }
 
     public MessageStopPiloting() {
@@ -35,7 +35,7 @@ public class MessageStopPiloting implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         PacketBuffer packetBuf = new PacketBuffer(buf);
-        posToStopPiloting = new BlockPos(
+        this.posToStopPiloting = new BlockPos(
                 packetBuf.readInt(),
                 packetBuf.readInt(),
                 packetBuf.readInt()
@@ -45,9 +45,9 @@ public class MessageStopPiloting implements IMessage {
     @Override
     public void toBytes(ByteBuf buf) {
         PacketBuffer packetBuf = new PacketBuffer(buf);
-        packetBuf.writeInt(posToStopPiloting.getX());
-        packetBuf.writeInt(posToStopPiloting.getY());
-        packetBuf.writeInt(posToStopPiloting.getZ());
+        packetBuf.writeInt(this.posToStopPiloting.getX());
+        packetBuf.writeInt(this.posToStopPiloting.getY());
+        packetBuf.writeInt(this.posToStopPiloting.getZ());
         //use absolute coordinates instead of writeBlockPos in case we ever add compatibility with cubic chunks
     }
 

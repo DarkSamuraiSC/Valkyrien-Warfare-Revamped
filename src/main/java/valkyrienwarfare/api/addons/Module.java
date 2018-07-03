@@ -58,27 +58,27 @@ public abstract class Module {
     }
 
     public final void doPreInit(FMLStateEvent event) {
-        if (!donePreInit) {
-            registerEntities();
-            registerCapabilities();
-            preInit(event);
-            donePreInit = true;
+        if (!this.donePreInit) {
+            this.registerEntities();
+            this.registerCapabilities();
+            this.preInit(event);
+            this.donePreInit = true;
         }
     }
 
     public final void doInit(FMLStateEvent event) {
-        if (!doneInit) {
-            registerTileEntities();
-            registerNetworks();
-            init(event);
-            doneInit = true;
+        if (!this.doneInit) {
+            this.registerTileEntities();
+            this.registerNetworks();
+            this.init(event);
+            this.doneInit = true;
         }
     }
 
     public final void doPostInit(FMLStateEvent event) {
-        if (!donePostInit) {
-            postInit(event);
-            donePostInit = true;
+        if (!this.donePostInit) {
+            this.postInit(event);
+            this.donePostInit = true;
         }
     }
 
@@ -117,7 +117,7 @@ public abstract class Module {
     public abstract void applyConfig(Configuration config);
 
     public final ModuleProxy getClientProxy() {
-        return client;
+        return this.client;
     }
 
     public final void setClientProxy(ModuleProxy client) {
@@ -125,7 +125,7 @@ public abstract class Module {
     }
 
     public final ModuleProxy getServerProxy() {
-        return server;
+        return this.server;
     }
 
     public final void setServerProxy(ModuleProxy server) {
@@ -133,7 +133,7 @@ public abstract class Module {
     }
 
     public final ModuleProxy getCommonProxy() {
-        return common;
+        return this.common;
     }
 
     protected abstract void preInit(FMLStateEvent event);
@@ -143,6 +143,6 @@ public abstract class Module {
     protected abstract void postInit(FMLStateEvent event);
 
     public final String getModID() {
-        return modid;
+        return this.modid;
     }
 }

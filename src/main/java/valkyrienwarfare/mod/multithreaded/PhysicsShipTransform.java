@@ -61,7 +61,7 @@ public class PhysicsShipTransform extends ShipTransform {
         this.yaw = physYaw;
         this.roll = physRoll;
         this.centerOfMass = new Vector(physCenterOfMass);
-        this.shipBoundingBox = createApproxBoundingBox(gameTickShipBoundingBox, gameTickTransform);
+        this.shipBoundingBox = this.createApproxBoundingBox(gameTickShipBoundingBox, gameTickTransform);
     }
 
     /**
@@ -80,31 +80,31 @@ public class PhysicsShipTransform extends ShipTransform {
     }
 
     public double getPosX() {
-        return posX;
+        return this.posX;
     }
 
     public double getPosY() {
-        return posY;
+        return this.posY;
     }
 
     public double getPosZ() {
-        return posZ;
+        return this.posZ;
     }
 
     public double getPitch() {
-        return pitch;
+        return this.pitch;
     }
 
     public double getYaw() {
-        return yaw;
+        return this.yaw;
     }
 
     public double getRoll() {
-        return roll;
+        return this.roll;
     }
 
     public Vector getCenterOfMass() {
-        return centerOfMass;
+        return this.centerOfMass;
     }
 
     /**
@@ -115,7 +115,7 @@ public class PhysicsShipTransform extends ShipTransform {
      * using the physics transformations instead of game transformation.
      */
     public AxisAlignedBB getShipBoundingBox() {
-        return shipBoundingBox;
+        return this.shipBoundingBox;
     }
 
 }

@@ -72,7 +72,7 @@ import java.util.logging.Level;
 
 public class EventsCommon {
 
-    public static final Map<EntityPlayer, Double[]> lastPositions = new HashMap<EntityPlayer, Double[]>();
+    public static final Map<EntityPlayer, Double[]> lastPositions = new HashMap<>();
 
     @SubscribeEvent()
     public void onPlayerSleepInBedEvent(PlayerSleepInBedEvent event) {
@@ -251,14 +251,14 @@ public class EventsCommon {
                         @Override
                         public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
                             return capability == ValkyrienWarfareMod.airshipCounter
-                                    ? ValkyrienWarfareMod.airshipCounter.<T>cast(inst)
+                                    ? ValkyrienWarfareMod.airshipCounter.<T>cast(this.inst)
                                     : null;
                         }
 
                         @Override
                         public NBTTagIntArray serializeNBT() {
                             return (NBTTagIntArray) ValkyrienWarfareMod.airshipCounter.getStorage()
-                                    .writeNBT(ValkyrienWarfareMod.airshipCounter, inst, null);
+                                    .writeNBT(ValkyrienWarfareMod.airshipCounter, this.inst, null);
                         }
 
                         @Override
@@ -266,7 +266,7 @@ public class EventsCommon {
                             // Otherwise its old, then ignore it
                             if (nbt instanceof NBTTagIntArray) {
                                 ValkyrienWarfareMod.airshipCounter.getStorage()
-                                        .readNBT(ValkyrienWarfareMod.airshipCounter, inst, null, nbt);
+                                        .readNBT(ValkyrienWarfareMod.airshipCounter, this.inst, null, nbt);
                             }
                         }
                     });

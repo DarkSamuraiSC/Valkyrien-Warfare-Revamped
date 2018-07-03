@@ -25,22 +25,22 @@ public class BooleanArrayBitSet implements IBitSet {
     private final boolean[] data;
 
     public BooleanArrayBitSet(int size) {
-        data = new boolean[size];
+        this.data = new boolean[size];
     }
 
     @Override
     public void set(int index) {
-        data[index] = true;
+        this.data[index] = true;
     }
 
     @Override
     public void clear(int index) {
-        data[index] = false;
+        this.data[index] = false;
     }
 
     @Override
     public boolean get(int index) {
-        return data[index];
+        return this.data[index];
     }
 
 }

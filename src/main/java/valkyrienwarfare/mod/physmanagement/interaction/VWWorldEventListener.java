@@ -43,7 +43,7 @@ public class VWWorldEventListener implements IWorldEventListener {
     private final World worldObj;
 
     public VWWorldEventListener(World world) {
-        worldObj = world;
+        this.worldObj = world;
     }
 
     @Override
@@ -88,7 +88,7 @@ public class VWWorldEventListener implements IWorldEventListener {
         int oldChunkZ = MathHelper.floor(entityIn.posZ / 16.0D);
 
         BlockPos posAt = new BlockPos(entityIn);
-        PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(worldObj, posAt);
+        PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(this.worldObj, posAt);
         if (!(entityIn instanceof EntityFallingBlock) && wrapper != null
                 && wrapper.getPhysicsObject().getShipTransformationManager() != null) {
             if (entityIn instanceof EntityMountingWeaponBase || entityIn instanceof EntityArmorStand
@@ -103,8 +103,8 @@ public class VWWorldEventListener implements IWorldEventListener {
             int newChunkX = MathHelper.floor(entityIn.posX / 16.0D);
             int newChunkZ = MathHelper.floor(entityIn.posZ / 16.0D);
 
-            worldObj.getChunkFromChunkCoords(oldChunkX, oldChunkZ).removeEntity(entityIn);
-            worldObj.getChunkFromChunkCoords(newChunkX, newChunkZ).addEntity(entityIn);
+            this.worldObj.getChunkFromChunkCoords(oldChunkX, oldChunkZ).removeEntity(entityIn);
+            this.worldObj.getChunkFromChunkCoords(newChunkX, newChunkZ).addEntity(entityIn);
 
         }
         if (entityIn instanceof PhysicsWrapperEntity) {
@@ -145,12 +145,12 @@ public class VWWorldEventListener implements IWorldEventListener {
 
     @Override
     public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {
-        if (!worldObj.isRemote) {
-            for (EntityPlayer entityplayermp : worldObj.playerEntities) {
+        if (!this.worldObj.isRemote) {
+            for (EntityPlayer entityplayermp : this.worldObj.playerEntities) {
                 if (entityplayermp != null && entityplayermp.getEntityId() != breakerId) {
                     Vector posVector = new Vector(pos.getX(), pos.getY(), pos.getZ());
 
-                    PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(worldObj,
+                    PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(this.worldObj,
                             pos);
 
                     if (wrapper != null) {

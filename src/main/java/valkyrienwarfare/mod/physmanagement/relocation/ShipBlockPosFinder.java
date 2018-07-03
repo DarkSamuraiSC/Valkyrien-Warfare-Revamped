@@ -27,13 +27,13 @@ public class ShipBlockPosFinder extends SpatialDetector {
 
     public ShipBlockPosFinder(BlockPos start, World worldIn, int maximum, boolean checkCorners) {
         super(start, worldIn, maximum, checkCorners);
-        startDetection();
+        this.startDetection();
     }
 
     @Override
     public boolean isValidExpansion(int x, int y, int z) {
-        mutablePos.setPos(x, y, z);
-        return !BlockPhysicsRegistration.blocksToNotPhysicise.contains(cache.getBlockState(mutablePos).getBlock());
+        this.mutablePos.setPos(x, y, z);
+        return !BlockPhysicsRegistration.blocksToNotPhysicise.contains(this.cache.getBlockState(this.mutablePos).getBlock());
     }
 
 }

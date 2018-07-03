@@ -33,7 +33,7 @@ public class BlockForce {
     private final Map<Block, Force> blocksToForces;
 
     public BlockForce() {
-        blocksToForces = new HashMap<Block, Force>();
+        this.blocksToForces = new HashMap<>();
     }
 
     public static void registerBlockForce(Block block, Vector forceVec, boolean isLocal) {

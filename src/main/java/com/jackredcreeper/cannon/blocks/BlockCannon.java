@@ -47,12 +47,12 @@ public class BlockCannon extends BlockDirectional implements ITileEntityProvider
 
     public BlockCannon() {
         super(Material.IRON);
-        setHardness(0.5f);
-        setResistance(1);
-        setResistance(1);
+        this.setHardness(0.5f);
+        this.setResistance(1);
+        this.setResistance(1);
 
-        setUnlocalizedName(CannonModReference.ModBlocks.CANNON.getUnlocalizedName());
-        setRegistryName(CannonModReference.ModBlocks.CANNON.getRegistryName());
+        this.setUnlocalizedName(CannonModReference.ModBlocks.CANNON.getUnlocalizedName());
+        this.setRegistryName(CannonModReference.ModBlocks.CANNON.getRegistryName());
 
         this.setDefaultState(this.blockState.getBaseState().withProperty(LOOKING, EnumFacing.NORTH));
         this.setCreativeTab(CreativeTabs.COMBAT);

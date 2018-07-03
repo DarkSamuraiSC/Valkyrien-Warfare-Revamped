@@ -29,7 +29,7 @@ import java.util.List;
 
 public class VWCommandHelp extends CommandBase {
 
-    public static final List<String> COMMANDS = new ArrayList<String>();
+    public static final List<String> COMMANDS = new ArrayList<>();
 
     static {
         COMMANDS.add("/physsettings");

@@ -96,12 +96,12 @@ public class WorldPhysicsCollider {
     public WorldPhysicsCollider(PhysicsCalculations calculations) {
         this.calculator = calculations;
         this.parent = calculations.getParent();
-        this.worldObj = parent.getWorldObj();
+        this.worldObj = this.parent.getWorldObj();
         this.cachedPotentialHits = TCollections.synchronizedList(new TIntArrayList());
         this.cachedHitsToRemove = new TIntArrayList();
         this.rand = new Random();
         this.mutablePos = new MutableBlockPos();
-        this.tasks = new ArrayList<ShipCollisionTask>();
+        this.tasks = new ArrayList<>();
         this.ticksSinceCacheUpdate = 25D;
         this.updateCollisionTasksCache = true;
         this.centerPotentialHit = null;
@@ -109,33 +109,33 @@ public class WorldPhysicsCollider {
 
     public void tickUpdatingTheCollisionCache() {
         // Multiply by 20 to convert seconds (physTickSpeed) into ticks
-        ticksSinceCacheUpdate += calculator.getPhysicsTimeDeltaPerPhysTick();
-        for (int i = 0; i < cachedHitsToRemove.size(); i++) {
-            cachedPotentialHits.remove(cachedHitsToRemove.get(i));
+        this.ticksSinceCacheUpdate += this.calculator.getPhysicsTimeDeltaPerPhysTick();
+        for (int i = 0; i < this.cachedHitsToRemove.size(); i++) {
+            this.cachedPotentialHits.remove(this.cachedHitsToRemove.get(i));
         }
-        cachedHitsToRemove.resetQuick();
-        if (ticksSinceCacheUpdate > CACHE_UPDATE_FREQUENCY || parent.needsImmediateCollisionCacheUpdate()) {
-            updatePotentialCollisionCache();
-            updateCollisionTasksCache = true;
+        this.cachedHitsToRemove.resetQuick();
+        if (this.ticksSinceCacheUpdate > CACHE_UPDATE_FREQUENCY || this.parent.needsImmediateCollisionCacheUpdate()) {
+            this.updatePotentialCollisionCache();
+            this.updateCollisionTasksCache = true;
         }
         if (Math.random() < COLLISION_TASK_SHUFFLE_FREQUENCY) {
-            cachedPotentialHits.shuffle(rand);
+            this.cachedPotentialHits.shuffle(this.rand);
         }
     }
 
     public void splitIntoCollisionTasks(List<ShipCollisionTask> toAdd) {
-        if (updateCollisionTasksCache) {
-            tasks.clear();
+        if (this.updateCollisionTasksCache) {
+            this.tasks.clear();
             int index = 0;
-            int size = cachedPotentialHits.size();
+            int size = this.cachedPotentialHits.size();
             while (index < size) {
                 ShipCollisionTask task = new ShipCollisionTask(this, index);
                 index += ShipCollisionTask.MAX_TASKS_TO_CHECK;
-                tasks.add(task);
+                this.tasks.add(task);
             }
-            updateCollisionTasksCache = false;
+            this.updateCollisionTasksCache = false;
         }
-        toAdd.addAll(tasks);
+        toAdd.addAll(this.tasks);
     }
 
     public void processCollisionTask(ShipCollisionTask task) {
@@ -148,7 +148,7 @@ public class WorldPhysicsCollider {
             CollisionInformationHolder info = collisionIterator.next();
             inWorldPos.setPos(info.inWorldX, info.inWorldY, info.inWorldZ);
             inLocalPos.setPos(info.inLocalX, info.inLocalY, info.inLocalZ);
-            handleActualCollision(info.collider, inWorldPos, inLocalPos, info.inWorldState, info.inLocalState);
+            this.handleActualCollision(info.collider, inWorldPos, inLocalPos, info.inWorldState, info.inLocalState);
         }
 
         /*
@@ -172,16 +172,16 @@ public class WorldPhysicsCollider {
         final MutableBlockPos localCollisionPos = new MutableBlockPos();
         final Vector inWorld = new Vector();
 
-        TIntIterator cachedHitsIterator = cachedPotentialHits.iterator();
+        TIntIterator cachedHitsIterator = this.cachedPotentialHits.iterator();
         while (cachedHitsIterator.hasNext()) {
             // Converts the int to a mutablePos
-            SpatialDetector.setPosWithRespectTo(cachedHitsIterator.next(), centerPotentialHit, mutablePos);
+            SpatialDetector.setPosWithRespectTo(cachedHitsIterator.next(), this.centerPotentialHit, this.mutablePos);
 
-            inWorld.X = mutablePos.getX() + .5;
-            inWorld.Y = mutablePos.getY() + .5;
-            inWorld.Z = mutablePos.getZ() + .5;
+            inWorld.X = this.mutablePos.getX() + .5;
+            inWorld.Y = this.mutablePos.getY() + .5;
+            inWorld.Z = this.mutablePos.getZ() + .5;
 
-            parent.getShipTransformationManager().getCurrentPhysicsTransform().transform(inWorld,
+            this.parent.getShipTransformationManager().getCurrentPhysicsTransform().transform(inWorld,
                     TransformType.GLOBAL_TO_SUBSPACE);
 
             // parent.coordTransform.fromGlobalToLocal(inWorld);
@@ -210,8 +210,8 @@ public class WorldPhysicsCollider {
             if (!(minChunkY > 15 || maxChunkY < 0)) {
                 for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
                     for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
-                        if (parent.ownsChunk(chunkX, chunkZ)) {
-                            final Chunk chunkIn = parent.getChunkCache().getChunkAt(chunkX, chunkZ);
+                        if (this.parent.ownsChunk(chunkX, chunkZ)) {
+                            final Chunk chunkIn = this.parent.getChunkCache().getChunkAt(chunkX, chunkZ);
 
                             int minXToCheck = chunkX << 4;
                             int maxXToCheck = minXToCheck + 15;
@@ -244,16 +244,16 @@ public class WorldPhysicsCollider {
 
                                                     localCollisionPos.setPos(x, y, z);
 
-                                                    boolean brokeAWorldBlock = handleLikelyCollision(mutablePos,
-                                                            localCollisionPos, parent.getCachedSurroundingChunks()
-                                                                    .getBlockState(mutablePos),
+                                                    boolean brokeAWorldBlock = this.handleLikelyCollision(this.mutablePos,
+                                                            localCollisionPos, this.parent.getCachedSurroundingChunks()
+                                                                    .getBlockState(this.mutablePos),
                                                             state);
 
                                                     if (brokeAWorldBlock) {
                                                         int positionRemoved = SpatialDetector.getHashWithRespectTo(
-                                                                mutablePos.getX(), mutablePos.getY(), mutablePos.getZ(),
-                                                                centerPotentialHit);
-                                                        cachedHitsToRemove.add(positionRemoved);
+                                                                this.mutablePos.getX(), this.mutablePos.getY(), this.mutablePos.getZ(),
+                                                                this.centerPotentialHit);
+                                                        this.cachedHitsToRemove.add(positionRemoved);
                                                         break entireLoop;
                                                     }
                                                 }
@@ -284,13 +284,13 @@ public class WorldPhysicsCollider {
         // List<AxisAlignedBB> colBB = worldObj.getCollisionBoxes(inLocalBB);
         // inLocalBB = colBB.get(0);
 
-        Polygon shipInWorld = new Polygon(inLocalBB, parent.getShipTransformationManager().getCurrentPhysicsTransform(),
+        Polygon shipInWorld = new Polygon(inLocalBB, this.parent.getShipTransformationManager().getCurrentPhysicsTransform(),
                 TransformType.SUBSPACE_TO_GLOBAL);
         Polygon worldPoly = new Polygon(inGlobalBB);
         PhysPolygonCollider collider = new PhysPolygonCollider(shipInWorld, worldPoly,
-                parent.getShipTransformationManager().normals);
+                this.parent.getShipTransformationManager().normals);
         if (!collider.seperated) {
-            return handleActualCollision(collider, inWorldPos, inLocalPos, inWorldState, inLocalState);
+            return this.handleActualCollision(collider, inWorldPos, inLocalPos, inWorldState, inLocalState);
         }
 
         return false;
@@ -310,10 +310,10 @@ public class WorldPhysicsCollider {
         // NestedBoolean didBlockBreakInWorld = new NestedBoolean(false);
 
         Vector positionInBody = collider.entity.getCenter();
-        positionInBody.subtract(parent.getWrapperEntity().posX, parent.getWrapperEntity().posY,
-                parent.getWrapperEntity().posZ);
+        positionInBody.subtract(this.parent.getWrapperEntity().posX, this.parent.getWrapperEntity().posY,
+                this.parent.getWrapperEntity().posZ);
 
-        Vector velocityAtPoint = calculator.getVelocityAtPoint(positionInBody);
+        Vector velocityAtPoint = this.calculator.getVelocityAtPoint(positionInBody);
 
         double impulseApplied = 1D;
         // BlockRammingManager.processBlockRamming(parent.wrapper, collisionSpeed,
@@ -325,13 +325,13 @@ public class WorldPhysicsCollider {
         impulseApplied /= collisionPoints.length;
 
         for (Vector collisionPos : collisionPoints) {
-            Vector inBody = collisionPos.getSubtraction(new Vector(parent.getWrapperEntity().posX,
-                    parent.getWrapperEntity().posY, parent.getWrapperEntity().posZ));
+            Vector inBody = collisionPos.getSubtraction(new Vector(this.parent.getWrapperEntity().posX,
+                    this.parent.getWrapperEntity().posY, this.parent.getWrapperEntity().posZ));
             inBody.multiply(-1D);
-            Vector momentumAtPoint = calculator.getVelocityAtPoint(inBody);
+            Vector momentumAtPoint = this.calculator.getVelocityAtPoint(inBody);
             Vector axis = toCollideWith.collision_normal;
             Vector offsetVector = toCollideWith.getResponse();
-            calculateCollisionImpulseForce(inBody, momentumAtPoint, axis, offsetVector, false, false, impulseApplied);
+            this.calculateCollisionImpulseForce(inBody, momentumAtPoint, axis, offsetVector, false, false, impulseApplied);
         }
 
         return false;
@@ -342,12 +342,12 @@ public class WorldPhysicsCollider {
     private void calculateCollisionImpulseForce(Vector inBody, Vector velocityAtPointOfCollision, Vector axis,
                                                 Vector offsetVector, boolean didBlockBreakInShip, boolean didBlockBreakInWorld, double impulseApplied) {
         Vector firstCross = inBody.cross(axis);
-        RotationMatrices.applyTransform3by3(calculator.getPhysInvMOITensor(), firstCross);
+        RotationMatrices.applyTransform3by3(this.calculator.getPhysInvMOITensor(), firstCross);
 
         Vector secondCross = firstCross.cross(inBody);
 
         double impulseMagnitude = -velocityAtPointOfCollision.dot(axis)
-                / (calculator.getInvMass() + secondCross.dot(axis));
+                / (this.calculator.getInvMass() + secondCross.dot(axis));
 
         // Below this speed our collision coefficient of restitution is zero.
         final double slopR = .5D;
@@ -368,12 +368,12 @@ public class WorldPhysicsCollider {
             // collisionImpulseForce.multiply(1.8D);
             double collisionVelocity = velocityAtPointOfCollision.dot(axis);
 
-            addFrictionToNormalForce(velocityAtPointOfCollision, collisionImpulseForce, inBody);
-            calculator.linearMomentum.add(collisionImpulseForce);
+            this.addFrictionToNormalForce(velocityAtPointOfCollision, collisionImpulseForce, inBody);
+            this.calculator.linearMomentum.add(collisionImpulseForce);
             Vector thirdCross = inBody.cross(collisionImpulseForce);
 
-            RotationMatrices.applyTransform3by3(calculator.getPhysInvMOITensor(), thirdCross);
-            calculator.angularVelocity.add(thirdCross);
+            RotationMatrices.applyTransform3by3(this.calculator.getPhysInvMOITensor(), thirdCross);
+            this.calculator.angularVelocity.add(thirdCross);
         }
     }
 
@@ -397,22 +397,22 @@ public class WorldPhysicsCollider {
         frictionVector.subtract(toRemove);
 
 
-        double inertiaScalarAlongAxis = parent.getPhysicsProcessor().getInertiaAlongRotationAxis();
+        double inertiaScalarAlongAxis = this.parent.getPhysicsProcessor().getInertiaAlongRotationAxis();
         // The change in velocity vector
-        Vector initialVelocity = new Vector(parent.getPhysicsProcessor().linearMomentum,
-                parent.getPhysicsProcessor().getInvMass());
+        Vector initialVelocity = new Vector(this.parent.getPhysicsProcessor().linearMomentum,
+                this.parent.getPhysicsProcessor().getInvMass());
         // Don't forget to multiply by delta t
         Vector deltaVelocity = new Vector(frictionVector,
-                parent.getPhysicsProcessor().getInvMass() * parent.getPhysicsProcessor().getDragForPhysTick());
+                this.parent.getPhysicsProcessor().getInvMass() * this.parent.getPhysicsProcessor().getDragForPhysTick());
 
         double A = initialVelocity.lengthSq();
         double B = 2 * initialVelocity.dot(deltaVelocity);
         double C = deltaVelocity.lengthSq();
 
-        Vector initialAngularVelocity = parent.getPhysicsProcessor().angularVelocity;
+        Vector initialAngularVelocity = this.parent.getPhysicsProcessor().angularVelocity;
         Vector deltaAngularVelocity = inBody.cross(frictionVector);
         // This might need to be 1 / inertiaScalarAlongAxis
-        deltaAngularVelocity.multiply(parent.getPhysicsProcessor().getDragForPhysTick() / inertiaScalarAlongAxis);
+        deltaAngularVelocity.multiply(this.parent.getPhysicsProcessor().getDragForPhysTick() / inertiaScalarAlongAxis);
 
         double D = initialAngularVelocity.lengthSq();
         double E = 2 * deltaAngularVelocity.dot(initialAngularVelocity);
@@ -426,9 +426,9 @@ public class WorldPhysicsCollider {
 
         // The coefficients of energy as a function of energyScaleFactor in the form (A
         // + B * k + c * k^2)
-        double firstCoefficient = A * parent.getPhysicsProcessor().getMass() + D * inertiaScalarAlongAxis;
-        double secondCoefficient = B * parent.getPhysicsProcessor().getMass() + E * inertiaScalarAlongAxis;
-        double thirdCoefficient = C * parent.getPhysicsProcessor().getMass() + F * inertiaScalarAlongAxis;
+        double firstCoefficient = A * this.parent.getPhysicsProcessor().getMass() + D * inertiaScalarAlongAxis;
+        double secondCoefficient = B * this.parent.getPhysicsProcessor().getMass() + E * inertiaScalarAlongAxis;
+        double thirdCoefficient = C * this.parent.getPhysicsProcessor().getMass() + F * inertiaScalarAlongAxis;
 
         double scaleFactor = -secondCoefficient / (thirdCoefficient * 2);
 
@@ -447,7 +447,7 @@ public class WorldPhysicsCollider {
 
     // TODO: The greatest physics lag starts here.
     private void updatePotentialCollisionCache() {
-        PhysicsShipTransform currentPhysicsTransform = (PhysicsShipTransform) parent.getShipTransformationManager()
+        PhysicsShipTransform currentPhysicsTransform = (PhysicsShipTransform) this.parent.getShipTransformationManager()
                 .getCurrentPhysicsTransform();
         // final AxisAlignedBB collisionBB = parent.getCollisionBoundingBox()
         // .expand(calculator.linearMomentum.X * calculator.getInvMass(),
@@ -456,22 +456,22 @@ public class WorldPhysicsCollider {
         // .grow(AABB_EXPANSION);
         // Use the physics tick collision box instead of the game tick collision box.
         final AxisAlignedBB collisionBB = currentPhysicsTransform.getShipBoundingBox().grow(AABB_EXPANSION).expand(
-                calculator.linearMomentum.X * calculator.getInvMass() * calculator.getPhysicsTimeDeltaPerPhysTick() * 5,
-                calculator.linearMomentum.Y * calculator.getInvMass() * calculator.getPhysicsTimeDeltaPerPhysTick() * 5,
-                calculator.linearMomentum.Z * calculator.getInvMass() * calculator.getPhysicsTimeDeltaPerPhysTick()
+                this.calculator.linearMomentum.X * this.calculator.getInvMass() * this.calculator.getPhysicsTimeDeltaPerPhysTick() * 5,
+                this.calculator.linearMomentum.Y * this.calculator.getInvMass() * this.calculator.getPhysicsTimeDeltaPerPhysTick() * 5,
+                this.calculator.linearMomentum.Z * this.calculator.getInvMass() * this.calculator.getPhysicsTimeDeltaPerPhysTick()
                         * 5);
         final AxisAlignedBB shipBB = currentPhysicsTransform.getShipBoundingBox();
-        ticksSinceCacheUpdate = 0D;
+        this.ticksSinceCacheUpdate = 0D;
         // This is being used to occasionally offset the collision cache update, in the
         // hopes this will prevent multiple ships from all updating
         // in the same tick
         if (Math.random() > .5) {
-            ticksSinceCacheUpdate -= .05D;
+            this.ticksSinceCacheUpdate -= .05D;
         }
-        int oldSize = cachedPotentialHits.size();
+        int oldSize = this.cachedPotentialHits.size();
         // Resets the potential hits array in O(1) time! Isn't that something.
         // cachedPotentialHits.resetQuick();
-        cachedPotentialHits.clear();
+        this.cachedPotentialHits.clear();
         // Ship is outside of world blockSpace, just skip this all together
         if (collisionBB.maxY < 0 || collisionBB.minY > 255) {
             return;
@@ -481,10 +481,10 @@ public class WorldPhysicsCollider {
         // falling through the floor
         BlockPos min = new BlockPos(collisionBB.minX, Math.max(collisionBB.minY - 1, 0), collisionBB.minZ);
         BlockPos max = new BlockPos(collisionBB.maxX, Math.min(collisionBB.maxY, 255), collisionBB.maxZ);
-        centerPotentialHit = new BlockPos((min.getX() + max.getX()) / 2D, (min.getY() + max.getY()) / 2D,
+        this.centerPotentialHit = new BlockPos((min.getX() + max.getX()) / 2D, (min.getY() + max.getY()) / 2D,
                 (min.getZ() + max.getZ()) / 2D);
 
-        ChunkCache cache = parent.getCachedSurroundingChunks();
+        ChunkCache cache = this.parent.getCachedSurroundingChunks();
 
         if (cache == null) {
             System.err.println(
@@ -506,19 +506,19 @@ public class WorldPhysicsCollider {
         int maxZ = max.getZ();
 
         // More multithreading!
-        if (parent.getBlockPositions().size() > 100) {
-            List<Tuple<Integer, Integer>> tasks = new ArrayList<Tuple<Integer, Integer>>();
+        if (this.parent.getBlockPositions().size() > 100) {
+            List<Tuple<Integer, Integer>> tasks = new ArrayList<>();
 
             for (int chunkX = chunkMinX; chunkX < chunkMaxX; chunkX++) {
                 for (int chunkZ = chunkMinZ; chunkZ < chunkMaxZ; chunkZ++) {
-                    tasks.add(new Tuple<Integer, Integer>(chunkX, chunkZ));
+                    tasks.add(new Tuple<>(chunkX, chunkZ));
                 }
             }
 
             Consumer<Tuple<Integer, Integer>> consumer = i -> { // i is a Tuple<Integer, Integer>
                 // updateCollisionCacheParrallel(cache, cachedPotentialHits, i.getFirst(),
                 // i.getSecond(), minX, minY, minZ, maxX, maxY, maxZ);
-                updateCollisionCacheSequential(cache, i.getFirst(), i.getSecond(), minX, minY, minZ, maxX, maxY, maxZ,
+                this.updateCollisionCacheSequential(cache, i.getFirst(), i.getSecond(), minX, minY, minZ, maxX, maxY, maxZ,
                         shipBB);
             };
             try {
@@ -529,7 +529,7 @@ public class WorldPhysicsCollider {
         } else {
             for (int chunkX = chunkMinX; chunkX < chunkMaxX; chunkX++) {
                 for (int chunkZ = chunkMinZ; chunkZ < chunkMaxZ; chunkZ++) {
-                    updateCollisionCacheSequential(cache, chunkX, chunkZ, minX, minY, minZ, maxX, maxY, maxZ, shipBB);
+                    this.updateCollisionCacheSequential(cache, chunkX, chunkZ, minX, minY, minZ, maxX, maxY, maxZ, shipBB);
                 }
             }
         }
@@ -588,21 +588,21 @@ public class WorldPhysicsCollider {
 
                                                 if (x >= minX && x <= maxX && y >= minY && y <= maxY && z >= minZ
                                                         && z <= maxZ && false) {
-                                                    checkForCollision(x, y, z, extendedblockstorage, octree, temp1,
+                                                    this.checkForCollision(x, y, z, extendedblockstorage, octree, temp1,
                                                             temp2, temp3, dataQueue);
-                                                    checkForCollision(x, y, z + 1, extendedblockstorage, octree, temp1,
+                                                    this.checkForCollision(x, y, z + 1, extendedblockstorage, octree, temp1,
                                                             temp2, temp3, dataQueue);
-                                                    checkForCollision(x, y + 1, z, extendedblockstorage, octree, temp1,
+                                                    this.checkForCollision(x, y + 1, z, extendedblockstorage, octree, temp1,
                                                             temp2, temp3, dataQueue);
-                                                    checkForCollision(x, y + 1, z + 1, extendedblockstorage, octree,
+                                                    this.checkForCollision(x, y + 1, z + 1, extendedblockstorage, octree,
                                                             temp1, temp2, temp3, dataQueue);
-                                                    checkForCollision(x + 1, y, z, extendedblockstorage, octree, temp1,
+                                                    this.checkForCollision(x + 1, y, z, extendedblockstorage, octree, temp1,
                                                             temp2, temp3, dataQueue);
-                                                    checkForCollision(x + 1, y, z + 1, extendedblockstorage, octree,
+                                                    this.checkForCollision(x + 1, y, z + 1, extendedblockstorage, octree,
                                                             temp1, temp2, temp3, dataQueue);
-                                                    checkForCollision(x + 1, y + 1, z, extendedblockstorage, octree,
+                                                    this.checkForCollision(x + 1, y + 1, z, extendedblockstorage, octree,
                                                             temp1, temp2, temp3, dataQueue);
-                                                    checkForCollision(x + 1, y + 1, z + 1, extendedblockstorage, octree,
+                                                    this.checkForCollision(x + 1, y + 1, z + 1, extendedblockstorage, octree,
                                                             temp1, temp2, temp3, dataQueue);
                                                 }
                                             }
@@ -615,7 +615,7 @@ public class WorldPhysicsCollider {
                         for (int x = minStorageX; x < maxStorageX; x++) {
                             for (int y = minStorageY; y < maxStorageY; y++) {
                                 for (int z = minStorageZ; z < maxStorageZ; z++) {
-                                    checkForCollision(x, y, z, extendedblockstorage, octree, temp1, temp2, temp3,
+                                    this.checkForCollision(x, y, z, extendedblockstorage, octree, temp1, temp2, temp3,
                                             dataQueue);
                                 }
                             }
@@ -678,21 +678,21 @@ public class WorldPhysicsCollider {
 
                                                 if (x >= minX && x <= maxX && y >= minY && y <= maxY && z >= minZ
                                                         && z <= maxZ) {
-                                                    checkForCollision(x, y, z, extendedblockstorage, octree, temp1,
+                                                    this.checkForCollision(x, y, z, extendedblockstorage, octree, temp1,
                                                             temp2, temp3, shipBB);
-                                                    checkForCollision(x, y, z + 1, extendedblockstorage, octree, temp1,
+                                                    this.checkForCollision(x, y, z + 1, extendedblockstorage, octree, temp1,
                                                             temp2, temp3, shipBB);
-                                                    checkForCollision(x, y + 1, z, extendedblockstorage, octree, temp1,
+                                                    this.checkForCollision(x, y + 1, z, extendedblockstorage, octree, temp1,
                                                             temp2, temp3, shipBB);
-                                                    checkForCollision(x, y + 1, z + 1, extendedblockstorage, octree,
+                                                    this.checkForCollision(x, y + 1, z + 1, extendedblockstorage, octree,
                                                             temp1, temp2, temp3, shipBB);
-                                                    checkForCollision(x + 1, y, z, extendedblockstorage, octree, temp1,
+                                                    this.checkForCollision(x + 1, y, z, extendedblockstorage, octree, temp1,
                                                             temp2, temp3, shipBB);
-                                                    checkForCollision(x + 1, y, z + 1, extendedblockstorage, octree,
+                                                    this.checkForCollision(x + 1, y, z + 1, extendedblockstorage, octree,
                                                             temp1, temp2, temp3, shipBB);
-                                                    checkForCollision(x + 1, y + 1, z, extendedblockstorage, octree,
+                                                    this.checkForCollision(x + 1, y + 1, z, extendedblockstorage, octree,
                                                             temp1, temp2, temp3, shipBB);
-                                                    checkForCollision(x + 1, y + 1, z + 1, extendedblockstorage, octree,
+                                                    this.checkForCollision(x + 1, y + 1, z + 1, extendedblockstorage, octree,
                                                             temp1, temp2, temp3, shipBB);
                                                 }
                                             }
@@ -705,7 +705,7 @@ public class WorldPhysicsCollider {
                         for (int x = minStorageX; x < maxStorageX; x++) {
                             for (int y = minStorageY; y < maxStorageY; y++) {
                                 for (int z = minStorageZ; z < maxStorageZ; z++) {
-                                    checkForCollision(x, y, z, extendedblockstorage, octree, temp1, temp2, temp3,
+                                    this.checkForCollision(x, y, z, extendedblockstorage, octree, temp1, temp2, temp3,
                                             shipBB);
                                 }
                             }
@@ -726,10 +726,10 @@ public class WorldPhysicsCollider {
             // parent.coordTransform.fromGlobalToLocal(inLocal);
             if (inLocal.X > shipBB.minX && inLocal.X < shipBB.maxX && inLocal.Y > shipBB.minY && inLocal.Y < shipBB.maxY
                     && inLocal.Z > shipBB.minZ && inLocal.Z < shipBB.maxZ) {
-                parent.getShipTransformationManager().getCurrentPhysicsTransform().transform(inLocal,
+                this.parent.getShipTransformationManager().getCurrentPhysicsTransform().transform(inLocal,
                         TransformType.GLOBAL_TO_SUBSPACE);
 
-                inBody.setSubtraction(inLocal, parent.getCenterCoord());
+                inBody.setSubtraction(inLocal, this.parent.getCenterCoord());
                 // parent.physicsProcessor.setVectorToVelocityAtPoint(inBody, speedInBody);
                 // speedInBody.multiply(-parent.physicsProcessor.getPhysicsTimeDeltaPerGameTick());
 
@@ -775,12 +775,12 @@ public class WorldPhysicsCollider {
                 // maxX = Math.min(maxX, minX << 4);
                 // maxZ = Math.min(maxZ, minZ << 4);
 
-                if (parent.ownsChunk(minX >> 4, minZ >> 4) && parent.ownsChunk(maxX >> 4, maxZ >> 4)) {
+                if (this.parent.ownsChunk(minX >> 4, minZ >> 4) && this.parent.ownsChunk(maxX >> 4, maxZ >> 4)) {
 
-                    Chunk chunkIn00 = parent.getChunkCache().getChunkAt(minX >> 4, minZ >> 4);
-                    Chunk chunkIn01 = parent.getChunkCache().getChunkAt(minX >> 4, maxZ >> 4);
-                    Chunk chunkIn10 = parent.getChunkCache().getChunkAt(maxX >> 4, minZ >> 4);
-                    Chunk chunkIn11 = parent.getChunkCache().getChunkAt(maxX >> 4, maxZ >> 4);
+                    Chunk chunkIn00 = this.parent.getChunkCache().getChunkAt(minX >> 4, minZ >> 4);
+                    Chunk chunkIn01 = this.parent.getChunkCache().getChunkAt(minX >> 4, maxZ >> 4);
+                    Chunk chunkIn10 = this.parent.getChunkCache().getChunkAt(maxX >> 4, minZ >> 4);
+                    Chunk chunkIn11 = this.parent.getChunkCache().getChunkAt(maxX >> 4, maxZ >> 4);
 
                     breakThisLoop:
                     for (int localX = minX; localX < maxX; localX++) {
@@ -800,7 +800,7 @@ public class WorldPhysicsCollider {
                                 }
                             }
                             for (int localY = minY; localY < maxY; localY++) {
-                                boolean result = checkForCollisionFast(theChunk, localX, localY, localZ, x, y, z);
+                                boolean result = this.checkForCollisionFast(theChunk, localX, localY, localZ, x, y, z);
                                 if (result) {
                                     break breakThisLoop;
                                 }
@@ -824,11 +824,11 @@ public class WorldPhysicsCollider {
             IBitOctreeProvider provider = (IBitOctreeProvider) chunk.storageArrays[localY >> 4].getData();
             IBitOctree octreeInLocal = provider.getBitOctree();
             if (octreeInLocal.get(localX & 15, localY & 15, localZ & 15)) {
-                int hash = SpatialDetector.getHashWithRespectTo(x, y, z, centerPotentialHit);
+                int hash = SpatialDetector.getHashWithRespectTo(x, y, z, this.centerPotentialHit);
                 // Sometimes we end up adding to the hits array in multiple threads at once,
                 // crashing the physics.
                 try {
-                    cachedPotentialHits.add(hash);
+                    this.cachedPotentialHits.add(hash);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -848,10 +848,10 @@ public class WorldPhysicsCollider {
             inLocal.Z = z + .5D;
             // TODO: Something
             // parent.coordTransform.fromGlobalToLocal(inLocal);
-            parent.getShipTransformationManager().getCurrentPhysicsTransform().transform(inLocal,
+            this.parent.getShipTransformationManager().getCurrentPhysicsTransform().transform(inLocal,
                     TransformType.GLOBAL_TO_SUBSPACE);
 
-            inBody.setSubtraction(inLocal, parent.getCenterCoord());
+            inBody.setSubtraction(inLocal, this.parent.getCenterCoord());
             // parent.physicsProcessor.setVectorToVelocityAtPoint(inBody, speedInBody);
             // speedInBody.multiply(-parent.physicsProcessor.getPhysicsTimeDeltaPerGameTick());
 
@@ -891,14 +891,14 @@ public class WorldPhysicsCollider {
             for (int localX = minX; localX < maxX; localX++) {
                 for (int localZ = minZ; localZ < maxZ; localZ++) {
                     for (int localY = minY; localY < maxY; localY++) {
-                        if (parent.ownsChunk(localX >> 4, localZ >> 4)) {
-                            Chunk chunkIn = parent.getChunkCache().getChunkAt(localX >> 4, localZ >> 4);
+                        if (this.parent.ownsChunk(localX >> 4, localZ >> 4)) {
+                            Chunk chunkIn = this.parent.getChunkCache().getChunkAt(localX >> 4, localZ >> 4);
                             if (localY >> 4 < 16 && chunkIn.storageArrays[localY >> 4] != null) {
                                 IBitOctreeProvider provider = IBitOctreeProvider.class
                                         .cast(chunkIn.storageArrays[localY >> 4].getData());
                                 IBitOctree octreeInLocal = provider.getBitOctree();
                                 if (octreeInLocal.get(localX & 15, localY & 15, localZ & 15)) {
-                                    int hash = SpatialDetector.getHashWithRespectTo(x, y, z, centerPotentialHit);
+                                    int hash = SpatialDetector.getHashWithRespectTo(x, y, z, this.centerPotentialHit);
                                     collection.add(hash);
                                     break outermostloop;
                                 }
@@ -911,19 +911,19 @@ public class WorldPhysicsCollider {
     }
 
     public BlockPos getCenterPotentialHit() {
-        return centerPotentialHit;
+        return this.centerPotentialHit;
     }
 
     public int getCachedPotentialHit(int offset) {
-        return cachedPotentialHits.get(offset);
+        return this.cachedPotentialHits.get(offset);
     }
 
     public int getCachedPotentialHitSize() {
-        return cachedPotentialHits.size();
+        return this.cachedPotentialHits.size();
     }
 
     public PhysicsObject getParent() {
-        return parent;
+        return this.parent;
     }
 
 }

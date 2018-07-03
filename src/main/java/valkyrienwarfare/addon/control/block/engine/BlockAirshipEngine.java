@@ -60,7 +60,7 @@ public abstract class BlockAirshipEngine extends Block implements IBlockForcePro
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
+        return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
     }
 
     @Override
@@ -142,8 +142,8 @@ public abstract class BlockAirshipEngine extends Block implements IBlockForcePro
 
     public TileEntity createNewTileEntity(World worldIn, int meta) {
         Vector normalVector = new Vector(1, 0, 0);
-        IBlockState state = getStateFromMeta(meta);
-        return new TileEntityPropellerEngine(new Vector(state.getValue(FACING)), true, enginePower);
+        IBlockState state = this.getStateFromMeta(meta);
+        return new TileEntityPropellerEngine(new Vector(state.getValue(FACING)), true, this.enginePower);
     }
 
     public void setEnginePower(double power) {

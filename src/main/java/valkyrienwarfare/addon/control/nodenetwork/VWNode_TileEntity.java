@@ -45,8 +45,8 @@ public class VWNode_TileEntity implements IVWNode {
 
     public VWNode_TileEntity(TileEntity parent, int maximumConnections) {
         this.parentTile = parent;
-        this.linkedNodesPos = new HashSet<BlockPos>();
-        this.unmodifiableLinkedNodesPos = Collections.unmodifiableSet(linkedNodesPos);
+        this.linkedNodesPos = new HashSet<>();
+        this.unmodifiableLinkedNodesPos = Collections.unmodifiableSet(this.linkedNodesPos);
         this.isValid = false;
         this.parentPhysicsObject = null;
         this.nodeGraph = null;
@@ -87,9 +87,9 @@ public class VWNode_TileEntity implements IVWNode {
     @Override
     public Iterable<IVWNode> getDirectlyConnectedNodes() {
         // assertValidity();
-        List<IVWNode> nodesList = new ArrayList<IVWNode>();
-        for (BlockPos pos : linkedNodesPos) {
-            IVWNode node = getVWNode_TileEntity(getNodeWorld(), pos);
+        List<IVWNode> nodesList = new ArrayList<>();
+        for (BlockPos pos : this.linkedNodesPos) {
+            IVWNode node = getVWNode_TileEntity(this.getNodeWorld(), pos);
             if (node != null) {
                 nodesList.add(node);
             }
@@ -99,15 +99,15 @@ public class VWNode_TileEntity implements IVWNode {
 
     @Override
     public void makeConnection(IVWNode other) {
-        assertValidity();
-        boolean contains = linkedNodesPos.contains(other.getNodePos());
+        this.assertValidity();
+        boolean contains = this.linkedNodesPos.contains(other.getNodePos());
         if (!contains) {
-            linkedNodesPos.add(other.getNodePos());
-            parentTile.markDirty();
+            this.linkedNodesPos.add(other.getNodePos());
+            this.parentTile.markDirty();
             other.makeConnection(this);
-            sendNodeUpdates();
+            this.sendNodeUpdates();
             List stupid = Collections.singletonList(other);
-            getGraph().addNeighours(this, stupid);
+            this.getGraph().addNeighours(this, stupid);
             // System.out.println("Connections: " + getGraph().getObjects().size());
             // getNodeGraph().addNode(other);
         }
@@ -115,14 +115,14 @@ public class VWNode_TileEntity implements IVWNode {
 
     @Override
     public void breakConnection(IVWNode other) {
-        assertValidity();
-        boolean contains = linkedNodesPos.contains(other.getNodePos());
+        this.assertValidity();
+        boolean contains = this.linkedNodesPos.contains(other.getNodePos());
         if (contains) {
-            linkedNodesPos.remove(other.getNodePos());
-            parentTile.markDirty();
+            this.linkedNodesPos.remove(other.getNodePos());
+            this.parentTile.markDirty();
             other.breakConnection(this);
-            sendNodeUpdates();
-            getGraph().removeNeighbour(this, other);
+            this.sendNodeUpdates();
+            this.getGraph().removeNeighbour(this, other);
             // System.out.println(getGraph().getObjects().size());
             // getNodeGraph().removeNode(other);
         }
@@ -130,40 +130,40 @@ public class VWNode_TileEntity implements IVWNode {
 
     @Override
     public BlockPos getNodePos() {
-        assertValidity();
-        return parentTile.getPos();
+        this.assertValidity();
+        return this.parentTile.getPos();
     }
 
     @Override
     public void validate() {
-        isValid = true;
+        this.isValid = true;
     }
 
     @Override
     public void invalidate() {
-        isValid = false;
+        this.isValid = false;
     }
 
     @Override
     public boolean isValid() {
-        return isValid;
+        return this.isValid;
     }
 
     @Override
     public World getNodeWorld() {
-        return parentTile.getWorld();
+        return this.parentTile.getWorld();
     }
 
     @Override
     public Set<BlockPos> getLinkedNodesPos() {
-        return unmodifiableLinkedNodesPos;
+        return this.unmodifiableLinkedNodesPos;
     }
 
     @Override
     public void writeToNBT(NBTTagCompound compound) {
-        int[] positions = new int[getLinkedNodesPos().size() * 3];
+        int[] positions = new int[this.getLinkedNodesPos().size() * 3];
         int cont = 0;
-        for (BlockPos pos : getLinkedNodesPos()) {
+        for (BlockPos pos : this.getLinkedNodesPos()) {
             positions[cont] = pos.getX();
             positions[cont + 1] = pos.getY();
             positions[cont + 2] = pos.getZ();
@@ -176,55 +176,55 @@ public class VWNode_TileEntity implements IVWNode {
     public void readFromNBT(NBTTagCompound compound) {
         int[] positions = compound.getIntArray(NBT_DATA_KEY);
         for (int i = 0; i < positions.length; i += 3) {
-            linkedNodesPos.add(new BlockPos(positions[i], positions[i + 1], positions[i + 2]));
+            this.linkedNodesPos.add(new BlockPos(positions[i], positions[i + 1], positions[i + 2]));
         }
     }
 
     @Override
     public PhysicsObject getPhysicsObject() {
-        return parentPhysicsObject;
+        return this.parentPhysicsObject;
     }
 
     @Override
     public void sendNodeUpdates() {
         if (!this.getNodeWorld().isRemote) {
-            Packet toSend = parentTile.getUpdatePacket();
+            Packet toSend = this.parentTile.getUpdatePacket();
 
-            double xPos = parentTile.getPos().getX();
-            double yPos = parentTile.getPos().getY();
-            double zPos = parentTile.getPos().getZ();
+            double xPos = this.parentTile.getPos().getX();
+            double yPos = this.parentTile.getPos().getY();
+            double zPos = this.parentTile.getPos().getZ();
 
             WorldServer serverWorld = (WorldServer) this.getNodeWorld();
             PlayerList list = serverWorld.mcServer.getPlayerList();
             // System.out.println("help");
-            if (!parentTile.isInvalid()) {
+            if (!this.parentTile.isInvalid()) {
                 list.sendToAllNearExcept(null, xPos, yPos, zPos, 128D, serverWorld.provider.getDimension(), toSend);
             }
         }
     }
 
     private void assertValidity() {
-        if (!isValid()) {
+        if (!this.isValid()) {
             throw new IllegalStateException("This node is not valid / initialized!");
         }
     }
 
     @Override
     public void shiftConnections(BlockPos offset) {
-        if (isValid()) {
+        if (this.isValid()) {
             throw new IllegalStateException("Cannot shift the connections of a Node while it is valid and in use!");
         }
-        List<BlockPos> shiftedNodesPos = new ArrayList<BlockPos>(linkedNodesPos.size());
-        for (BlockPos originalPos : linkedNodesPos) {
+        List<BlockPos> shiftedNodesPos = new ArrayList<>(this.linkedNodesPos.size());
+        for (BlockPos originalPos : this.linkedNodesPos) {
             shiftedNodesPos.add(originalPos.add(offset));
         }
-        linkedNodesPos.clear();
-        linkedNodesPos.addAll(shiftedNodesPos);
+        this.linkedNodesPos.clear();
+        this.linkedNodesPos.addAll(shiftedNodesPos);
     }
 
     @Override
     public void setParentPhysicsObject(PhysicsObject parent) {
-        if (isValid()) {
+        if (this.isValid()) {
             throw new IllegalStateException(
                     "Cannot change the parent physics object of a Node while it is valid and in use!");
         }
@@ -245,7 +245,7 @@ public class VWNode_TileEntity implements IVWNode {
 
     @Override
     public Graph getGraph() {
-        return nodeGraph;
+        return this.nodeGraph;
     }
 
     @Override
@@ -254,8 +254,8 @@ public class VWNode_TileEntity implements IVWNode {
     }
 
     private List<GraphObject> getNeighbors() {
-        List<GraphObject> neighbors = new ArrayList<GraphObject>();
-        for (BlockPos pos : getLinkedNodesPos()) {
+        List<GraphObject> neighbors = new ArrayList<>();
+        for (BlockPos pos : this.getLinkedNodesPos()) {
             IVWNode node = getVWNode_TileEntity(this.getNodeWorld(), pos);
             if (node == null) {
                 throw new IllegalStateException();
@@ -267,9 +267,9 @@ public class VWNode_TileEntity implements IVWNode {
 
     @Override
     public List<GraphObject> getNeighbours() {
-        List<GraphObject> nodesList = new ArrayList<GraphObject>();
-        for (BlockPos pos : linkedNodesPos) {
-            IVWNode node = getVWNode_TileEntity(getNodeWorld(), pos);
+        List<GraphObject> nodesList = new ArrayList<>();
+        for (BlockPos pos : this.linkedNodesPos) {
+            IVWNode node = getVWNode_TileEntity(this.getNodeWorld(), pos);
             if (node != null) {
                 nodesList.add(node);
             }
@@ -279,11 +279,11 @@ public class VWNode_TileEntity implements IVWNode {
 
     @Override
     public TileEntity getParentTile() {
-        return parentTile;
+        return this.parentTile;
     }
 
     @Override
     public int getMaximumConnections() {
-        return maximumConnections;
+        return this.maximumConnections;
     }
 }

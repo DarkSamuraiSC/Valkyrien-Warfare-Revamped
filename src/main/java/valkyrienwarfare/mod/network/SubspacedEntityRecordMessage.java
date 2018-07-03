@@ -54,30 +54,30 @@ public class SubspacedEntityRecordMessage implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        physicsObjectWrapperID = buf.readInt();
-        entitySubspacedID = buf.readInt();
-        position = VectorImmutable.readFromByteBuf(buf);
-        positionLastTick = VectorImmutable.readFromByteBuf(buf);
-        lookDirection = VectorImmutable.readFromByteBuf(buf);
-        velocity = VectorImmutable.readFromByteBuf(buf);
+        this.physicsObjectWrapperID = buf.readInt();
+        this.entitySubspacedID = buf.readInt();
+        this.position = VectorImmutable.readFromByteBuf(buf);
+        this.positionLastTick = VectorImmutable.readFromByteBuf(buf);
+        this.lookDirection = VectorImmutable.readFromByteBuf(buf);
+        this.velocity = VectorImmutable.readFromByteBuf(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        if (subspacedEntityRecord.getParentSubspace().getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
+        if (this.subspacedEntityRecord.getParentSubspace().getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
             throw new IllegalStateException(
                     "Just tried sending SubspacedEntityRecordMessage for a record that was made by the world subspace. This isn't right so we crash right here.");
         }
-        buf.writeInt(subspacedEntityRecord.getParentSubspace().getSubspaceParentEntityID());
-        buf.writeInt(subspacedEntityRecord.getParentEntity().getSubspacedEntityID());
-        subspacedEntityRecord.getPosition().writeToByteBuf(buf);
-        subspacedEntityRecord.getPositionLastTick().writeToByteBuf(buf);
-        subspacedEntityRecord.getLookDirection().writeToByteBuf(buf);
-        subspacedEntityRecord.getVelocity().writeToByteBuf(buf);
+        buf.writeInt(this.subspacedEntityRecord.getParentSubspace().getSubspaceParentEntityID());
+        buf.writeInt(this.subspacedEntityRecord.getParentEntity().getSubspacedEntityID());
+        this.subspacedEntityRecord.getPosition().writeToByteBuf(buf);
+        this.subspacedEntityRecord.getPositionLastTick().writeToByteBuf(buf);
+        this.subspacedEntityRecord.getLookDirection().writeToByteBuf(buf);
+        this.subspacedEntityRecord.getVelocity().writeToByteBuf(buf);
     }
 
     public ISubspacedEntityRecord createRecordForThisMessage(ISubspacedEntity entity, ISubspace provider) {
-        return new ImplSubspacedEntityRecord(entity, provider, position, positionLastTick, lookDirection, velocity);
+        return new ImplSubspacedEntityRecord(entity, provider, this.position, this.positionLastTick, this.lookDirection, this.velocity);
     }
 
 }

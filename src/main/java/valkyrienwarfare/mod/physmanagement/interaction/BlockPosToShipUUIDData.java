@@ -62,7 +62,7 @@ public class BlockPosToShipUUIDData extends WorldSavedData {
     public UUID getShipUUIDFromPos(int chunkX, int ChunkZ) {
         long chunkPos = ChunkPos.asLong(chunkX, ChunkZ);
 
-        return chunkposToShipUUID.get(chunkPos);
+        return this.chunkposToShipUUID.get(chunkPos);
     }
 
     public void addShipToPersistantMap(PhysicsWrapperEntity toAdd) {
@@ -75,11 +75,11 @@ public class BlockPosToShipUUIDData extends WorldSavedData {
         for (int x = centerX - radius; x <= centerX + radius; x++) {
             for (int z = centerZ - radius; z <= centerZ + radius; z++) {
                 long chunkPos = ChunkPos.asLong(x, z);
-                chunkposToShipUUID.put(chunkPos, shipID);
+                this.chunkposToShipUUID.put(chunkPos, shipID);
             }
         }
-        UUIDToChunkSet.put(toAdd.getPersistentID(), toAdd.getPhysicsObject().getOwnedChunks());
-        markDirty();
+        this.UUIDToChunkSet.put(toAdd.getPersistentID(), toAdd.getPhysicsObject().getOwnedChunks());
+        this.markDirty();
     }
 
     public void removeShipFromPersistantMap(PhysicsWrapperEntity toRemove) {
@@ -90,11 +90,11 @@ public class BlockPosToShipUUIDData extends WorldSavedData {
         for (int x = centerX - radius; x <= centerX + radius; x++) {
             for (int z = centerZ - radius; z <= centerZ + radius; z++) {
                 long chunkPos = ChunkPos.asLong(x, z);
-                chunkposToShipUUID.remove(chunkPos);
+                this.chunkposToShipUUID.remove(chunkPos);
             }
         }
-        UUIDToChunkSet.remove(toRemove.getPersistentID());
-        markDirty();
+        this.UUIDToChunkSet.remove(toRemove.getPersistentID());
+        this.markDirty();
     }
 
     @Override
@@ -115,11 +115,11 @@ public class BlockPosToShipUUIDData extends WorldSavedData {
             UUID persistantID = new UUID(mostBits, leastBits);
             VWChunkClaim set = new VWChunkClaim(centerX, centerZ, radius);
 
-            UUIDToChunkSet.put(persistantID, set);
+            this.UUIDToChunkSet.put(persistantID, set);
 
             for (int x = centerX - radius; x <= centerX + radius; x++) {
                 for (int z = centerZ - radius; z <= centerZ + radius; z++) {
-                    chunkposToShipUUID.put(ChunkPos.asLong(x, z), persistantID);
+                    this.chunkposToShipUUID.put(ChunkPos.asLong(x, z), persistantID);
                 }
             }
         }
@@ -127,7 +127,7 @@ public class BlockPosToShipUUIDData extends WorldSavedData {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        Set<Entry<UUID, VWChunkClaim>> entries = UUIDToChunkSet.entrySet();
+        Set<Entry<UUID, VWChunkClaim>> entries = this.UUIDToChunkSet.entrySet();
 
         //2 ints, 1 byte (radius), and 2 longs for each ship, that comes out to 25 bytes per entry
         int byteArraySize = entries.size() * 25;

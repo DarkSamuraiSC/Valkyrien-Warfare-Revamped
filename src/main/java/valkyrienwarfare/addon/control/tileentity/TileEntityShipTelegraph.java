@@ -47,7 +47,7 @@ public class TileEntityShipTelegraph extends ImplTileEntityPilotable implements 
             deltaOrdinal += 1;
             deltaRotation += 22.5;
         }
-        IBlockState blockState = this.getWorld().getBlockState(getPos());
+        IBlockState blockState = this.getWorld().getBlockState(this.getPos());
         if (blockState.getBlock() instanceof BlockShipTelegraph) {
             EnumFacing facing = blockState.getValue(BlockShipTelegraph.FACING);
             if (this.isPlayerInFront(sender, facing)) {
@@ -57,12 +57,12 @@ public class TileEntityShipTelegraph extends ImplTileEntityPilotable implements 
         }
 
 
-        int ordinal = telegraphState.ordinal();
+        int ordinal = this.telegraphState.ordinal();
         if ((ordinal > 0 && ordinal < 12) || (ordinal == 0 && deltaOrdinal > 0) || (ordinal == 12 && deltaOrdinal < 0)) {
-            handleRotation += deltaRotation;
+            this.handleRotation += deltaRotation;
             ordinal += deltaOrdinal;
         }
-        telegraphState = ShipTelegraphState.values()[ordinal];
+        this.telegraphState = ShipTelegraphState.values()[ordinal];
     }
 
 
@@ -70,27 +70,27 @@ public class TileEntityShipTelegraph extends ImplTileEntityPilotable implements 
     public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt) {
 //		lastWheelRotation = wheelRotation;
 
-        nextHandleRotation = pkt.getNbtCompound().getDouble("handleRotation");
+        this.nextHandleRotation = pkt.getNbtCompound().getDouble("handleRotation");
     }
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tagToSend = new NBTTagCompound();
-        tagToSend.setDouble("handleRotation", handleRotation);
+        tagToSend.setDouble("handleRotation", this.handleRotation);
         return new SPacketUpdateTileEntity(this.getPos(), 0, tagToSend);
     }
 
     public double getHandleRenderRotation() {
-        return handleRotation;
+        return this.handleRotation;
     }
 
     @Override
     public void update() {
-        if (getWorld().isRemote) {
-            oldHandleRotation = handleRotation;
-            handleRotation += (nextHandleRotation - handleRotation) * .35D;
+        if (this.getWorld().isRemote) {
+            this.oldHandleRotation = this.handleRotation;
+            this.handleRotation += (this.nextHandleRotation - this.handleRotation) * .35D;
         } else {
-            sendUpdatePacketToAllNearby();
+            this.sendUpdatePacketToAllNearby();
         }
 //		this.markDirty();
     }
@@ -98,22 +98,22 @@ public class TileEntityShipTelegraph extends ImplTileEntityPilotable implements 
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound toReturn = super.getUpdateTag();
-        toReturn.setDouble("handleRotation", handleRotation);
+        toReturn.setDouble("handleRotation", this.handleRotation);
         return toReturn;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        handleRotation = compound.getDouble("handleRotation");
-        telegraphState = ShipTelegraphState.values()[compound.getInteger("telegraphStateOrdinal")];
+        this.handleRotation = compound.getDouble("handleRotation");
+        this.telegraphState = ShipTelegraphState.values()[compound.getInteger("telegraphStateOrdinal")];
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound toReturn = super.writeToNBT(compound);
-        toReturn.setDouble("handleRotation", handleRotation);
-        toReturn.setInteger("telegraphStateOrdinal", telegraphState.ordinal());
+        toReturn.setDouble("handleRotation", this.handleRotation);
+        toReturn.setInteger("telegraphStateOrdinal", this.telegraphState.ordinal());
         return toReturn;
     }
 

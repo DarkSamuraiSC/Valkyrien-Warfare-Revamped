@@ -38,11 +38,11 @@ public interface IBlockForceProvider {
      */
     default Vector getBlockForceInWorldSpace(World world, BlockPos pos, IBlockState state, Entity shipEntity,
                                              double secondsToApply) {
-        Vector toReturn = getBlockForceInShipSpace(world, pos, state, shipEntity, secondsToApply);
+        Vector toReturn = this.getBlockForceInShipSpace(world, pos, state, shipEntity, secondsToApply);
         if (toReturn == null || shipEntity == null) {
             return null;
         }
-        if (shouldLocalForceBeRotated(world, pos, state, secondsToApply)) {
+        if (this.shouldLocalForceBeRotated(world, pos, state, secondsToApply)) {
             double[] tranformationMatrix = ValkyrienWarfareHooks.getShipTransformMatrix(shipEntity);
             RotationMatrices.doRotationOnly(tranformationMatrix, toReturn);
         }

@@ -49,8 +49,8 @@ public class PhysicsChunkManager {
     private ChunkClaimWorldData data;
 
     public PhysicsChunkManager(World worldFor) {
-        worldObj = worldFor;
-        loadDataFromWorld();
+        this.worldObj = worldFor;
+        this.loadDataFromWorld();
     }
 
     public static boolean isLikelyShipChunk(int chunkX, int chunkZ) {
@@ -87,7 +87,7 @@ public class PhysicsChunkManager {
             key = this.data.getAvailableChunkKeys().get(0);
             this.data.getAvailableChunkKeys().remove(0);
         }
-        data.markDirty();
+        this.data.markDirty();
 
         int chunkX = (int) ((key % maxSetsPerRow) * distanceBetweenSets + xChunkStartingPos);
         int chunkZ = (int) ((key / maxSetsPerRow) * distanceBetweenSets + zChunkStartingPos);
@@ -98,7 +98,7 @@ public class PhysicsChunkManager {
      * This retrieves the ChunkSetKey data for the specific world
      */
     public void loadDataFromWorld() {
-        data = ChunkClaimWorldData.get(worldObj);
+        this.data = ChunkClaimWorldData.get(this.worldObj);
     }
 
     public void markChunksAvailable(@NonNull VWChunkClaim claim) {

@@ -27,7 +27,7 @@ public enum ControllerInputType {
     }
 
     public boolean shouldLockPlayerMovement() {
-        return lockPlayerMovement;
+        return this.lockPlayerMovement;
     }
 
 }

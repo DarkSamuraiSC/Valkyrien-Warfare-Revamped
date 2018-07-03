@@ -31,8 +31,8 @@ public class ItemTuner extends Item {
 
     public ItemTuner() {
 
-        setUnlocalizedName(CannonModReference.ModItems.TUNER.getUnlocalizedName());
-        setRegistryName(CannonModReference.ModItems.TUNER.getRegistryName());
+        this.setUnlocalizedName(CannonModReference.ModItems.TUNER.getUnlocalizedName());
+        this.setRegistryName(CannonModReference.ModItems.TUNER.getRegistryName());
 
         this.setCreativeTab(CreativeTabs.COMBAT);
         this.maxStackSize = 1;

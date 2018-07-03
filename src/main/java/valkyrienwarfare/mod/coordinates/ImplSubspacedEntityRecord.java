@@ -37,32 +37,32 @@ public class ImplSubspacedEntityRecord implements ISubspacedEntityRecord {
 
     @Override
     public ISubspacedEntity getParentEntity() {
-        return parentEntity;
+        return this.parentEntity;
     }
 
     @Override
     public ISubspace getParentSubspace() {
-        return parentSubspace;
+        return this.parentSubspace;
     }
 
     @Override
     public VectorImmutable getPosition() {
-        return position;
+        return this.position;
     }
 
     @Override
     public VectorImmutable getPositionLastTick() {
-        return positionLastTick;
+        return this.positionLastTick;
     }
 
     @Override
     public VectorImmutable getLookDirection() {
-        return lookVector;
+        return this.lookVector;
     }
 
     @Override
     public VectorImmutable getVelocity() {
-        return velocity;
+        return this.velocity;
     }
 
 }

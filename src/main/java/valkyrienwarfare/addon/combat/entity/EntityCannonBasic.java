@@ -42,20 +42,20 @@ public class EntityCannonBasic extends EntityMountingWeaponBase {
     @Override
     public void onRiderInteract(EntityPlayer player, ItemStack stack, EnumHand hand) {
         if (!player.world.isRemote) {
-            if (canPlayerInteract(player, stack, hand)) {
-                fireCannon(player, stack, hand);
+            if (this.canPlayerInteract(player, stack, hand)) {
+                this.fireCannon(player, stack, hand);
             }
         }
     }
 
     public void fireCannon(EntityPlayer player, ItemStack stack, EnumHand hand) {
-        Vec3d velocityNormal = getVectorForRotation(rotationPitch, rotationYaw);
+        Vec3d velocityNormal = this.getVectorForRotation(this.rotationPitch, this.rotationYaw);
         Vector velocityVector = new Vector(velocityNormal);
 
-        PhysicsWrapperEntity wrapper = getParentShip();
+        PhysicsWrapperEntity wrapper = this.getParentShip();
 
         velocityVector.multiply(3D);
-        EntityCannonBall projectile = new EntityCannonBall(world, velocityVector, this);
+        EntityCannonBall projectile = new EntityCannonBall(this.world, velocityVector, this);
 
         Vector projectileSpawnPos = new Vector(0, .5, 0);
 
@@ -67,18 +67,18 @@ public class EntityCannonBasic extends EntityMountingWeaponBase {
         projectile.posY += projectileSpawnPos.Y;
         projectile.posZ += projectileSpawnPos.Z;
 
-        world.spawnEntity(projectile);
+        this.world.spawnEntity(projectile);
 
-        isCannonLoaded = false;
+        this.isCannonLoaded = false;
         // worldObj.playSound(null, posX, posY, posZ, new SoundEvent(), SoundCategory.AMBIENT, volume, pitch, true);
     }
 
     public boolean canPlayerInteract(EntityPlayer player, ItemStack stack, EnumHand hand) {
-        if (currentTicksOperated < 0) {
-            currentTicksOperated++;
+        if (this.currentTicksOperated < 0) {
+            this.currentTicksOperated++;
             return false;
         }
-        if (!isCannonLoaded) {
+        if (!this.isCannonLoaded) {
             ItemStack cannonBallStack = new ItemStack(ValkyrienWarfareCombat.INSTANCE.cannonBall);
             ItemStack powderStack = new ItemStack(ValkyrienWarfareCombat.INSTANCE.powderPouch);
 
@@ -105,14 +105,11 @@ public class EntityCannonBasic extends EntityMountingWeaponBase {
                         }
                     }
                 }
-                isCannonLoaded = true;
+                this.isCannonLoaded = true;
             }
         } else {
-            currentTicksOperated++;
-            if (currentTicksOperated > tickDelay) {
-                // currentTicksOperated = -4;
-                return true;
-            }
+            this.currentTicksOperated++;
+            return this.currentTicksOperated > this.tickDelay;
         }
 
         return false;
@@ -132,13 +129,13 @@ public class EntityCannonBasic extends EntityMountingWeaponBase {
     @Override
     protected void readEntityFromNBT(NBTTagCompound tagCompund) {
         super.readEntityFromNBT(tagCompund);
-        isCannonLoaded = tagCompund.getBoolean("isCannonLoaded");
+        this.isCannonLoaded = tagCompund.getBoolean("isCannonLoaded");
     }
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound tagCompound) {
         super.writeEntityToNBT(tagCompound);
-        tagCompound.setBoolean("isCannonLoaded", isCannonLoaded);
+        tagCompound.setBoolean("isCannonLoaded", this.isCannonLoaded);
     }
 
 }

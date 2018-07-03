@@ -33,7 +33,7 @@ public class ShipNameUUIDData extends WorldSavedData {
 
     private static final String key = "ShipNameUUIDData";
 
-    public HashMap<String, Long> ShipNameToLongMap = new HashMap<String, Long>();
+    public HashMap<String, Long> ShipNameToLongMap = new HashMap<>();
 
     public ShipNameUUIDData(String name) {
         super(name);
@@ -60,8 +60,8 @@ public class ShipNameUUIDData extends WorldSavedData {
      * @param defaultName
      */
     public void placeShipInRegistry(PhysicsWrapperEntity wrapper, String defaultName) {
-        ShipNameToLongMap.put(defaultName, wrapper.getPersistentID().getMostSignificantBits());
-        markDirty();
+        this.ShipNameToLongMap.put(defaultName, wrapper.getPersistentID().getMostSignificantBits());
+        this.markDirty();
     }
 
     /**
@@ -73,21 +73,21 @@ public class ShipNameUUIDData extends WorldSavedData {
      * @return
      */
     public boolean renameShipInRegsitry(PhysicsWrapperEntity wrapper, String newName, String oldName) {
-        if (ShipNameToLongMap.containsKey(newName)) {
+        if (this.ShipNameToLongMap.containsKey(newName)) {
             return false;
         }
 
-        ShipNameToLongMap.put(newName, wrapper.getPersistentID().getMostSignificantBits());
-        ShipNameToLongMap.remove(oldName);
+        this.ShipNameToLongMap.put(newName, wrapper.getPersistentID().getMostSignificantBits());
+        this.ShipNameToLongMap.remove(oldName);
 
-        markDirty();
+        this.markDirty();
         return true;
     }
 
     public void removeShipFromRegistry(PhysicsWrapperEntity wrapper) {
         String customName = wrapper.getCustomNameTag();
-        ShipNameToLongMap.remove(customName);
-        markDirty();
+        this.ShipNameToLongMap.remove(customName);
+        this.markDirty();
     }
 
     @Override
@@ -101,14 +101,14 @@ public class ShipNameUUIDData extends WorldSavedData {
             }
             String shipName = new String(stringBytes, StandardCharsets.UTF_8);
             long shipUUIDMostSig = buffer.getLong();
-            ShipNameToLongMap.put(shipName, shipUUIDMostSig);
+            this.ShipNameToLongMap.put(shipName, shipUUIDMostSig);
         }
     }
 
     //Inefficient, but the Ship name map shouldn't update often anyways
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        Set<Entry<String, Long>> entryMap = ShipNameToLongMap.entrySet();
+        Set<Entry<String, Long>> entryMap = this.ShipNameToLongMap.entrySet();
         int stringEntriesSize = 0;
         for (Entry<String, Long> entry : entryMap) {
             byte[] stringBytes = entry.getKey().getBytes(StandardCharsets.UTF_8);

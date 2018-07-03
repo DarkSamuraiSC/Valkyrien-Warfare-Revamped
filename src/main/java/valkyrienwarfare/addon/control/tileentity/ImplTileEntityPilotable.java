@@ -45,8 +45,8 @@ public abstract class ImplTileEntityPilotable extends BasicNodeTileEntity implem
 
     @Override
     public final void onPilotControlsMessage(PilotControlsMessage message, EntityPlayerMP sender) {
-        if (sender == pilotPlayerEntity) {
-            processControlMessage(message, sender);
+        if (sender == this.pilotPlayerEntity) {
+            this.processControlMessage(message, sender);
         } else {
             // Wtf is this packet being sent for?
         }
@@ -54,26 +54,26 @@ public abstract class ImplTileEntityPilotable extends BasicNodeTileEntity implem
 
     @Override
     public final EntityPlayer getPilotEntity() {
-        return pilotPlayerEntity;
+        return this.pilotPlayerEntity;
     }
 
     @Override
     public final void setPilotEntity(EntityPlayer toSet) {
-        if (!getWorld().isRemote) {
-            sendPilotUpdatePackets((EntityPlayerMP) toSet, (EntityPlayerMP) pilotPlayerEntity);
+        if (!this.getWorld().isRemote) {
+            this.sendPilotUpdatePackets((EntityPlayerMP) toSet, (EntityPlayerMP) this.pilotPlayerEntity);
         }
-        pilotPlayerEntity = toSet;
-        if (pilotPlayerEntity != null) {
-            onStartTileUsage(pilotPlayerEntity);
+        this.pilotPlayerEntity = toSet;
+        if (this.pilotPlayerEntity != null) {
+            this.onStartTileUsage(this.pilotPlayerEntity);
         } else {
-            onStopTileUsage();
+            this.onStopTileUsage();
         }
     }
 
     @Override
     public final void playerWantsToStopPiloting(EntityPlayer player) {
-        if (player == getPilotEntity()) {
-            setPilotEntity(null);
+        if (player == this.getPilotEntity()) {
+            this.setPilotEntity(null);
         } else {
             // Wtf happened here?
         }
@@ -81,18 +81,18 @@ public abstract class ImplTileEntityPilotable extends BasicNodeTileEntity implem
 
     @Override
     public final PhysicsWrapperEntity getParentPhysicsEntity() {
-        return ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(getWorld(), getPos());
+        return ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(this.getWorld(), this.getPos());
     }
 
     // Always call this before setting the pilotPlayerEntity to equal newPilot
     private final void sendPilotUpdatePackets(EntityPlayerMP newPilot, EntityPlayerMP oldPilot) {
         if (oldPilot != null) {
-            MessageStopPiloting stopMessage = new MessageStopPiloting(getPos());
+            MessageStopPiloting stopMessage = new MessageStopPiloting(this.getPos());
             ValkyrienWarfareControl.controlNetwork.sendTo(stopMessage, oldPilot);
         }
         if (newPilot != null) {
-            MessageStartPiloting startMessage = new MessageStartPiloting(getPos(), setClientPilotingEntireShip(),
-                    getControlInputType());
+            MessageStartPiloting startMessage = new MessageStartPiloting(this.getPos(), this.setClientPilotingEntireShip(),
+                    this.getControlInputType());
             ValkyrienWarfareControl.controlNetwork.sendTo(startMessage, newPilot);
         }
     }
@@ -123,10 +123,10 @@ public abstract class ImplTileEntityPilotable extends BasicNodeTileEntity implem
     abstract void processControlMessage(PilotControlsMessage message, EntityPlayerMP sender);
 
     final void sendUpdatePacketToAllNearby() {
-        SPacketUpdateTileEntity spacketupdatetileentity = getUpdatePacket();
-        WorldServer serverWorld = (WorldServer) world;
-        Vector pos = new Vector(getPos().getX(), getPos().getY(), getPos().getZ());
-        PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(getWorld(), getPos());
+        SPacketUpdateTileEntity spacketupdatetileentity = this.getUpdatePacket();
+        WorldServer serverWorld = (WorldServer) this.world;
+        Vector pos = new Vector(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
+        PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(this.getWorld(), this.getPos());
         if (wrapper != null) {
             wrapper.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().transform(pos,
                     TransformType.SUBSPACE_TO_GLOBAL);
@@ -134,7 +134,7 @@ public abstract class ImplTileEntityPilotable extends BasicNodeTileEntity implem
             // pos);
         }
         serverWorld.mcServer.getPlayerList().sendToAllNearExcept(null, pos.X, pos.Y, pos.Z, 128D,
-                getWorld().provider.getDimension(), spacketupdatetileentity);
+                this.getWorld().provider.getDimension(), spacketupdatetileentity);
     }
 
     /**

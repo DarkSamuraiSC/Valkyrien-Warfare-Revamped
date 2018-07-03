@@ -46,7 +46,7 @@ public class MixinCPacketPlayerDigging implements ITransformablePacket {
     @Override
     public PhysicsWrapperEntity getPacketParent(NetHandlerPlayServer server) {
         World world = server.player.getEntityWorld();
-        return ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(world, thisPacketTryUse.getPosition());
+        return ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(world, this.thisPacketTryUse.getPosition());
     }
 
 }

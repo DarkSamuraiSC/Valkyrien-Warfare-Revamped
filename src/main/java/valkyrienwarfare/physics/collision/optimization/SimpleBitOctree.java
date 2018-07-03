@@ -21,28 +21,28 @@ public class SimpleBitOctree implements IBitOctree {
     private final IBitSet bitbuffer;
 
     public SimpleBitOctree() {
-        bitbuffer = new SmallBitSet(BITS_TOTAL);
+        this.bitbuffer = new SmallBitSet(BITS_TOTAL);
     }
 
     @Override
     public void set(int x, int y, int z, boolean bit) {
-        int index = getBlockIndex(x, y, z);
-        ensureCapacity(index);
-        if (bitbuffer.get(index) != bit) {
-            bitbuffer.set(index, bit);
-            updateOctrees(x, y, z, bit);
+        int index = this.getBlockIndex(x, y, z);
+        this.ensureCapacity(index);
+        if (this.bitbuffer.get(index) != bit) {
+            this.bitbuffer.set(index, bit);
+            this.updateOctrees(x, y, z, bit);
         }
     }
 
     @Override
     public boolean get(int x, int y, int z) {
-        return getAtIndex(getBlockIndex(x, y, z));
+        return this.getAtIndex(this.getBlockIndex(x, y, z));
     }
 
     @Override
     public boolean getAtIndex(int index) {
-        ensureCapacity(index);
-        return bitbuffer.get(index);
+        this.ensureCapacity(index);
+        return this.bitbuffer.get(index);
     }
 
     @Override
@@ -69,43 +69,43 @@ public class SimpleBitOctree implements IBitOctree {
     }
 
     private void updateOctrees(int x, int y, int z, boolean bit) {
-        int levelThreeIndex = getOctreeLevelThreeIndex(x, y, z);
-        int levelTwoIndex = getOctreeLevelTwoIndex(x, y, z, levelThreeIndex);
-        int levelOneIndex = getOctreeLevelOneIndex(x, y, z, levelTwoIndex);
+        int levelThreeIndex = this.getOctreeLevelThreeIndex(x, y, z);
+        int levelTwoIndex = this.getOctreeLevelTwoIndex(x, y, z, levelThreeIndex);
+        int levelOneIndex = this.getOctreeLevelOneIndex(x, y, z, levelTwoIndex);
 
-        if (getAtIndex(levelOneIndex) != bit) {
-            if (updateOctreeLevelOne(levelOneIndex, x, y, z)) {
-                if (updateOctreeLevelTwo(levelTwoIndex)) {
-                    updateOctreeLevelThree(levelThreeIndex);
+        if (this.getAtIndex(levelOneIndex) != bit) {
+            if (this.updateOctreeLevelOne(levelOneIndex, x, y, z)) {
+                if (this.updateOctreeLevelTwo(levelTwoIndex)) {
+                    this.updateOctreeLevelThree(levelThreeIndex);
                 }
             }
         }
     }
 
     private void updateOctreeLevelThree(int levelThreeIndex) {
-        if (bitbuffer.get(levelThreeIndex + 1) || bitbuffer.get(levelThreeIndex + 10)
-                || bitbuffer.get(levelThreeIndex + 19) || bitbuffer.get(levelThreeIndex + 28)
-                || bitbuffer.get(levelThreeIndex + 37) || bitbuffer.get(levelThreeIndex + 46)
-                || bitbuffer.get(levelThreeIndex + 55) || bitbuffer.get(levelThreeIndex + 64)) {
-            bitbuffer.set(levelThreeIndex);
+        if (this.bitbuffer.get(levelThreeIndex + 1) || this.bitbuffer.get(levelThreeIndex + 10)
+                || this.bitbuffer.get(levelThreeIndex + 19) || this.bitbuffer.get(levelThreeIndex + 28)
+                || this.bitbuffer.get(levelThreeIndex + 37) || this.bitbuffer.get(levelThreeIndex + 46)
+                || this.bitbuffer.get(levelThreeIndex + 55) || this.bitbuffer.get(levelThreeIndex + 64)) {
+            this.bitbuffer.set(levelThreeIndex);
         } else {
-            bitbuffer.clear(levelThreeIndex);
+            this.bitbuffer.clear(levelThreeIndex);
         }
     }
 
     // Returns true if the next level of octree should be updated
     private boolean updateOctreeLevelTwo(int levelTwoIndex) {
-        if (bitbuffer.get(levelTwoIndex + 1) || bitbuffer.get(levelTwoIndex + 2) || bitbuffer.get(levelTwoIndex + 3)
-                || bitbuffer.get(levelTwoIndex + 4) || bitbuffer.get(levelTwoIndex + 5)
-                || bitbuffer.get(levelTwoIndex + 6) || bitbuffer.get(levelTwoIndex + 7)
-                || bitbuffer.get(levelTwoIndex + 8)) {
-            if (!bitbuffer.get(levelTwoIndex)) {
-                bitbuffer.set(levelTwoIndex);
+        if (this.bitbuffer.get(levelTwoIndex + 1) || this.bitbuffer.get(levelTwoIndex + 2) || this.bitbuffer.get(levelTwoIndex + 3)
+                || this.bitbuffer.get(levelTwoIndex + 4) || this.bitbuffer.get(levelTwoIndex + 5)
+                || this.bitbuffer.get(levelTwoIndex + 6) || this.bitbuffer.get(levelTwoIndex + 7)
+                || this.bitbuffer.get(levelTwoIndex + 8)) {
+            if (!this.bitbuffer.get(levelTwoIndex)) {
+                this.bitbuffer.set(levelTwoIndex);
                 return true;
             }
         } else {
-            if (bitbuffer.get(levelTwoIndex)) {
-                bitbuffer.clear(levelTwoIndex);
+            if (this.bitbuffer.get(levelTwoIndex)) {
+                this.bitbuffer.clear(levelTwoIndex);
                 return true;
             }
         }
@@ -118,15 +118,15 @@ public class SimpleBitOctree implements IBitOctree {
         x &= 0x0E;
         y &= 0x0E;
         z &= 0x0E;
-        if (get(x, y, z) || get(x, y, z + 1) || get(x, y + 1, z) || get(x, y + 1, z + 1) || get(x + 1, y, z)
-                || get(x + 1, y, z + 1) || get(x + 1, y + 1, z) || get(x + 1, y + 1, z + 1)) {
-            if (!bitbuffer.get(levelOneIndex)) {
-                bitbuffer.set(levelOneIndex);
+        if (this.get(x, y, z) || this.get(x, y, z + 1) || this.get(x, y + 1, z) || this.get(x, y + 1, z + 1) || this.get(x + 1, y, z)
+                || this.get(x + 1, y, z + 1) || this.get(x + 1, y + 1, z) || this.get(x + 1, y + 1, z + 1)) {
+            if (!this.bitbuffer.get(levelOneIndex)) {
+                this.bitbuffer.set(levelOneIndex);
                 return true;
             }
         } else {
-            if (bitbuffer.get(levelOneIndex)) {
-                bitbuffer.clear(levelOneIndex);
+            if (this.bitbuffer.get(levelOneIndex)) {
+                this.bitbuffer.clear(levelOneIndex);
                 return true;
             }
         }
@@ -137,21 +137,21 @@ public class SimpleBitOctree implements IBitOctree {
         x = (x & 0x02) >> 1;
         y = (y & 0x02);
         z = (z & 0x02) << 1;
-        return getOctreeLevelOneIndex(levelTwoIndex, x | y | z);
+        return this.getOctreeLevelOneIndex(levelTwoIndex, x | y | z);
     }
 
     private int getOctreeLevelTwoIndex(int x, int y, int z, int levelThreeIndex) {
         x = (x & 0x04) >> 2;
         y = (y & 0x04) >> 1;
         z = (z & 0x04);
-        return getOctreeLevelTwoIndex(levelThreeIndex, x | y | z);
+        return this.getOctreeLevelTwoIndex(levelThreeIndex, x | y | z);
     }
 
     private int getOctreeLevelThreeIndex(int x, int y, int z) {
         x = (x & 0x08) >> 3;
         y = (y & 0x08) >> 2;
         z = (z & 0x08) >> 1;
-        return getOctreeLevelThreeIndex(x | y | z);
+        return this.getOctreeLevelThreeIndex(x | y | z);
     }
 
     private int getBlockIndex(int x, int y, int z) {

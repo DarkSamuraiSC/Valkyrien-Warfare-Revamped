@@ -70,15 +70,15 @@ public class ShipSpawnDetector extends SpatialDetector {
 
     public ShipSpawnDetector(BlockPos start, World worldIn, int maximum, boolean checkCorners) {
         super(start, worldIn, maximum, checkCorners);
-        startDetection();
+        this.startDetection();
     }
 
     @Override
     public boolean isValidExpansion(int x, int y, int z) {
-        mutablePos.setPos(x, y, z);
-        IBlockState state = cache.getBlockState(mutablePos);
+        this.mutablePos.setPos(x, y, z);
+        IBlockState state = this.cache.getBlockState(this.mutablePos);
         if (state.getBlock() == Blocks.BEDROCK) {
-            cleanHouse = true;
+            this.cleanHouse = true;
             return false;
         }
         return !blackList.contains(state.getBlock());

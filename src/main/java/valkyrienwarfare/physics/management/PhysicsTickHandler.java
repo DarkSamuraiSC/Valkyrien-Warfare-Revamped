@@ -29,7 +29,7 @@ public class PhysicsTickHandler {
     public static void onWorldTickStart(World world) {
         WorldPhysObjectManager manager = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getManagerForWorld(world);
 
-        List<PhysicsWrapperEntity> toUnload = new ArrayList<PhysicsWrapperEntity>(manager.physicsEntitiesToUnload);
+        List<PhysicsWrapperEntity> toUnload = new ArrayList<>(manager.physicsEntitiesToUnload);
         for (PhysicsWrapperEntity wrapper : toUnload) {
             manager.onUnload(wrapper);
         }

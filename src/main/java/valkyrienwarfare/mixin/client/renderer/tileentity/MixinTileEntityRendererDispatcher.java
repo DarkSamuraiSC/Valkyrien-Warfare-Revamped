@@ -51,7 +51,7 @@ public abstract class MixinTileEntityRendererDispatcher {
             at = @At("HEAD"),
             cancellable = true)
     public void preRender(TileEntity tileentityIn, float partialTicks, int destroyStage, CallbackInfo callbackInfo) {
-        if (!hasChanged) {
+        if (!this.hasChanged) {
             BlockPos pos = tileentityIn.getPos();
             PhysicsWrapperEntity wrapper = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(tileentityIn.getWorld(), pos);
 
@@ -59,7 +59,7 @@ public abstract class MixinTileEntityRendererDispatcher {
                 try {
                     GlStateManager.resetColor();
 
-                    if (drawingBatch) {
+                    if (this.drawingBatch) {
                         this.drawBatch(MinecraftForgeClient.getRenderPass());
                         this.preDrawBatch();
                     }
@@ -74,15 +74,15 @@ public abstract class MixinTileEntityRendererDispatcher {
                     TileEntityRendererDispatcher.staticPlayerY = wrapper.getPhysicsObject().getShipRenderer().offsetPos.getY();
                     TileEntityRendererDispatcher.staticPlayerZ = wrapper.getPhysicsObject().getShipRenderer().offsetPos.getZ();
 
-                    hasChanged = true;
-                    if (drawingBatch) {
+                    this.hasChanged = true;
+                    if (this.drawingBatch) {
                         this.render(tileentityIn, partialTicks, destroyStage);
                         this.drawBatch(MinecraftForgeClient.getRenderPass());
                         this.preDrawBatch();
                     } else {
                         this.render(tileentityIn, partialTicks, destroyStage);
                     }
-                    hasChanged = false;
+                    this.hasChanged = false;
                     TileEntityRendererDispatcher.staticPlayerX = playerX;
                     TileEntityRendererDispatcher.staticPlayerY = playerY;
                     TileEntityRendererDispatcher.staticPlayerZ = playerZ;

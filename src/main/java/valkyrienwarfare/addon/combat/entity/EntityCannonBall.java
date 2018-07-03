@@ -35,20 +35,20 @@ public class EntityCannonBall extends Entity {
 
     public EntityCannonBall(World worldIn) {
         super(worldIn);
-        setSize(.4F, .4F);
-        explosionPower = 2f;
+        this.setSize(.4F, .4F);
+        this.explosionPower = 2f;
     }
 
     public EntityCannonBall(World worldIn, Vector velocityVector, Entity parent) {
         this(worldIn);
-        motionX = velocityVector.X;
-        motionY = velocityVector.Y;
-        motionZ = velocityVector.Z;
-        prevRotationYaw = rotationYaw = parent.rotationYaw;
-        prevRotationPitch = rotationPitch = parent.rotationPitch;
-        prevPosX = lastTickPosX = posX = parent.posX;
-        prevPosY = lastTickPosY = posY = parent.posY;
-        prevPosZ = lastTickPosZ = posZ = parent.posZ;
+        this.motionX = velocityVector.X;
+        this.motionY = velocityVector.Y;
+        this.motionZ = velocityVector.Z;
+        this.prevRotationYaw = this.rotationYaw = parent.rotationYaw;
+        this.prevRotationPitch = this.rotationPitch = parent.rotationPitch;
+        this.prevPosX = this.lastTickPosX = this.posX = parent.posX;
+        this.prevPosY = this.lastTickPosY = this.posY = parent.posY;
+        this.prevPosZ = this.lastTickPosZ = this.posZ = parent.posZ;
     }
 
     @Override
@@ -59,39 +59,39 @@ public class EntityCannonBall extends Entity {
     @Override
     public void onUpdate() {
         super.onUpdate();
-        tickLerp();
+        this.tickLerp();
         // if(!worldObj.isRemote){
-        processMovementForTick();
+        this.processMovementForTick();
         // }
 
     }
 
     private void processMovementForTick() {
-        Vec3d origin = new Vec3d(posX, posY, posZ);
-        Vec3d traceEnd = origin.addVector(motionX, motionY, motionZ);
+        Vec3d origin = new Vec3d(this.posX, this.posY, this.posZ);
+        Vec3d traceEnd = origin.addVector(this.motionX, this.motionY, this.motionZ);
 
-        RayTraceResult traceResult = world.rayTraceBlocks(origin, traceEnd, false, true, false);
+        RayTraceResult traceResult = this.world.rayTraceBlocks(origin, traceEnd, false, true, false);
 
         if (traceResult == null || traceResult.typeOfHit == Type.MISS) {
-            posX += motionX;
-            posY += motionY;
-            posZ += motionZ;
+            this.posX += this.motionX;
+            this.posY += this.motionY;
+            this.posZ += this.motionZ;
 
             double drag = Math.pow(.995D, 1D / 20D);
-            motionX *= drag;
-            motionY *= drag;
-            motionZ *= drag;
-            motionY -= .05;
+            this.motionX *= drag;
+            this.motionY *= drag;
+            this.motionZ *= drag;
+            this.motionY -= .05;
         } else {
-            if (traceResult.hitVec != null && !world.isRemote) {
-                processCollision(traceResult);
+            if (traceResult.hitVec != null && !this.world.isRemote) {
+                this.processCollision(traceResult);
                 this.setDead();
             }
         }
     }
 
     private void processCollision(RayTraceResult collisionTrace) {
-        world.createExplosion(this, collisionTrace.hitVec.x, collisionTrace.hitVec.y, collisionTrace.hitVec.z, explosionPower, true);
+        this.world.createExplosion(this, collisionTrace.hitVec.x, collisionTrace.hitVec.y, collisionTrace.hitVec.z, this.explosionPower, true);
     }
 
     private void tickLerp() {
@@ -113,9 +113,9 @@ public class EntityCannonBall extends Entity {
      */
     @SideOnly(Side.CLIENT)
     public void setPositionAndRotationDirect(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport) {
-        posX = x;
-        posY = y;
-        posZ = z;
+        this.posX = x;
+        this.posY = y;
+        this.posZ = z;
         // this.boatPitch = x;
         // this.lerpY = y;
         // this.lerpZ = z;

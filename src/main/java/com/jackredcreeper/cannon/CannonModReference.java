@@ -25,7 +25,7 @@ public class CannonModReference {
     public static final String CLIENT = "com.jackredcreeper.cannon.proxy.ClientProxy";
     public static final String SERVER = "com.jackredcreeper.cannon.proxy.ServerProxy";
 
-    public static enum ModItems {
+    public enum ModItems {
         PRIMER("primer", "itemprimer"),
         LOADER("loader", "itemloader"),
         TUNER("tuner", "itemtuner"),
@@ -44,15 +44,15 @@ public class CannonModReference {
         }
 
         public String getUnlocalizedName() {
-            return unlocalizedName;
+            return this.unlocalizedName;
         }
 
         public String getRegistryName() {
-            return registryName;
+            return this.registryName;
         }
     }
 
-    public static enum ModBlocks {
+    public enum ModBlocks {
         CANNON("cannon", "blockcannon"),
         AIRMINE("airmine", "blockairmine");
 
@@ -66,11 +66,11 @@ public class CannonModReference {
         }
 
         public String getUnlocalizedName() {
-            return unlocalizedName;
+            return this.unlocalizedName;
         }
 
         public String getRegistryName() {
-            return registryName;
+            return this.registryName;
         }
     }
 

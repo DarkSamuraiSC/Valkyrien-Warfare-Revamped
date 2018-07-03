@@ -35,7 +35,7 @@ public class BlockRedstoneEngine extends BlockAirshipEngineLore {
 
     @Override
     public String getEnginePowerTooltip() {
-        return enginePower + " * redstone power level";
+        return this.enginePower + " * redstone power level";
     }
 
 }

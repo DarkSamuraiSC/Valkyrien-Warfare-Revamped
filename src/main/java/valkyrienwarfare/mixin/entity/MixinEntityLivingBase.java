@@ -61,9 +61,9 @@ public abstract class MixinEntityLivingBase extends Entity implements ISubspaced
         VectorImmutable lookVector = record.getLookDirection();
         VectorImmutable velocityVector = record.getVelocity();
 
-        thisAsEntity.lastTickPosX = coordinatesLastTick.getX();
-        thisAsEntity.lastTickPosY = coordinatesLastTick.getY();
-        thisAsEntity.lastTickPosZ = coordinatesLastTick.getZ();
+        this.thisAsEntity.lastTickPosX = coordinatesLastTick.getX();
+        this.thisAsEntity.lastTickPosY = coordinatesLastTick.getY();
+        this.thisAsEntity.lastTickPosZ = coordinatesLastTick.getZ();
 
         double pitch = VWMath.getPitchFromVectorImmutable(lookVector);
         double yaw = VWMath.getYawFromVectorImmutable(lookVector, pitch);
@@ -75,7 +75,7 @@ public abstract class MixinEntityLivingBase extends Entity implements ISubspaced
         this.motionY = velocityVector.getY();
         this.motionZ = velocityVector.getZ();
 
-        thisAsEntity.setPosition(coordinates.getX(), coordinates.getY(), coordinates.getZ());
+        this.thisAsEntity.setPosition(coordinates.getX(), coordinates.getY(), coordinates.getZ());
     }
 
     @Inject(method = "dismountEntity", at = @At("HEAD"), cancellable = true)
@@ -150,6 +150,6 @@ public abstract class MixinEntityLivingBase extends Entity implements ISubspaced
         int k = MathHelper.floor(this.posZ);
         BlockPos blockpos = new BlockPos(i, j, k);
         IBlockState iblockstate = this.world.getBlockState(blockpos);
-        return net.minecraftforge.common.ForgeHooks.isLivingOnLadder(iblockstate, world, new BlockPos(i, j, k), EntityLivingBase.class.cast(this));
+        return net.minecraftforge.common.ForgeHooks.isLivingOnLadder(iblockstate, this.world, new BlockPos(i, j, k), EntityLivingBase.class.cast(this));
     }
 }

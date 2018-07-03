@@ -59,60 +59,60 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
     public PhysicsWrapperEntity(World worldIn) {
         super(worldIn);
         this.physicsObject = new PhysicsObject(this);
-        dataManager.register(IS_NAME_CUSTOM, Boolean.valueOf(false));
+        this.dataManager.register(IS_NAME_CUSTOM, Boolean.valueOf(false));
     }
 
     public PhysicsWrapperEntity(World worldIn, double x, double y, double z, @Nullable EntityPlayer creator,
                                 int detectorID, ShipType shipType) {
         this(worldIn);
-        posX = x;
-        posY = y;
-        posZ = z;
+        this.posX = x;
+        this.posY = y;
+        this.posZ = z;
 
-        getPhysicsObject().setDetectorID(detectorID);
-        getPhysicsObject().setShipType(shipType);
-        getPhysicsObject().processChunkClaims(creator);
+        this.getPhysicsObject().setDetectorID(detectorID);
+        this.getPhysicsObject().setShipType(shipType);
+        this.getPhysicsObject().processChunkClaims(creator);
 
         IAirshipCounterCapability counter = creator.getCapability(ValkyrienWarfareMod.airshipCounter, null);
         counter.onCreate();
 
-        setCustomNameTagInitial(creator.getName() + ":" + counter.getAirshipCountEver());
-        ShipNameUUIDData.get(worldIn).placeShipInRegistry(this, getCustomNameTag());
+        this.setCustomNameTagInitial(creator.getName() + ":" + counter.getAirshipCountEver());
+        ShipNameUUIDData.get(worldIn).placeShipInRegistry(this, this.getCustomNameTag());
     }
 
     // TODO: Redesign this constructor
     public PhysicsWrapperEntity(World worldIn, double x, double y, double z, ShipType shipType, Schematic schematic) {
         this(worldIn);
-        posX = x;
-        posY = y;
-        posZ = z;
+        this.posX = x;
+        this.posY = y;
+        this.posZ = z;
 
-        getPhysicsObject().setDetectorID(0);
-        getPhysicsObject().setShipType(shipType);
+        this.getPhysicsObject().setDetectorID(0);
+        this.getPhysicsObject().setShipType(shipType);
 
-        getPhysicsObject().processChunkClaims(schematic);
+        this.getPhysicsObject().processChunkClaims(schematic);
 
-        setCustomNameTagInitial("ShipRandom" + ":" + Math.random() * 10000000);
-        ShipNameUUIDData.get(worldIn).placeShipInRegistry(this, getCustomNameTag());
+        this.setCustomNameTagInitial("ShipRandom" + ":" + Math.random() * 10000000);
+        ShipNameUUIDData.get(worldIn).placeShipInRegistry(this, this.getCustomNameTag());
     }
 
     @Override
     public void onUpdate() {
-        if (isDead) {
+        if (this.isDead) {
             return;
         }
-        if (world.isRemote) {
-            getPhysicsObject().setNameCustom(dataManager.get(IS_NAME_CUSTOM));
+        if (this.world.isRemote) {
+            this.getPhysicsObject().setNameCustom(this.dataManager.get(IS_NAME_CUSTOM));
         }
         // super.onUpdate();
-        getPhysicsObject().onTick();
+        this.getPhysicsObject().onTick();
 
-        firstUpdate = false;
+        this.firstUpdate = false;
     }
 
     @Override
     public void updatePassenger(Entity passenger) {
-        Vector inLocal = getPhysicsObject().getLocalPositionForEntity(passenger);
+        Vector inLocal = this.getPhysicsObject().getLocalPositionForEntity(passenger);
 
         if (inLocal != null) {
             Vector newEntityPosition = new Vector(inLocal);
@@ -121,9 +121,9 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
             AxisAlignedBB inLocalAABB = new AxisAlignedBB(newEntityPosition.X - f, newEntityPosition.Y,
                     newEntityPosition.Z - f, newEntityPosition.X + f, newEntityPosition.Y + f1,
                     newEntityPosition.Z + f);
-            getPhysicsObject().getShipTransformationManager().fromLocalToGlobal(newEntityPosition);
+            this.getPhysicsObject().getShipTransformationManager().fromLocalToGlobal(newEntityPosition);
             passenger.setPosition(newEntityPosition.X, newEntityPosition.Y, newEntityPosition.Z);
-            Polygon entityBBPoly = new Polygon(inLocalAABB, getPhysicsObject().getShipTransformationManager().getCurrentTickTransform(), TransformType.SUBSPACE_TO_GLOBAL);
+            Polygon entityBBPoly = new Polygon(inLocalAABB, this.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform(), TransformType.SUBSPACE_TO_GLOBAL);
 
             AxisAlignedBB newEntityBB = entityBBPoly.getEnclosedAABB();
             passenger.setEntityBoundingBox(newEntityBB);
@@ -131,11 +131,11 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
                 passenger.onUpdate();
 
                 for (Entity e : passenger.riddenByEntities) {
-                    if (getPhysicsObject().isEntityFixed(e)) {
-                        Vector inLocalAgain = getPhysicsObject().getLocalPositionForEntity(e);
+                    if (this.getPhysicsObject().isEntityFixed(e)) {
+                        Vector inLocalAgain = this.getPhysicsObject().getLocalPositionForEntity(e);
                         if (inLocalAgain != null) {
                             Vector newEntityPositionAgain = new Vector(inLocalAgain);
-                            getPhysicsObject().getShipTransformationManager().fromLocalToGlobal(newEntityPositionAgain);
+                            this.getPhysicsObject().getShipTransformationManager().fromLocalToGlobal(newEntityPositionAgain);
 
                             e.setPosition(newEntityPositionAgain.X, newEntityPositionAgain.Y, newEntityPositionAgain.Z);
                         }
@@ -147,15 +147,15 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
 
     @Override
     public void setCustomNameTag(String name) {
-        if (!world.isRemote) {
-            if (getCustomNameTag() != null && !getCustomNameTag().equals("")) {
+        if (!this.world.isRemote) {
+            if (this.getCustomNameTag() != null && !this.getCustomNameTag().equals("")) {
                 // Update the name registry
-                boolean didRenameSuccessful = ShipNameUUIDData.get(world).renameShipInRegsitry(this, name,
-                        getCustomNameTag());
+                boolean didRenameSuccessful = ShipNameUUIDData.get(this.world).renameShipInRegsitry(this, name,
+                        this.getCustomNameTag());
                 if (didRenameSuccessful) {
                     super.setCustomNameTag(name);
-                    getPhysicsObject().setNameCustom(true);
-                    dataManager.set(IS_NAME_CUSTOM, true);
+                    this.getPhysicsObject().setNameCustom(true);
+                    this.dataManager.set(IS_NAME_CUSTOM, true);
                 }
             } else {
                 super.setCustomNameTag(name);
@@ -178,7 +178,7 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return getPhysicsObject().getShipBoundingBox();
+        return this.getPhysicsObject().getShipBoundingBox();
     }
 
     @Override
@@ -205,7 +205,7 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
     @Override
     @SideOnly(Side.CLIENT)
     public boolean getAlwaysRenderNameTagForRender() {
-        return getPhysicsObject().isNameCustom();
+        return this.getPhysicsObject().isNameCustom();
     }
 
     public void setCustomNameTagInitial(String name) {
@@ -214,51 +214,51 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
 
     @Override
     protected void readEntityFromNBT(NBTTagCompound tagCompound) {
-        getPhysicsObject().readFromNBTTag(tagCompound);
+        this.getPhysicsObject().readFromNBTTag(tagCompound);
     }
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound tagCompound) {
-        getPhysicsObject().writeToNBTTag(tagCompound);
+        this.getPhysicsObject().writeToNBTTag(tagCompound);
     }
 
     @Override
     public void writeSpawnData(ByteBuf buffer) {
-        getPhysicsObject().preloadNewPlayers();
-        getPhysicsObject().writeSpawnData(buffer);
+        this.getPhysicsObject().preloadNewPlayers();
+        this.getPhysicsObject().writeSpawnData(buffer);
     }
 
     @Override
     public void readSpawnData(ByteBuf additionalData) {
-        getPhysicsObject().readSpawnData(additionalData);
+        this.getPhysicsObject().readSpawnData(additionalData);
     }
 
     /**
      * @return the roll value being currently used by the game tick
      */
     public double getRoll() {
-        return roll;
+        return this.roll;
     }
 
     /**
      * @return the yaw value being currently used by the game tick
      */
     public double getYaw() {
-        return yaw;
+        return this.yaw;
     }
 
     /**
      * @return the pitch value being currently used by the game tick
      */
     public double getPitch() {
-        return pitch;
+        return this.pitch;
     }
 
     /**
      * @return The PhysicsObject this entity is wrapping around.
      */
     public PhysicsObject getPhysicsObject() {
-        return physicsObject;
+        return this.physicsObject;
     }
 
     /**
@@ -276,7 +276,7 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
         this.posX = posX;
         this.posY = posY;
         this.posZ = posZ;
-        setPhysicsEntityRotation(pitch, yaw, roll);
+        this.setPhysicsEntityRotation(pitch, yaw, roll);
         this.setEntityBoundingBox(new AxisAlignedBB(this.posX, this.posY, this.posZ, this.posX, this.posY, this.posZ).grow(.1D));
     }
 

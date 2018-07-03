@@ -73,53 +73,53 @@ public abstract class MixinEntityPlayer extends EntityLivingBase implements IShi
 
     @Override
     public PhysicsWrapperEntity getPilotedShip() {
-        return pilotedShip;
+        return this.pilotedShip;
     }
 
     @Override
     public void setPilotedShip(PhysicsWrapperEntity wrapper) {
-        pilotedShip = wrapper;
+        this.pilotedShip = wrapper;
     }
 
     @Override
     public boolean isPilotingShip() {
-        return pilotedShip != null;
+        return this.pilotedShip != null;
     }
 
     @Override
     public BlockPos getPosBeingControlled() {
-        return blockBeingControlled;
+        return this.blockBeingControlled;
     }
 
     @Override
     public void setPosBeingControlled(BlockPos pos) {
-        blockBeingControlled = pos;
+        this.blockBeingControlled = pos;
     }
 
     @Override
     public ControllerInputType getControllerInputEnum() {
-        return controlInputType;
+        return this.controlInputType;
     }
 
     @Override
     public void setControllerInputEnum(ControllerInputType type) {
-        controlInputType = type;
+        this.controlInputType = type;
     }
 
     @Override
     public boolean isPilotingATile() {
-        return blockBeingControlled != null;
+        return this.blockBeingControlled != null;
     }
 
     @Override
     public boolean isPiloting() {
-        return isPilotingShip() || isPilotingATile();
+        return this.isPilotingShip() || this.isPilotingATile();
     }
 
     @Override
     public void stopPilotingEverything() {
-        setPilotedShip(null);
-        setPosBeingControlled(null);
-        setControllerInputEnum(null);
+        this.setPilotedShip(null);
+        this.setPosBeingControlled(null);
+        this.setControllerInputEnum(null);
     }
 }

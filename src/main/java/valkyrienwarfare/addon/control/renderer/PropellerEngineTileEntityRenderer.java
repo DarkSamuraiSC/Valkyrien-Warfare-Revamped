@@ -38,7 +38,7 @@ public class PropellerEngineTileEntityRenderer extends TileEntitySpecialRenderer
         if (state.getBlock() instanceof BlockAirshipEngine) {
             EnumFacing facing = state.getValue(BlockAirshipEngine.FACING);
 
-            IBlockState engineRenderState = getRenderState(state);
+            IBlockState engineRenderState = this.getRenderState(state);
             IBlockState propellerRenderState = ValkyrienWarfareControl.INSTANCE.vwControlBlocks.shipWheel.getStateFromMeta(14);
 
             this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);

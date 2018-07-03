@@ -37,20 +37,20 @@ public class ShipTransformationBuffer {
     private final BezierWeightGenerator weightGenerator;
 
     public ShipTransformationBuffer() {
-        this.transformations = new LinkedList<ShipTransformationPacketHolder>();
+        this.transformations = new LinkedList<>();
         this.weightGenerator = new BezierWeightGenerator(TRANSFORMS_SMOOTHED);
     }
 
     public void pushMessage(PhysWrapperPositionMessage toPush) {
-        transformations.push(new ShipTransformationPacketHolder(toPush));
-        if (transformations.size() > PACKET_BUFFER_SIZE) {
-            transformations.removeLast();
+        this.transformations.push(new ShipTransformationPacketHolder(toPush));
+        if (this.transformations.size() > PACKET_BUFFER_SIZE) {
+            this.transformations.removeLast();
         }
     }
 
     public ShipTransformationPacketHolder pollForClientTransform() {
-        if (isSmoothTransformReady()) {
-            return generateSmoothTransform();
+        if (this.isSmoothTransformReady()) {
+            return this.generateSmoothTransform();
         } else {
             return null;
         }
@@ -62,7 +62,7 @@ public class ShipTransformationBuffer {
 
     // Doesn't really do anything yet.
     private ShipTransformationPacketHolder generateSmoothTransform() {
-        return transformations.pollFirst();
+        return this.transformations.pollFirst();
     	/*
     	double[] weights = new double[TRANSFORMS_SMOOTHED];
     	ShipTransformationPacketHolder[] transforms = new ShipTransformationPacketHolder[TRANSFORMS_SMOOTHED];
@@ -83,8 +83,8 @@ public class ShipTransformationBuffer {
         }
 
         public double getTermWeight(double deltaTime, int term) {
-            return 2 * Math.pow(deltaTime, term) * Math.pow(1 - deltaTime, order - term)
-                    * binomial(TRANSFORMS_SMOOTHED - 1, term);
+            return 2 * Math.pow(deltaTime, term) * Math.pow(1 - deltaTime, this.order - term)
+                    * this.binomial(TRANSFORMS_SMOOTHED - 1, term);
         }
 
         private int binomial(int n, int k) {

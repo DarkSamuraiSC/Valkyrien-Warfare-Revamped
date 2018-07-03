@@ -29,7 +29,7 @@ public class DimensionPhysObjectManager {
     private final Map<World, WorldPhysObjectManager> managerPerWorld;
 
     public DimensionPhysObjectManager() {
-        managerPerWorld = new HashMap<>();
+        this.managerPerWorld = new HashMap<>();
     }
 
     /**
@@ -38,28 +38,28 @@ public class DimensionPhysObjectManager {
      * @param toPreload
      */
     public void onShipPreload(PhysicsWrapperEntity toPreload) {
-        getManagerForWorld(toPreload.world).preloadPhysicsWrapperEntityMappings(toPreload);
+        this.getManagerForWorld(toPreload.world).preloadPhysicsWrapperEntityMappings(toPreload);
     }
 
     // Put the ship in the manager queues
     public void onShipLoad(PhysicsWrapperEntity justLoaded) {
-        getManagerForWorld(justLoaded.world).onLoad(justLoaded);
+        this.getManagerForWorld(justLoaded.world).onLoad(justLoaded);
     }
 
     // Remove the ship from the damn queues
     public void onShipUnload(PhysicsWrapperEntity justUnloaded) {
-        getManagerForWorld(justUnloaded.world).onUnload(justUnloaded);
+        this.getManagerForWorld(justUnloaded.world).onUnload(justUnloaded);
     }
 
     public WorldPhysObjectManager getManagerForWorld(World world) {
-        if (!managerPerWorld.containsKey(world)) {
-            managerPerWorld.put(world, new WorldPhysObjectManager(world));
+        if (!this.managerPerWorld.containsKey(world)) {
+            this.managerPerWorld.put(world, new WorldPhysObjectManager(world));
         }
-        return managerPerWorld.get(world);
+        return this.managerPerWorld.get(world);
     }
 
     public void removeWorld(World world) {
-        managerPerWorld.remove(world);
+        this.managerPerWorld.remove(world);
     }
 
     /**
@@ -80,7 +80,7 @@ public class DimensionPhysObjectManager {
         if (!PhysicsChunkManager.isLikelyShipChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
             return null;
         }
-        PhysicsWrapperEntity wrapperEntity = getManagerForWorld(world).getManagingObjectForChunkPosition(pos.getX() >> 4, pos.getZ() >> 4);
+        PhysicsWrapperEntity wrapperEntity = this.getManagerForWorld(world).getManagingObjectForChunkPosition(pos.getX() >> 4, pos.getZ() >> 4);
         if (wrapperEntity == null) {
             return null;
         }
@@ -93,11 +93,11 @@ public class DimensionPhysObjectManager {
     }
 
     public boolean isEntityFixed(Entity entity) {
-        return getManagerForWorld(entity.world).isEntityFixed(entity);
+        return this.getManagerForWorld(entity.world).isEntityFixed(entity);
     }
 
     public PhysicsWrapperEntity getShipFixedOnto(Entity entity) {
-        return getManagerForWorld(entity.world).getShipFixedOnto(entity);
+        return this.getManagerForWorld(entity.world).getShipFixedOnto(entity);
     }
 
 }

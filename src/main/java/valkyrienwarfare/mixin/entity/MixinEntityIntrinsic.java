@@ -48,12 +48,12 @@ public abstract class MixinEntityIntrinsic {
 
     @Inject(method = "move", at = @At("HEAD"), cancellable = true)
     public void changeMoveArgs(MoverType type, double dx, double dy, double dz, CallbackInfo callbackInfo) {
-        if (!hasChanged) {
-            alteredMovement = MixinMethods.handleMove(type, dx, dy, dz, thisClassAsAnEntity);
-            if (alteredMovement != null) {
-                hasChanged = true;
-                this.move(type, alteredMovement.dxyz.X, alteredMovement.dxyz.Y, alteredMovement.dxyz.Z);
-                hasChanged = false;
+        if (!this.hasChanged) {
+            this.alteredMovement = MixinMethods.handleMove(type, dx, dy, dz, this.thisClassAsAnEntity);
+            if (this.alteredMovement != null) {
+                this.hasChanged = true;
+                this.move(type, this.alteredMovement.dxyz.X, this.alteredMovement.dxyz.Y, this.alteredMovement.dxyz.Z);
+                this.hasChanged = false;
                 callbackInfo.cancel();
             }
         }
@@ -61,8 +61,8 @@ public abstract class MixinEntityIntrinsic {
 
     @Inject(method = "move", at = @At("RETURN"))
     public void postMove(CallbackInfo callbackInfo) {
-        if (hasChanged) {
-            EntityCollisionInjector.alterEntityMovementPost(thisClassAsAnEntity, alteredMovement);
+        if (this.hasChanged) {
+            EntityCollisionInjector.alterEntityMovementPost(this.thisClassAsAnEntity, this.alteredMovement);
         }
     }
 }

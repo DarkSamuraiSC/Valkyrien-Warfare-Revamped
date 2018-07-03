@@ -48,20 +48,20 @@ public class VWChunkClaim {
     }
 
     public void writeToNBT(NBTTagCompound toSave) {
-        toSave.setInteger("centerX", getCenterX());
-        toSave.setInteger("centerZ", getCenterZ());
-        toSave.setInteger("radius", getRadius());
+        toSave.setInteger("centerX", this.getCenterX());
+        toSave.setInteger("centerZ", this.getCenterZ());
+        toSave.setInteger("radius", this.getRadius());
     }
 
     public boolean isChunkEnclosedInMaxSet(int chunkX, int chunkZ) {
-        boolean inX = (chunkX >= getCenterX() - 12) && (chunkX <= getCenterX() + 12);
-        boolean inZ = (chunkZ >= getCenterZ() - 12) && (chunkZ <= getCenterZ() + 12);
+        boolean inX = (chunkX >= this.getCenterX() - 12) && (chunkX <= this.getCenterX() + 12);
+        boolean inZ = (chunkZ >= this.getCenterZ() - 12) && (chunkZ <= this.getCenterZ() + 12);
         return inX && inZ;
     }
 
     public boolean isChunkEnclosedInSet(int chunkX, int chunkZ) {
-        boolean inX = (chunkX >= getMinX()) && (chunkX <= getMaxX());
-        boolean inZ = (chunkZ >= getMinZ()) && (chunkZ <= getMaxZ());
+        boolean inX = (chunkX >= this.getMinX()) && (chunkX <= this.getMaxX());
+        boolean inZ = (chunkZ >= this.getMinZ()) && (chunkZ <= this.getMaxZ());
         return inX && inZ;
     }
 
@@ -78,14 +78,14 @@ public class VWChunkClaim {
 
     @Override
     public String toString() {
-        return getCenterX() + ":" + getCenterZ() + ":" + getRadius();
+        return this.getCenterX() + ":" + this.getCenterZ() + ":" + this.getRadius();
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof VWChunkClaim) {
             VWChunkClaim other = (VWChunkClaim) o;
-            return other.getCenterX() == getCenterX() && other.getCenterZ() == getCenterZ() && other.getRadius() == getRadius();
+            return other.getCenterX() == this.getCenterX() && other.getCenterZ() == this.getCenterZ() && other.getRadius() == this.getRadius();
         }
         return false;
     }
@@ -94,28 +94,28 @@ public class VWChunkClaim {
      * @return the maxX
      */
     public int getMaxX() {
-        return getCenterX() + getRadius();
+        return this.getCenterX() + this.getRadius();
     }
 
     /**
      * @return the maxZ
      */
     public int getMaxZ() {
-        return getCenterZ() + getRadius();
+        return this.getCenterZ() + this.getRadius();
     }
 
     /**
      * @return the minZ
      */
     public int getMinZ() {
-        return getCenterZ() - getRadius();
+        return this.getCenterZ() - this.getRadius();
     }
 
     /**
      * @return the minX
      */
     public int getMinX() {
-        return getCenterX() - getRadius();
+        return this.getCenterX() - this.getRadius();
     }
 
     public BlockPos getRegionCenter() {
@@ -123,10 +123,10 @@ public class VWChunkClaim {
     }
 
     public int getChunkLengthX() {
-        return getMaxX() - getMinX() + 1;
+        return this.getMaxX() - this.getMinX() + 1;
     }
 
     public int getChunkLengthZ() {
-        return getMaxZ() - getMinZ() + 1;
+        return this.getMaxZ() - this.getMinZ() + 1;
     }
 }

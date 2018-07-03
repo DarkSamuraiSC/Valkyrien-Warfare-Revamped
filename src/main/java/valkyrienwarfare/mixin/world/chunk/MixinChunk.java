@@ -59,15 +59,15 @@ public abstract class MixinChunk implements ITileEntitiesToRenderProvider {
     private List<TileEntity>[] tileEntitesByExtendedData = new List[16];
 
     public List<TileEntity> getTileEntitiesToRender(int chunkExtendedDataIndex) {
-        return tileEntitesByExtendedData[chunkExtendedDataIndex];
+        return this.tileEntitesByExtendedData[chunkExtendedDataIndex];
     }
 
     @Inject(method = "addTileEntity(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/tileentity/TileEntity;)V", at = @At("TAIL"))
     public void post_addTileEntity(BlockPos pos, TileEntity tileEntityIn, CallbackInfo callbackInfo) {
         int yIndex = pos.getY() >> 4;
-        removeTileEntityFromIndex(pos, yIndex);
-        tileEntitesByExtendedData[yIndex].add(tileEntityIn);
-        PhysicsWrapperEntity entity = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(world, pos);
+        this.removeTileEntityFromIndex(pos, yIndex);
+        this.tileEntitesByExtendedData[yIndex].add(tileEntityIn);
+        PhysicsWrapperEntity entity = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(this.world, pos);
         if (entity != null) {
             entity.getPhysicsObject().onSetTileEntity(pos, tileEntityIn);
         }
@@ -76,18 +76,18 @@ public abstract class MixinChunk implements ITileEntitiesToRenderProvider {
     @Inject(method = "removeTileEntity(Lnet/minecraft/util/math/BlockPos;)V", at = @At("TAIL"))
     public void post_removeTileEntity(BlockPos pos, CallbackInfo callbackInfo) {
         int yIndex = pos.getY() >> 4;
-        removeTileEntityFromIndex(pos, yIndex);
-        PhysicsWrapperEntity entity = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(world, pos);
+        this.removeTileEntityFromIndex(pos, yIndex);
+        PhysicsWrapperEntity entity = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getObjectManagingPos(this.world, pos);
         if (entity != null) {
             entity.getPhysicsObject().onRemoveTileEntity(pos);
         }
     }
 
     private void removeTileEntityFromIndex(BlockPos pos, int yIndex) {
-        if (tileEntitesByExtendedData[yIndex] == null) {
-            tileEntitesByExtendedData[yIndex] = new ArrayList<TileEntity>();
+        if (this.tileEntitesByExtendedData[yIndex] == null) {
+            this.tileEntitesByExtendedData[yIndex] = new ArrayList<>();
         }
-        Iterator<TileEntity> tileEntitiesIterator = tileEntitesByExtendedData[yIndex].iterator();
+        Iterator<TileEntity> tileEntitiesIterator = this.tileEntitesByExtendedData[yIndex].iterator();
         while (tileEntitiesIterator.hasNext()) {
             TileEntity tile = tileEntitiesIterator.next();
             if (tile.getPos().equals(pos) || tile.isInvalid()) {

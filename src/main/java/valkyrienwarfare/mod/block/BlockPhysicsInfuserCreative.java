@@ -28,7 +28,7 @@ public class BlockPhysicsInfuserCreative extends BlockPhysicsInfuser {
 
     public BlockPhysicsInfuserCreative(Material materialIn) {
         super(materialIn);
-        shipSpawnDetectorID = DetectorManager.DetectorIDs.BlockPosFinder.ordinal();
+        this.shipSpawnDetectorID = DetectorManager.DetectorIDs.BlockPosFinder.ordinal();
     }
 
     @Override

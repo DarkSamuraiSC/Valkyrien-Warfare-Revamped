@@ -59,21 +59,21 @@ public class TileEntityThrustModulator extends ImplNodeControllerTileEntity impl
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        idealYHeight = compound.getFloat("idealYHeight");
-        maximumYVelocity = compound.getFloat("maximumYVelocity");
+        this.idealYHeight = compound.getFloat("idealYHeight");
+        this.maximumYVelocity = compound.getFloat("maximumYVelocity");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound = super.writeToNBT(compound);
-        compound.setFloat("idealYHeight", (float) idealYHeight);
-        compound.setFloat("maximumYVelocity", (float) maximumYVelocity);
+        compound.setFloat("idealYHeight", (float) this.idealYHeight);
+        compound.setFloat("maximumYVelocity", (float) this.maximumYVelocity);
         return compound;
     }
 
     public void handleGUIInput(ThrustModulatorGuiInputMessage message, MessageContext ctx) {
-        idealYHeight = Math.min(message.idealYHeight, 5000D);
-        maximumYVelocity = Math.max(Math.min(message.maximumYVelocity, 100D), 0D);
+        this.idealYHeight = Math.min(message.idealYHeight, 5000D);
+        this.maximumYVelocity = Math.max(Math.min(message.maximumYVelocity, 100D), 0D);
         VWNode_TileEntity thisTileEntitiesNode = this.getNode();
         this.markDirty();
     }
@@ -90,9 +90,9 @@ public class TileEntityThrustModulator extends ImplNodeControllerTileEntity impl
         try {
             ThrustModulatorGuiInputMessage msg = new ThrustModulatorGuiInputMessage();
             msg.idealYHeight = (float) args.checkDouble(0);
-            msg.maximumYVelocity = (float) maximumYVelocity;
+            msg.maximumYVelocity = (float) this.maximumYVelocity;
 
-            handleGUIInput(msg, null);
+            this.handleGUIInput(msg, null);
             success = true;
         } catch (IllegalArgumentException e) {
         }
@@ -105,10 +105,10 @@ public class TileEntityThrustModulator extends ImplNodeControllerTileEntity impl
         boolean success = false;
         try {
             ThrustModulatorGuiInputMessage msg = new ThrustModulatorGuiInputMessage();
-            msg.idealYHeight = (float) idealYHeight;
+            msg.idealYHeight = (float) this.idealYHeight;
             msg.maximumYVelocity = (float) args.checkDouble(0);
 
-            handleGUIInput(msg, null);
+            this.handleGUIInput(msg, null);
             success = true;
         } catch (IllegalArgumentException e) {
         }

@@ -80,13 +80,13 @@ public interface IVWNode extends GraphObject {
     void readFromNBT(NBTTagCompound compound);
 
     default void breakAllConnections() {
-        for (IVWNode node : getDirectlyConnectedNodes()) {
-            breakConnection(node);
+        for (IVWNode node : this.getDirectlyConnectedNodes()) {
+            this.breakConnection(node);
         }
     }
 
     default boolean canLinkToOtherNode(IVWNode other) {
-        return getLinkedNodesPos().size() < getMaximumConnections() && other.getLinkedNodesPos().size() < other.getMaximumConnections();
+        return this.getLinkedNodesPos().size() < this.getMaximumConnections() && other.getLinkedNodesPos().size() < other.getMaximumConnections();
     }
 
     void sendNodeUpdates();
@@ -119,6 +119,6 @@ public interface IVWNode extends GraphObject {
      * @return True if the nodes are linked.
      */
     default boolean isLinkedToNode(IVWNode other) {
-        return getLinkedNodesPos().contains(other.getNodePos());
+        return this.getLinkedNodesPos().contains(other.getNodePos());
     }
 }

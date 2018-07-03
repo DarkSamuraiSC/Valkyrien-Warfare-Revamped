@@ -22,7 +22,7 @@ public class ImplCapabilityAntiGravity implements ICapabilityAntiGravity {
 
     @Override
     public double getAntiGravity() {
-        return antiGravity;
+        return this.antiGravity;
     }
 
     @Override

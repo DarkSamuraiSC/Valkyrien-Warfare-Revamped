@@ -36,14 +36,14 @@ public class ClientProxyWorld extends CommonProxyWorld {
 
     @Override
     public void init(FMLStateEvent e) {
-        registerBlockItem(ValkyrienWarfareWorld.INSTANCE.etheriumOre);
-        registerBlockItem(ValkyrienWarfareWorld.INSTANCE.quartz_fence);
-        registerBlockItem(ValkyrienWarfareWorld.INSTANCE.skydungeon_controller);
+        this.registerBlockItem(ValkyrienWarfareWorld.INSTANCE.etheriumOre);
+        this.registerBlockItem(ValkyrienWarfareWorld.INSTANCE.quartz_fence);
+        this.registerBlockItem(ValkyrienWarfareWorld.INSTANCE.skydungeon_controller);
     }
 
     @Override
     public void postInit(FMLStateEvent e) {
-        registerItemModel(ValkyrienWarfareWorld.INSTANCE.etheriumCrystal);
+        this.registerItemModel(ValkyrienWarfareWorld.INSTANCE.etheriumCrystal);
     }
 
     private void registerBlockItem(Block toRegister) {

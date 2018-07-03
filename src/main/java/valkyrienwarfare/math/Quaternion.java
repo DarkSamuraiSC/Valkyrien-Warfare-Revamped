@@ -26,10 +26,10 @@ public class Quaternion {
     private double x, y, z, w;
 
     public Quaternion(double xx, double yy, double zz, double ww) {
-        x = xx;
-        y = yy;
-        z = zz;
-        w = ww;
+        this.x = xx;
+        this.y = yy;
+        this.z = zz;
+        this.w = ww;
     }
 
     private Quaternion() {
@@ -99,23 +99,23 @@ public class Quaternion {
 
     public double[] toRadians() {
         // double test = x*y + z*w;
-        double sqw = w * w;
-        double sqx = x * x;
-        double sqy = y * y;
-        double sqz = z * z;
-        double pitch = -Math.atan2(2.0 * (y * z + x * w), (-sqx - sqy + sqz + sqw));
-        double yaw = -Math.asin(-2.0 * (x * z - y * w) / (sqx + sqy + sqz + sqw));
-        double roll = -Math.atan2(2.0 * (x * y + z * w), (sqx - sqy - sqz + sqw));
-        sqw = x * y + z * w;
+        double sqw = this.w * this.w;
+        double sqx = this.x * this.x;
+        double sqy = this.y * this.y;
+        double sqz = this.z * this.z;
+        double pitch = -Math.atan2(2.0 * (this.y * this.z + this.x * this.w), (-sqx - sqy + sqz + sqw));
+        double yaw = -Math.asin(-2.0 * (this.x * this.z - this.y * this.w) / (sqx + sqy + sqz + sqw));
+        double roll = -Math.atan2(2.0 * (this.x * this.y + this.z * this.w), (sqx - sqy - sqz + sqw));
+        sqw = this.x * this.y + this.z * this.w;
         if (sqw > .9) {
             System.out.println("Quaternion singularity at North Pole");
-            roll = 2 * Math.atan2(x, w);
+            roll = 2 * Math.atan2(this.x, this.w);
             yaw = Math.PI / 2;
             pitch = 0;
         }
         if (sqw < -.9) {
             System.out.println("Quaternion singularity at South Pole");
-            roll = -2 * Math.atan2(x, w);
+            roll = -2 * Math.atan2(this.x, this.w);
             yaw = -Math.PI / 2;
             pitch = 0;
         }
@@ -123,21 +123,21 @@ public class Quaternion {
     }
 
     public void multiply(Quaternion q1) {
-        double oldw = w;
-        double oldx = x;
-        double oldy = y;
-        double oldz = z;
-        w = oldw * q1.w - oldx * q1.x - oldy * q1.y - oldz * q1.z;
-        x = oldw * q1.x + q1.w * oldx + oldy * q1.z - oldz * q1.y;
-        y = oldw * q1.y + q1.w * oldy - oldx * q1.z + oldz * q1.x;
-        z = oldw * q1.z + q1.w * oldz + oldx * q1.y - oldy * q1.x;
-        oldw = x * x + y * y + z * z + w * w;
+        double oldw = this.w;
+        double oldx = this.x;
+        double oldy = this.y;
+        double oldz = this.z;
+        this.w = oldw * q1.w - oldx * q1.x - oldy * q1.y - oldz * q1.z;
+        this.x = oldw * q1.x + q1.w * oldx + oldy * q1.z - oldz * q1.y;
+        this.y = oldw * q1.y + q1.w * oldy - oldx * q1.z + oldz * q1.x;
+        this.z = oldw * q1.z + q1.w * oldz + oldx * q1.y - oldy * q1.x;
+        oldw = this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w;
         if (Math.abs(1D - oldw) > .001) {
             oldw = Math.sqrt(oldw);
-            w /= oldw;
-            x /= oldw;
-            y /= oldw;
-            z /= oldw;
+            this.w /= oldw;
+            this.x /= oldw;
+            this.y /= oldw;
+            this.z /= oldw;
         }
     }
 

@@ -65,20 +65,20 @@ public abstract class BasicForceNodeTileEntity extends BasicNodeTileEntity imple
     @Override
     public Vector getForceOutputNormal() {
         // TODO Auto-generated method stub
-        return normalVelocityUnoriented;
+        return this.normalVelocityUnoriented;
     }
 
     @Override
     public Vector getForceOutputUnoriented(double secondsToApply, PhysicsObject physicsObject) {
-        return normalVelocityUnoriented.getProduct(currentThrust * secondsToApply);
+        return this.normalVelocityUnoriented.getProduct(this.currentThrust * secondsToApply);
     }
 
     @Override
     public Vector getForceOutputOriented(double secondsToApply, PhysicsObject physicsObject) {
-        Vector outputForce = getForceOutputUnoriented(secondsToApply, physicsObject);
-        if (isForceOutputOriented()) {
-            if (updateParentShip()) {
-                getNode().getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().rotate(outputForce, TransformType.SUBSPACE_TO_GLOBAL);
+        Vector outputForce = this.getForceOutputUnoriented(secondsToApply, physicsObject);
+        if (this.isForceOutputOriented()) {
+            if (this.updateParentShip()) {
+                this.getNode().getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().rotate(outputForce, TransformType.SUBSPACE_TO_GLOBAL);
 //                RotationMatrices.doRotationOnly(getNode().getPhysicsObject().coordTransform.lToWTransform, outputForce);
             }
         }
@@ -87,31 +87,31 @@ public abstract class BasicForceNodeTileEntity extends BasicNodeTileEntity imple
 
     @Override
     public double getMaxThrust() {
-        return maxThrust;
+        return this.maxThrust;
     }
 
     @Override
     public double getThrustActual() {
-        return currentThrust;
+        return this.currentThrust;
     }
 
     @Override
     public double getThrustGoal() {
-        return currentThrust;
+        return this.currentThrust;
     }
 
     @Override
     public void setThrustGoal(double newMagnitude) {
-        currentThrust = newMagnitude;
+        this.currentThrust = newMagnitude;
     }
 
     @Override
     public Vector getPositionInLocalSpaceWithOrientation() {
-        if (updateParentShip()) {
+        if (this.updateParentShip()) {
             return null;
         }
-        PhysicsWrapperEntity parentShip = getNode().getPhysicsObject().getWrapperEntity();
-        Vector engineCenter = new Vector(getPos().getX() + .5D, getPos().getY() + .5D, getPos().getZ() + .5D);
+        PhysicsWrapperEntity parentShip = this.getNode().getPhysicsObject().getWrapperEntity();
+        Vector engineCenter = new Vector(this.getPos().getX() + .5D, this.getPos().getY() + .5D, this.getPos().getZ() + .5D);
 //        RotationMatrices.applyTransform(parentShip.wrapping.coordTransform.lToWTransform, engineCenter);
         parentShip.getPhysicsObject().getShipTransformationManager().getCurrentTickTransform().transform(engineCenter, TransformType.SUBSPACE_TO_GLOBAL);
         engineCenter.subtract(parentShip.posX, parentShip.posY, parentShip.posZ);
@@ -120,46 +120,46 @@ public abstract class BasicForceNodeTileEntity extends BasicNodeTileEntity imple
 
     @Override
     public Vector getVelocityAtEngineCenter() {
-        if (updateParentShip()) {
+        if (this.updateParentShip()) {
             return null;
         }
-        PhysicsCalculations calculations = getNode().getPhysicsObject().getPhysicsProcessor();
-        return calculations.getVelocityAtPoint(getPositionInLocalSpaceWithOrientation());
+        PhysicsCalculations calculations = this.getNode().getPhysicsObject().getPhysicsProcessor();
+        return calculations.getVelocityAtPoint(this.getPositionInLocalSpaceWithOrientation());
     }
 
     @Override
     public Vector getLinearVelocityAtEngineCenter() {
-        if (updateParentShip()) {
+        if (this.updateParentShip()) {
             return null;
         }
-        PhysicsCalculations calculations = getNode().getPhysicsObject().getPhysicsProcessor();
+        PhysicsCalculations calculations = this.getNode().getPhysicsObject().getPhysicsProcessor();
         return calculations.linearMomentum;
     }
 
     @Override
     public Vector getAngularVelocityAtEngineCenter() {
-        if (updateParentShip()) {
+        if (this.updateParentShip()) {
             return null;
         }
-        PhysicsCalculations calculations = getNode().getPhysicsObject().getPhysicsProcessor();
-        return calculations.angularVelocity.cross(getPositionInLocalSpaceWithOrientation());
+        PhysicsCalculations calculations = this.getNode().getPhysicsObject().getPhysicsProcessor();
+        return calculations.angularVelocity.cross(this.getPositionInLocalSpaceWithOrientation());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
-        maxThrust = compound.getDouble("maxThrust");
-        currentThrust = compound.getDouble("currentThrust");
-        normalVelocityUnoriented = NBTUtils.readVectorFromNBT("normalVelocityUnoriented", compound);
-        ticksSinceLastControlSignal = compound.getInteger("ticksSinceLastControlSignal");
+        this.maxThrust = compound.getDouble("maxThrust");
+        this.currentThrust = compound.getDouble("currentThrust");
+        this.normalVelocityUnoriented = NBTUtils.readVectorFromNBT("normalVelocityUnoriented", compound);
+        this.ticksSinceLastControlSignal = compound.getInteger("ticksSinceLastControlSignal");
         super.readFromNBT(compound);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setDouble("maxThrust", maxThrust);
-        compound.setDouble("currentThrust", currentThrust);
-        NBTUtils.writeVectorToNBT("normalVelocityUnoriented", normalVelocityUnoriented, compound);
-        compound.setInteger("ticksSinceLastControlSignal", ticksSinceLastControlSignal);
+        compound.setDouble("maxThrust", this.maxThrust);
+        compound.setDouble("currentThrust", this.currentThrust);
+        NBTUtils.writeVectorToNBT("normalVelocityUnoriented", this.normalVelocityUnoriented, compound);
+        compound.setInteger("ticksSinceLastControlSignal", this.ticksSinceLastControlSignal);
         return super.writeToNBT(compound);
     }
 
@@ -173,15 +173,15 @@ public abstract class BasicForceNodeTileEntity extends BasicNodeTileEntity imple
     }
 
     public void updateTicksSinceLastRecievedSignal() {
-        ticksSinceLastControlSignal = 0;
+        this.ticksSinceLastControlSignal = 0;
     }
 
     @Override
     public void update() {
         super.update();
-        ticksSinceLastControlSignal++;
-        if (ticksSinceLastControlSignal > 5) {
-            setThrustGoal(getThrustActual() * .9D);
+        this.ticksSinceLastControlSignal++;
+        if (this.ticksSinceLastControlSignal > 5) {
+            this.setThrustGoal(this.getThrustActual() * .9D);
         }
     }
 

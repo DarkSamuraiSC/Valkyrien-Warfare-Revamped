@@ -47,8 +47,8 @@ public class WorldPhysObjectManager {
     public WorldPhysObjectManager(World toManage) {
         this.worldObj = toManage;
         this.physicsEntities = ConcurrentHashMap.newKeySet();
-        this.physicsEntitiesToUnload = new ArrayList<PhysicsWrapperEntity>();
-        this.chunkPosToPhysicsEntityMap = new Long2ObjectOpenHashMap<PhysicsWrapperEntity>();
+        this.physicsEntitiesToUnload = new ArrayList<>();
+        this.chunkPosToPhysicsEntityMap = new Long2ObjectOpenHashMap<>();
     }
 
     /**
@@ -58,11 +58,11 @@ public class WorldPhysObjectManager {
      * @return
      */
     public List<PhysicsWrapperEntity> getTickablePhysicsEntities() {
-        List<PhysicsWrapperEntity> list = new ArrayList<PhysicsWrapperEntity>(physicsEntities);
-        List<PhysicsWrapperEntity> frozenShips = new ArrayList<PhysicsWrapperEntity>();
+        List<PhysicsWrapperEntity> list = new ArrayList<>(this.physicsEntities);
+        List<PhysicsWrapperEntity> frozenShips = new ArrayList<>();
 
-        if (worldObj instanceof WorldServer) {
-            WorldServer worldServer = (WorldServer) worldObj;
+        if (this.worldObj instanceof WorldServer) {
+            WorldServer worldServer = (WorldServer) this.worldObj;
             for (PhysicsWrapperEntity wrapper : list) {
                 if (!wrapper.isDead) {
                     if (wrapper.getPhysicsObject().getCachedSurroundingChunks() != null) {
@@ -93,7 +93,7 @@ public class WorldPhysObjectManager {
             }
         }
 
-        List<PhysicsWrapperEntity> dumbShips = new ArrayList<PhysicsWrapperEntity>();
+        List<PhysicsWrapperEntity> dumbShips = new ArrayList<>();
 
         for (PhysicsWrapperEntity wrapper : list) {
             if (wrapper.isDead || wrapper.getPhysicsObject() == null
@@ -111,21 +111,21 @@ public class WorldPhysObjectManager {
 
     public void onLoad(PhysicsWrapperEntity loaded) {
         if (loaded.world.isRemote) {
-            List<PhysicsWrapperEntity> potentialMatches = new ArrayList<PhysicsWrapperEntity>();
-            for (PhysicsWrapperEntity wrapper : physicsEntities) {
+            List<PhysicsWrapperEntity> potentialMatches = new ArrayList<>();
+            for (PhysicsWrapperEntity wrapper : this.physicsEntities) {
                 if (wrapper.getPersistentID().equals(loaded.getPersistentID())) {
                     potentialMatches.add(wrapper);
                 }
             }
             for (PhysicsWrapperEntity caught : potentialMatches) {
-                physicsEntities.remove(caught);
+                this.physicsEntities.remove(caught);
                 caught.getPhysicsObject().onThisUnload();
                 // System.out.println("Caught one");
             }
         }
         loaded.isDead = false;
         loaded.getPhysicsObject().resetConsecutiveProperTicks();
-        physicsEntities.add(loaded);
+        this.physicsEntities.add(loaded);
     }
 
     /**
@@ -137,19 +137,19 @@ public class WorldPhysObjectManager {
     public void preloadPhysicsWrapperEntityMappings(PhysicsWrapperEntity loaded) {
         for (int x = loaded.getPhysicsObject().getOwnedChunks().getMinX(); x <= loaded.getPhysicsObject().getOwnedChunks().getMaxX(); x++) {
             for (int z = loaded.getPhysicsObject().getOwnedChunks().getMinZ(); z <= loaded.getPhysicsObject().getOwnedChunks().getMaxZ(); z++) {
-                chunkPosToPhysicsEntityMap.put(getLongFromInts(x, z), loaded);
+                this.chunkPosToPhysicsEntityMap.put(this.getLongFromInts(x, z), loaded);
             }
         }
     }
 
     public void onUnload(PhysicsWrapperEntity loaded) {
         if (!loaded.world.isRemote) {
-            physicsEntities.remove(loaded);
+            this.physicsEntities.remove(loaded);
             loaded.getPhysicsObject().onThisUnload();
             VWChunkClaim vwChunkClaim = loaded.getPhysicsObject().getOwnedChunks();
             for (int chunkX = vwChunkClaim.getMinX(); chunkX <= vwChunkClaim.getMaxX(); chunkX++) {
                 for (int chunkZ = vwChunkClaim.getMinZ(); chunkZ <= vwChunkClaim.getMaxZ(); chunkZ++) {
-                    chunkPosToPhysicsEntityMap.remove(getLongFromInts(chunkX, chunkZ));
+                    this.chunkPosToPhysicsEntityMap.remove(this.getLongFromInts(chunkX, chunkZ));
                 }
             }
         } else {
@@ -167,18 +167,18 @@ public class WorldPhysObjectManager {
      */
     @Deprecated
     public PhysicsWrapperEntity getManagingObjectForChunk(Chunk chunk) {
-        return getManagingObjectForChunkPosition(chunk.x, chunk.z);
+        return this.getManagingObjectForChunkPosition(chunk.x, chunk.z);
     }
 
     public PhysicsWrapperEntity getManagingObjectForChunkPosition(int chunkX, int chunkZ) {
-        return chunkPosToPhysicsEntityMap.get(getLongFromInts(chunkX, chunkZ));
+        return this.chunkPosToPhysicsEntityMap.get(this.getLongFromInts(chunkX, chunkZ));
     }
 
     public List<PhysicsWrapperEntity> getNearbyPhysObjects(AxisAlignedBB toCheck) {
-        ArrayList<PhysicsWrapperEntity> ships = new ArrayList<PhysicsWrapperEntity>();
+        ArrayList<PhysicsWrapperEntity> ships = new ArrayList<>();
         AxisAlignedBB expandedCheck = toCheck.expand(6, 6, 6);
 
-        for (PhysicsWrapperEntity wrapper : physicsEntities) {
+        for (PhysicsWrapperEntity wrapper : this.physicsEntities) {
             if (wrapper.getPhysicsObject().getShipBoundingBox().intersects(expandedCheck)) {
                 ships.add(wrapper);
             }
@@ -188,11 +188,11 @@ public class WorldPhysObjectManager {
     }
 
     public boolean isEntityFixed(Entity entity) {
-        return getShipFixedOnto(entity) != null;
+        return this.getShipFixedOnto(entity) != null;
     }
 
     public PhysicsWrapperEntity getShipFixedOnto(Entity entity) {
-        for (PhysicsWrapperEntity wrapper : physicsEntities) {
+        for (PhysicsWrapperEntity wrapper : this.physicsEntities) {
             if (wrapper.getPhysicsObject().isEntityFixed(entity)) {
                 if (wrapper.riddenByEntities.contains(entity)) {
                     return wrapper;

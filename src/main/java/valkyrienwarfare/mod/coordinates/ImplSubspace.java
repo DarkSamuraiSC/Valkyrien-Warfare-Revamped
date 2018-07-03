@@ -38,17 +38,17 @@ public class ImplSubspace implements ISubspace {
 
     public ImplSubspace(@Nullable PhysicsObject parent) {
         this.parent = parent;
-        this.subspacedEntityRecords = new HashMap<ISubspacedEntity, ISubspacedEntityRecord>();
+        this.subspacedEntityRecords = new HashMap<>();
     }
 
     @Override
     public boolean hasRecordForSubspacedEntity(ISubspacedEntity subspaced) {
-        return subspacedEntityRecords.containsKey(subspaced);
+        return this.subspacedEntityRecords.containsKey(subspaced);
     }
 
     @Override
     public ISubspacedEntityRecord getRecordForSubspacedEntity(ISubspacedEntity subspaced) {
-        return subspacedEntityRecords.get(subspaced);
+        return this.subspacedEntityRecords.get(subspaced);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class ImplSubspace implements ISubspace {
         if (subspaced instanceof PhysicsWrapperEntity) {
             throw new IllegalArgumentException("Do not create subspace records for PhysicsWrapperEntities!!");
         }
-        subspacedEntityRecords.put(subspaced, createRecordForSubspacedEntity(subspaced));
+        this.subspacedEntityRecords.put(subspaced, this.createRecordForSubspacedEntity(subspaced));
     }
 
     private ISubspacedEntityRecord createRecordForSubspacedEntity(ISubspacedEntity subspacedEntity) {
@@ -67,7 +67,7 @@ public class ImplSubspace implements ISubspace {
         Vector positionLastTick = subspacedEntity.createLastTickPositionVector();
         Vector look = subspacedEntity.createCurrentLookVector();
         Vector velocity = subspacedEntity.createCurrentVelocityVector();
-        ShipTransform subspaceTransform = getSubspaceTransform();
+        ShipTransform subspaceTransform = this.getSubspaceTransform();
         if (subspaceTransform != null) {
             subspaceTransform.transform(position, TransformType.GLOBAL_TO_SUBSPACE);
             subspaceTransform.rotate(look, TransformType.GLOBAL_TO_SUBSPACE);
@@ -79,7 +79,7 @@ public class ImplSubspace implements ISubspace {
 
     @Override
     public CoordinateSpaceType getSubspaceCoordinatesType() {
-        if (parent == null) {
+        if (this.parent == null) {
             return CoordinateSpaceType.GLOBAL_COORDINATES;
         } else {
             return CoordinateSpaceType.SUBSPACE_COORDINATES;
@@ -88,10 +88,10 @@ public class ImplSubspace implements ISubspace {
 
     @Override
     public ShipTransform getSubspaceTransform() {
-        if (getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
+        if (this.getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
             return null;
         } else {
-            ShipTransform transform = parent.getShipTransformationManager().getCurrentTickTransform();
+            ShipTransform transform = this.parent.getShipTransformationManager().getCurrentTickTransform();
             if (transform == null) {
                 throw new IllegalStateException(
                         "A PhysicsObject got a request to use its subspace, but it had no transforms loaded. This is crash worthy.");
@@ -102,16 +102,16 @@ public class ImplSubspace implements ISubspace {
 
     @Override
     public int getSubspaceParentEntityID() {
-        if (getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
+        if (this.getSubspaceCoordinatesType() == CoordinateSpaceType.GLOBAL_COORDINATES) {
             throw new IllegalStateException(
                     "The World coordinate subspace doesn't have an entity ID. Don't call this method unless you're sure that the subspace isn't the world.");
         }
-        return parent.getWrapperEntity().getEntityId();
+        return this.parent.getWrapperEntity().getEntityId();
     }
 
     @Override
     public void forceSubspaceRecord(ISubspacedEntity entity, ISubspacedEntityRecord record) {
-        subspacedEntityRecords.put(entity, record);
+        this.subspacedEntityRecords.put(entity, record);
     }
 
 }

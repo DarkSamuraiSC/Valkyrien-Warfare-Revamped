@@ -55,11 +55,11 @@ public class MixinBlockStateContainer implements IBitOctreeProvider {
         int z = (index & 0xF0) >> 4;
         int y = (index & 0xF00) >> 8;
         boolean isStateSolid = state.getMaterial().isSolid();
-        bitOctree.set(x & 15, y & 15, z & 15, isStateSolid);
+        this.bitOctree.set(x & 15, y & 15, z & 15, isStateSolid);
     }
 
     @Override
     public IBitOctree getBitOctree() {
-        return bitOctree;
+        return this.bitOctree;
     }
 }

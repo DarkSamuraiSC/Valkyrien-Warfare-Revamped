@@ -59,8 +59,8 @@ public class ItemExplosiveArrow extends ItemArrow {
             @Override
             protected void onHit(RayTraceResult raytraceResultIn) {
                 super.onHit(raytraceResultIn);
-                world.createExplosion(this, posX, posY, posZ, 20F, true);
-                setDead();
+                this.world.createExplosion(this, this.posX, this.posY, this.posZ, 20F, true);
+                this.setDead();
             }
         };
         entitytippedarrow.setPotionEffect(stack);

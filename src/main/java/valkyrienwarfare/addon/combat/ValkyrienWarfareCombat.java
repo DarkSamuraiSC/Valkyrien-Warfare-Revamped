@@ -70,36 +70,36 @@ public class ValkyrienWarfareCombat extends Module {
 
     @Override
     public void registerItems(RegistryEvent.Register<Item> event) {
-        basicCannonSpawner = new ItemBasicCannon().setUnlocalizedName("basiccannonspawner").setRegistryName(getModID(), "basiccannonspawner").setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(4);
-        cannonBall = new ItemCannonBall().setUnlocalizedName("turretcannonball").setRegistryName(getModID(), "turretcannonball").setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(32);
-        powderPouch = new ItemPowderPouch().setUnlocalizedName("powderpouch").setRegistryName(getModID(), "powderpouch").setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(32);
-        explosiveArrow = new ItemExplosiveArrow().setUnlocalizedName("explosivearrow").setRegistryName(getModID(), "explosivearrow").setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(64);
+        this.basicCannonSpawner = new ItemBasicCannon().setUnlocalizedName("basiccannonspawner").setRegistryName(this.getModID(), "basiccannonspawner").setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(4);
+        this.cannonBall = new ItemCannonBall().setUnlocalizedName("turretcannonball").setRegistryName(this.getModID(), "turretcannonball").setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(32);
+        this.powderPouch = new ItemPowderPouch().setUnlocalizedName("powderpouch").setRegistryName(this.getModID(), "powderpouch").setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(32);
+        this.explosiveArrow = new ItemExplosiveArrow().setUnlocalizedName("explosivearrow").setRegistryName(this.getModID(), "explosivearrow").setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(64);
 
-        event.getRegistry().register(basicCannonSpawner);
-        event.getRegistry().register(cannonBall);
-        event.getRegistry().register(powderPouch);
-        event.getRegistry().register(explosiveArrow);
+        event.getRegistry().register(this.basicCannonSpawner);
+        event.getRegistry().register(this.cannonBall);
+        event.getRegistry().register(this.powderPouch);
+        event.getRegistry().register(this.explosiveArrow);
 
-        registerItemBlock(event, fakecannonblock);
+        registerItemBlock(event, this.fakecannonblock);
     }
 
     @Override
     protected void registerEntities() {
-        EntityRegistry.registerModEntity(new ResourceLocation(getModID(), "EntityCannonBasic"), EntityCannonBasic.class, "EntityCannonBasic", 71, ValkyrienWarfareMod.INSTANCE, 120, 1, false);
-        EntityRegistry.registerModEntity(new ResourceLocation(getModID(), "EntityCannonBall"), EntityCannonBall.class, "EntityCannonBall", 72, ValkyrienWarfareMod.INSTANCE, 120, 5, true);
+        EntityRegistry.registerModEntity(new ResourceLocation(this.getModID(), "EntityCannonBasic"), EntityCannonBasic.class, "EntityCannonBasic", 71, ValkyrienWarfareMod.INSTANCE, 120, 1, false);
+        EntityRegistry.registerModEntity(new ResourceLocation(this.getModID(), "EntityCannonBall"), EntityCannonBall.class, "EntityCannonBall", 72, ValkyrienWarfareMod.INSTANCE, 120, 5, true);
     }
 
     @Override
     public void registerBlocks(RegistryEvent.Register<Block> event) {
-        fakecannonblock = new FakeCannonBlock(Material.IRON).setHardness(5f).setUnlocalizedName("fakecannonblock").setRegistryName(getModID(), "fakecannonblock");
+        this.fakecannonblock = new FakeCannonBlock(Material.IRON).setHardness(5f).setUnlocalizedName("fakecannonblock").setRegistryName(this.getModID(), "fakecannonblock");
 
-        event.getRegistry().register(fakecannonblock);
+        event.getRegistry().register(this.fakecannonblock);
     }
 
     @Override
     public void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        registerRecipe(event, new ItemStack(cannonBall, 4), "II ", "II ", "   ", 'I', Items.IRON_INGOT);
-        registerRecipe(event, new ItemStack(powderPouch, 4), " S ", "SGS", " S ", 'S', Items.STRING, 'G', Items.GUNPOWDER);
+        registerRecipe(event, new ItemStack(this.cannonBall, 4), "II ", "II ", "   ", 'I', Items.IRON_INGOT);
+        registerRecipe(event, new ItemStack(this.powderPouch, 4), " S ", "SGS", " S ", 'S', Items.STRING, 'G', Items.GUNPOWDER);
     }
 
     @Override

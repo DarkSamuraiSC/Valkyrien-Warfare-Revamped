@@ -63,31 +63,31 @@ public class PilotControlsMessage implements IMessage {
 
         {
             byte b = packetBuf.readByte();
-            airshipUp_KeyDown = (b & 1) == 0;
-            airshipDown_KeyDown = ((b >> 1) & 1) == 0;
-            airshipForward_KeyDown = ((b >> 2) & 1) == 0;
-            airshipBackward_KeyDown = ((b >> 3) & 1) == 0;
-            airshipLeft_KeyDown = ((b >> 4) & 1) == 0;
-            airshipRight_KeyDown = ((b >> 5) & 1) == 0;
-            airshipSprinting = ((b >> 6) & 1) == 0;
-            airshipStop_KeyDown = ((b >> 7) & 1) == 0;
+            this.airshipUp_KeyDown = (b & 1) == 0;
+            this.airshipDown_KeyDown = ((b >> 1) & 1) == 0;
+            this.airshipForward_KeyDown = ((b >> 2) & 1) == 0;
+            this.airshipBackward_KeyDown = ((b >> 3) & 1) == 0;
+            this.airshipLeft_KeyDown = ((b >> 4) & 1) == 0;
+            this.airshipRight_KeyDown = ((b >> 5) & 1) == 0;
+            this.airshipSprinting = ((b >> 6) & 1) == 0;
+            this.airshipStop_KeyDown = ((b >> 7) & 1) == 0;
         }
 
         {
             byte b = packetBuf.readByte();
-            airshipUp_KeyPressed = (b & 1) == 0;
-            airshipDown_KeyPressed = ((b >> 1) & 1) == 0;
-            airshipForward_KeyPressed = ((b >> 2) & 1) == 0;
-            airshipBackward_KeyPressed = ((b >> 3) & 1) == 0;
-            airshipLeft_KeyPressed = ((b >> 4) & 1) == 0;
-            airshipRight_KeyPressed = ((b >> 5) & 1) == 0;
-            airshipStop_KeyPressed = ((b >> 6) & 1) == 0;
+            this.airshipUp_KeyPressed = (b & 1) == 0;
+            this.airshipDown_KeyPressed = ((b >> 1) & 1) == 0;
+            this.airshipForward_KeyPressed = ((b >> 2) & 1) == 0;
+            this.airshipBackward_KeyPressed = ((b >> 3) & 1) == 0;
+            this.airshipLeft_KeyPressed = ((b >> 4) & 1) == 0;
+            this.airshipRight_KeyPressed = ((b >> 5) & 1) == 0;
+            this.airshipStop_KeyPressed = ((b >> 6) & 1) == 0;
             //ignore most significant byte
         }
 
-        inputType = packetBuf.readEnumValue(ControllerInputType.class);
-        shipFor = packetBuf.readUniqueId();
-        controlBlockPos = packetBuf.readBlockPos();
+        this.inputType = packetBuf.readEnumValue(ControllerInputType.class);
+        this.shipFor = packetBuf.readUniqueId();
+        this.controlBlockPos = packetBuf.readBlockPos();
     }
 
     @Override
@@ -96,84 +96,84 @@ public class PilotControlsMessage implements IMessage {
 
         {
             int i = 0;
-            i |= airshipUp_KeyDown ? 0 : 1;
-            i |= (airshipDown_KeyDown ? 0 : 1) << 1;
-            i |= (airshipForward_KeyDown ? 0 : 1) << 2;
-            i |= (airshipBackward_KeyDown ? 0 : 1) << 3;
-            i |= (airshipLeft_KeyDown ? 0 : 1) << 4;
-            i |= (airshipRight_KeyDown ? 0 : 1) << 5;
-            i |= (airshipSprinting ? 0 : 1) << 6;
-            i |= (airshipStop_KeyDown ? 0 : 1) << 7;
+            i |= this.airshipUp_KeyDown ? 0 : 1;
+            i |= (this.airshipDown_KeyDown ? 0 : 1) << 1;
+            i |= (this.airshipForward_KeyDown ? 0 : 1) << 2;
+            i |= (this.airshipBackward_KeyDown ? 0 : 1) << 3;
+            i |= (this.airshipLeft_KeyDown ? 0 : 1) << 4;
+            i |= (this.airshipRight_KeyDown ? 0 : 1) << 5;
+            i |= (this.airshipSprinting ? 0 : 1) << 6;
+            i |= (this.airshipStop_KeyDown ? 0 : 1) << 7;
             packetBuf.writeByte(i);
         }
 
         {
             int i = 0;
-            i |= airshipUp_KeyPressed ? 0 : 1;
-            i |= (airshipDown_KeyPressed ? 0 : 1) << 1;
-            i |= (airshipForward_KeyPressed ? 0 : 1) << 2;
-            i |= (airshipBackward_KeyPressed ? 0 : 1) << 3;
-            i |= (airshipLeft_KeyPressed ? 0 : 1) << 4;
-            i |= (airshipRight_KeyPressed ? 0 : 1) << 5;
-            i |= (airshipStop_KeyPressed ? 0 : 1) << 6;
+            i |= this.airshipUp_KeyPressed ? 0 : 1;
+            i |= (this.airshipDown_KeyPressed ? 0 : 1) << 1;
+            i |= (this.airshipForward_KeyPressed ? 0 : 1) << 2;
+            i |= (this.airshipBackward_KeyPressed ? 0 : 1) << 3;
+            i |= (this.airshipLeft_KeyPressed ? 0 : 1) << 4;
+            i |= (this.airshipRight_KeyPressed ? 0 : 1) << 5;
+            i |= (this.airshipStop_KeyPressed ? 0 : 1) << 6;
             packetBuf.writeByte(i);
         }
 
-        packetBuf.writeEnumValue(inputType);
-        packetBuf.writeUniqueId(shipFor);
-        if (controlBlockPos == null) {
+        packetBuf.writeEnumValue(this.inputType);
+        packetBuf.writeUniqueId(this.shipFor);
+        if (this.controlBlockPos == null) {
             System.out.println(":(");
-            controlBlockPos = BlockPos.ORIGIN;
+            this.controlBlockPos = BlockPos.ORIGIN;
         }
-        packetBuf.writeBlockPos(controlBlockPos);
+        packetBuf.writeBlockPos(this.controlBlockPos);
     }
 
     public void assignKeyBooleans(PhysicsWrapperEntity shipPiloting, Enum inputType) {
-        airshipUp_KeyDown = VWKeyHandler.airshipUp.isKeyDown();
-        airshipDown_KeyDown = VWKeyHandler.airshipDown.isKeyDown();
-        airshipForward_KeyDown = VWKeyHandler.airshipForward.isKeyDown();
-        airshipBackward_KeyDown = VWKeyHandler.airshipBackward.isKeyDown();
-        airshipLeft_KeyDown = VWKeyHandler.airshipLeft.isKeyDown();
-        airshipRight_KeyDown = VWKeyHandler.airshipRight.isKeyDown();
-        airshipSprinting = VWKeyHandler.airshipSpriting.isKeyDown(); // Minecraft.getMinecraft().player.isSprinting();
+        this.airshipUp_KeyDown = VWKeyHandler.airshipUp.isKeyDown();
+        this.airshipDown_KeyDown = VWKeyHandler.airshipDown.isKeyDown();
+        this.airshipForward_KeyDown = VWKeyHandler.airshipForward.isKeyDown();
+        this.airshipBackward_KeyDown = VWKeyHandler.airshipBackward.isKeyDown();
+        this.airshipLeft_KeyDown = VWKeyHandler.airshipLeft.isKeyDown();
+        this.airshipRight_KeyDown = VWKeyHandler.airshipRight.isKeyDown();
+        this.airshipSprinting = VWKeyHandler.airshipSpriting.isKeyDown(); // Minecraft.getMinecraft().player.isSprinting();
 
-        airshipUp_KeyPressed = airshipUp_KeyDown && !airshipUp_KeyPressedLast;
-        airshipDown_KeyPressed = airshipDown_KeyDown && !airshipDown_KeyPressedLast;
-        airshipForward_KeyPressed = airshipForward_KeyDown && !airshipForward_KeyPressedLast;
-        airshipBackward_KeyPressed = airshipBackward_KeyDown && !airshipBackward_KeyPressedLast;
-        airshipLeft_KeyPressed = airshipLeft_KeyDown && !airshipLeft_KeyPressedLast;
-        airshipRight_KeyPressed = airshipRight_KeyDown && !airshipRight_KeyPressedLast;
-        airshipStop_KeyPressed = airshipStop_KeyDown && !airshipStop_KeyPressedLast;
+        this.airshipUp_KeyPressed = this.airshipUp_KeyDown && !airshipUp_KeyPressedLast;
+        this.airshipDown_KeyPressed = this.airshipDown_KeyDown && !airshipDown_KeyPressedLast;
+        this.airshipForward_KeyPressed = this.airshipForward_KeyDown && !airshipForward_KeyPressedLast;
+        this.airshipBackward_KeyPressed = this.airshipBackward_KeyDown && !airshipBackward_KeyPressedLast;
+        this.airshipLeft_KeyPressed = this.airshipLeft_KeyDown && !airshipLeft_KeyPressedLast;
+        this.airshipRight_KeyPressed = this.airshipRight_KeyDown && !airshipRight_KeyPressedLast;
+        this.airshipStop_KeyPressed = this.airshipStop_KeyDown && !airshipStop_KeyPressedLast;
 
         if (shipPiloting != null) {
-            shipFor = shipPiloting.getUniqueID();
+            this.shipFor = shipPiloting.getUniqueID();
         }
         this.inputType = inputType;
         if (inputType == ControllerInputType.Zepplin) {
-            airshipUp_KeyDown = VWKeyHandler.airshipUp_Zepplin.isKeyDown();
-            airshipDown_KeyDown = VWKeyHandler.airshipDown_Zepplin.isKeyDown();
-            airshipForward_KeyDown = VWKeyHandler.airshipForward_Zepplin.isKeyDown();
-            airshipBackward_KeyDown = VWKeyHandler.airshipBackward_Zepplin.isKeyDown();
-            airshipLeft_KeyDown = VWKeyHandler.airshipLeft_Zepplin.isKeyDown();
-            airshipRight_KeyDown = VWKeyHandler.airshipRight_Zepplin.isKeyDown();
-            airshipStop_KeyDown = VWKeyHandler.airshipStop_Zepplin.isKeyDown();
+            this.airshipUp_KeyDown = VWKeyHandler.airshipUp_Zepplin.isKeyDown();
+            this.airshipDown_KeyDown = VWKeyHandler.airshipDown_Zepplin.isKeyDown();
+            this.airshipForward_KeyDown = VWKeyHandler.airshipForward_Zepplin.isKeyDown();
+            this.airshipBackward_KeyDown = VWKeyHandler.airshipBackward_Zepplin.isKeyDown();
+            this.airshipLeft_KeyDown = VWKeyHandler.airshipLeft_Zepplin.isKeyDown();
+            this.airshipRight_KeyDown = VWKeyHandler.airshipRight_Zepplin.isKeyDown();
+            this.airshipStop_KeyDown = VWKeyHandler.airshipStop_Zepplin.isKeyDown();
 
-            airshipUp_KeyPressed = airshipUp_KeyDown && !airshipUp_KeyPressedLast;
-            airshipDown_KeyPressed = airshipDown_KeyDown && !airshipDown_KeyPressedLast;
-            airshipForward_KeyPressed = airshipForward_KeyDown && !airshipForward_KeyPressedLast;
-            airshipBackward_KeyPressed = airshipBackward_KeyDown && !airshipBackward_KeyPressedLast;
-            airshipLeft_KeyPressed = airshipLeft_KeyDown && !airshipLeft_KeyPressedLast;
-            airshipRight_KeyPressed = airshipRight_KeyDown && !airshipRight_KeyPressedLast;
-            airshipStop_KeyPressed = airshipStop_KeyDown && !airshipStop_KeyPressedLast;
+            this.airshipUp_KeyPressed = this.airshipUp_KeyDown && !airshipUp_KeyPressedLast;
+            this.airshipDown_KeyPressed = this.airshipDown_KeyDown && !airshipDown_KeyPressedLast;
+            this.airshipForward_KeyPressed = this.airshipForward_KeyDown && !airshipForward_KeyPressedLast;
+            this.airshipBackward_KeyPressed = this.airshipBackward_KeyDown && !airshipBackward_KeyPressedLast;
+            this.airshipLeft_KeyPressed = this.airshipLeft_KeyDown && !airshipLeft_KeyPressedLast;
+            this.airshipRight_KeyPressed = this.airshipRight_KeyDown && !airshipRight_KeyPressedLast;
+            this.airshipStop_KeyPressed = this.airshipStop_KeyDown && !airshipStop_KeyPressedLast;
         }
 
-        airshipUp_KeyPressedLast = airshipUp_KeyDown;
-        airshipDown_KeyPressedLast = airshipDown_KeyDown;
-        airshipForward_KeyPressedLast = airshipForward_KeyDown;
-        airshipBackward_KeyPressedLast = airshipBackward_KeyDown;
-        airshipLeft_KeyPressedLast = airshipLeft_KeyDown;
-        airshipRight_KeyPressedLast = airshipRight_KeyDown;
-        airshipStop_KeyPressedLast = airshipStop_KeyDown;
+        airshipUp_KeyPressedLast = this.airshipUp_KeyDown;
+        airshipDown_KeyPressedLast = this.airshipDown_KeyDown;
+        airshipForward_KeyPressedLast = this.airshipForward_KeyDown;
+        airshipBackward_KeyPressedLast = this.airshipBackward_KeyDown;
+        airshipLeft_KeyPressedLast = this.airshipLeft_KeyDown;
+        airshipRight_KeyPressedLast = this.airshipRight_KeyDown;
+        airshipStop_KeyPressedLast = this.airshipStop_KeyDown;
     }
 
 }

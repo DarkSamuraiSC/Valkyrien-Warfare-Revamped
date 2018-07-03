@@ -48,6 +48,6 @@ public abstract class BlockEtherCompressorLore extends BlockEtherCompressor {
     }
 
     protected void updateLore() {
-        lore = new String[]{"" + TextFormatting.GRAY + TextFormatting.ITALIC + TextFormatting.BOLD + "Power:", "  " + this.getEnginePowerTooltip()};
+        this.lore = new String[]{"" + TextFormatting.GRAY + TextFormatting.ITALIC + TextFormatting.BOLD + "Power:", "  " + this.getEnginePowerTooltip()};
     }
 }

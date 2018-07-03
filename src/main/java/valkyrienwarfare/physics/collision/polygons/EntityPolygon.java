@@ -27,12 +27,12 @@ public class EntityPolygon extends Polygon {
 
     public EntityPolygon(AxisAlignedBB bb, Entity ent) {
         super(bb);
-        entityFor = ent;
+        this.entityFor = ent;
     }
 
     public EntityPolygon(AxisAlignedBB bb, ShipTransform transform, TransformType transformType, Entity ent) {
         super(bb, transform, transformType);
-        entityFor = ent;
+        this.entityFor = ent;
     }
 
 }

@@ -28,7 +28,7 @@ public interface IVWNodeProvider {
      * @param offset
      */
     default void shiftInternalData(BlockPos offset) {
-        getNode().shiftConnections(offset);
+        this.getNode().shiftConnections(offset);
     }
 
     /**

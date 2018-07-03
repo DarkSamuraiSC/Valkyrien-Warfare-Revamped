@@ -43,7 +43,7 @@ public class Polygon {
 
     public Polygon(AxisAlignedBB bb, ShipTransform transformation, TransformType transformType) {
         this(bb);
-        transform(transformation, transformType);
+        this.transform(transformation, transformType);
     }
 
     // Copies one polygon onto another.
@@ -60,49 +60,49 @@ public class Polygon {
     }
 
     public Vector[] getVertices() {
-        return vertices;
+        return this.vertices;
     }
 
     public Vector[] getNormals() {
-        return normals;
+        return this.normals;
     }
 
     public double[] getProjectionOnVector(Vector axis) {
-        double[] distances = new double[vertices.length];
-        for (int i = 0; i < vertices.length; i++) {
-            distances[i] = axis.dot(vertices[i]);
+        double[] distances = new double[this.vertices.length];
+        for (int i = 0; i < this.vertices.length; i++) {
+            distances[i] = axis.dot(this.vertices[i]);
         }
         return distances;
     }
 
     public Vector getCenter() {
         Vector center = new Vector();
-        for (Vector v : vertices) {
+        for (Vector v : this.vertices) {
             center.add(v);
         }
-        center.divide(vertices.length);
+        center.divide(this.vertices.length);
         return center;
     }
 
     public void transform(ShipTransform transformation, TransformType transformType) {
-        for (int i = 0; i < vertices.length; i++) {
-            transformation.transform(vertices[i], transformType);
+        for (int i = 0; i < this.vertices.length; i++) {
+            transformation.transform(this.vertices[i], transformType);
         }
-        for (Vector normal : normals) {
+        for (Vector normal : this.normals) {
             transformation.rotate(normal, transformType);
         }
     }
 
     public AxisAlignedBB getEnclosedAABB() {
-        Vector firstVertice = vertices[0];
+        Vector firstVertice = this.vertices[0];
         double mnX = firstVertice.X;
         double mnY = firstVertice.Y;
         double mnZ = firstVertice.Z;
         double mxX = firstVertice.X;
         double mxY = firstVertice.Y;
         double mxZ = firstVertice.Z;
-        for (int i = 1; i < vertices.length; i++) {
-            Vector vertice = vertices[i];
+        for (int i = 1; i < this.vertices.length; i++) {
+            Vector vertice = this.vertices[i];
             mnX = Math.min(mnX, vertice.X);
             mnY = Math.min(mnY, vertice.Y);
             mnZ = Math.min(mnZ, vertice.Z);

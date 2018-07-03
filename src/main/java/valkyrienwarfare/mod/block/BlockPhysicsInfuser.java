@@ -42,7 +42,7 @@ public class BlockPhysicsInfuser extends Block {
 
     public BlockPhysicsInfuser(Material materialIn) {
         super(materialIn);
-        shipSpawnDetectorID = DetectorManager.DetectorIDs.ShipSpawnerGeneral.ordinal();
+        this.shipSpawnDetectorID = DetectorManager.DetectorIDs.ShipSpawnerGeneral.ordinal();
     }
 
     public void addInformation(ItemStack stack, EntityPlayer player, List itemInformation, boolean par4) {
@@ -78,7 +78,7 @@ public class BlockPhysicsInfuser extends Block {
 
             if (ValkyrienWarfareMod.canChangeAirshipCounter(true, playerIn)) {
                 PhysicsWrapperEntity wrapper = new PhysicsWrapperEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(),
-                        playerIn, shipSpawnDetectorID, ShipType.Full_Unlocked);
+                        playerIn, this.shipSpawnDetectorID, ShipType.Full_Unlocked);
                 worldIn.spawnEntity(wrapper);
             } else {
                 playerIn.sendMessage(new TextComponentString(

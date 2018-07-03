@@ -33,29 +33,29 @@ public class EntityFixMessage implements IMessage {
     }
 
     public EntityFixMessage(PhysicsWrapperEntity toFixOn, Entity toFix, boolean isFixing, Vector localPos) {
-        shipId = toFixOn.getEntityId();
-        entityUUID = toFix.getPersistentID().hashCode();
+        this.shipId = toFixOn.getEntityId();
+        this.entityUUID = toFix.getPersistentID().hashCode();
         this.isFixing = isFixing;
-        localPosition = localPos;
+        this.localPosition = localPos;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        shipId = buf.readInt();
-        entityUUID = buf.readInt();
-        isFixing = buf.readBoolean();
-        if (isFixing) {
-            localPosition = new Vector(buf);
+        this.shipId = buf.readInt();
+        this.entityUUID = buf.readInt();
+        this.isFixing = buf.readBoolean();
+        if (this.isFixing) {
+            this.localPosition = new Vector(buf);
         }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(shipId);
-        buf.writeInt(entityUUID);
-        buf.writeBoolean(isFixing);
-        if (isFixing) {
-            localPosition.writeToByteBuf(buf);
+        buf.writeInt(this.shipId);
+        buf.writeInt(this.entityUUID);
+        buf.writeBoolean(this.isFixing);
+        if (this.isFixing) {
+            this.localPosition.writeToByteBuf(buf);
         }
     }
 

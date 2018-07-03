@@ -18,7 +18,6 @@ package valkyrienwarfare.addon.control.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -29,17 +28,17 @@ public class BlockShipWheel extends Block {
 
     public BlockShipWheel(Material materialIn) {
         super(materialIn);
-        setDefaultState(getStateFromMeta(0));
+        this.setDefaultState(this.getStateFromMeta(0));
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[]{modelId});
+        return new BlockStateContainer(this, modelId);
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(modelId, meta);
+        return this.getDefaultState().withProperty(modelId, meta);
     }
 
     @Override

@@ -97,7 +97,7 @@ import java.util.zip.ZipInputStream;
         updateJSON = "https://raw.githubusercontent.com/Valkyrien-Warfare/Valkyrien-Warfare-Revamped/update.json",
         certificateFingerprint = "8f639e7b2d1117d8f2c5d545e2231f0a0519f0ce")
 public class ValkyrienWarfareMod {
-    public static final List<Module> addons = new ArrayList<Module>();
+    public static final List<Module> addons = new ArrayList<>();
     public static final String MODID = "valkyrienwarfare";
     public static final String MODNAME = "Valkyrien Warfare";
     public static final String MODVER = "0.9_prerelease_5";
@@ -218,7 +218,7 @@ public class ValkyrienWarfareMod {
 
     @EventHandler
     public void fmlConstruct(FMLConstructionEvent event) {
-        URLClassLoader classLoader = (URLClassLoader) getClass().getClassLoader();
+        URLClassLoader classLoader = (URLClassLoader) this.getClass().getClassLoader();
         ArrayList<String> allAddons = new ArrayList<>();
         final boolean isAddonBugFixed = false;
 
@@ -326,9 +326,9 @@ public class ValkyrienWarfareMod {
         hasAddonRegistrationEnded = true;
 
         proxy.preInit(event);
-        registerNetworks(event);
-        runConfiguration(event);
-        registerCapibilities();
+        this.registerNetworks(event);
+        this.runConfiguration(event);
+        this.registerCapibilities();
         ValkyrienWarfareHooks.methods = new RealMethods();
         ValkyrienWarfareHooks.isValkyrienWarfareInstalled = true;
         VW_LOGGER = Logger.getLogger("ValkyrienWarfare");
@@ -437,54 +437,54 @@ public class ValkyrienWarfareMod {
         File file = new File(ValkyrienWarfareMod.getWorkingFolder(), "/valkyrienwarfaresettings.dat");
 
         if (!file.exists()) {
-            tag = new DataTag(file);
-            tag.setBoolean("doGravity", true);
-            tag.setBoolean("doPhysicsBlocks", true);
-            tag.setBoolean("doBalloons", true);
-            tag.setBoolean("doAirshipRotation", true);
-            tag.setBoolean("doAirshipMovement", true);
-            tag.setBoolean("doSplitting", false);
-            tag.setInteger("maxShipSize", 15000);
-            tag.setDouble("gravityVecX", 0);
-            tag.setDouble("gravityVecY", -9.8);
-            tag.setDouble("gravityVecZ", 0);
-            tag.setInteger("physicsIterations", 10);
-            tag.setDouble("physicsSpeed", 0.05);
-            tag.setBoolean("doEtheriumLifting", true);
-            tag.save();
+            this.tag = new DataTag(file);
+            this.tag.setBoolean("doGravity", true);
+            this.tag.setBoolean("doPhysicsBlocks", true);
+            this.tag.setBoolean("doBalloons", true);
+            this.tag.setBoolean("doAirshipRotation", true);
+            this.tag.setBoolean("doAirshipMovement", true);
+            this.tag.setBoolean("doSplitting", false);
+            this.tag.setInteger("maxShipSize", 15000);
+            this.tag.setDouble("gravityVecX", 0);
+            this.tag.setDouble("gravityVecY", -9.8);
+            this.tag.setDouble("gravityVecZ", 0);
+            this.tag.setInteger("physicsIterations", 10);
+            this.tag.setDouble("physicsSpeed", 0.05);
+            this.tag.setBoolean("doEtheriumLifting", true);
+            this.tag.save();
         } else {
-            tag = new DataTag(file);
+            this.tag = new DataTag(file);
         }
 
-        PhysicsSettings.doGravity = tag.getBoolean("doGravity", true);
-        PhysicsSettings.doPhysicsBlocks = tag.getBoolean("doPhysicsBlocks", true);
-        PhysicsSettings.doAirshipRotation = tag.getBoolean("doAirshipRotation", true);
-        PhysicsSettings.doAirshipMovement = tag.getBoolean("doAirshipMovement", true);
-        ValkyrienWarfareMod.maxShipSize = tag.getInteger("maxShipSize", 15000);
-        ValkyrienWarfareMod.physSpeed = tag.getDouble("physicsSpeed", 0.01D);
+        PhysicsSettings.doGravity = this.tag.getBoolean("doGravity", true);
+        PhysicsSettings.doPhysicsBlocks = this.tag.getBoolean("doPhysicsBlocks", true);
+        PhysicsSettings.doAirshipRotation = this.tag.getBoolean("doAirshipRotation", true);
+        PhysicsSettings.doAirshipMovement = this.tag.getBoolean("doAirshipMovement", true);
+        ValkyrienWarfareMod.maxShipSize = this.tag.getInteger("maxShipSize", 15000);
+        ValkyrienWarfareMod.physSpeed = this.tag.getDouble("physicsSpeed", 0.01D);
         // TODO: Remove me later; this is just to force players VW configs to update.
         if (ValkyrienWarfareMod.physSpeed == .05D) {
             ValkyrienWarfareMod.physSpeed = .01D;
         }
-        ValkyrienWarfareMod.gravity = new Vector(tag.getDouble("gravityVecX", 0.0), tag.getDouble("gravityVecY", -9.8),
-                tag.getDouble("gravityVecZ", 0.0));
-        PhysicsSettings.doEtheriumLifting = tag.getBoolean("doEtheriumLifting", true);
+        ValkyrienWarfareMod.gravity = new Vector(this.tag.getDouble("gravityVecX", 0.0), this.tag.getDouble("gravityVecY", -9.8),
+                this.tag.getDouble("gravityVecZ", 0.0));
+        PhysicsSettings.doEtheriumLifting = this.tag.getBoolean("doEtheriumLifting", true);
 
         // save the tag in case new fields are added, this way they are saved right away
-        tag.save();
+        this.tag.save();
     }
 
     public void saveConfig() {
-        tag.setBoolean("doGravity", PhysicsSettings.doGravity);
-        tag.setBoolean("doPhysicsBlocks", PhysicsSettings.doPhysicsBlocks);
-        tag.setBoolean("doAirshipRotation", PhysicsSettings.doAirshipRotation);
-        tag.setBoolean("doAirshipMovement", PhysicsSettings.doAirshipMovement);
-        tag.setInteger("maxShipSize", ValkyrienWarfareMod.maxShipSize);
-        tag.setDouble("gravityVecX", ValkyrienWarfareMod.gravity.X);
-        tag.setDouble("gravityVecY", ValkyrienWarfareMod.gravity.Y);
-        tag.setDouble("gravityVecZ", ValkyrienWarfareMod.gravity.Z);
-        tag.setDouble("physicsSpeed", ValkyrienWarfareMod.physSpeed);
-        tag.save();
+        this.tag.setBoolean("doGravity", PhysicsSettings.doGravity);
+        this.tag.setBoolean("doPhysicsBlocks", PhysicsSettings.doPhysicsBlocks);
+        this.tag.setBoolean("doAirshipRotation", PhysicsSettings.doAirshipRotation);
+        this.tag.setBoolean("doAirshipMovement", PhysicsSettings.doAirshipMovement);
+        this.tag.setInteger("maxShipSize", ValkyrienWarfareMod.maxShipSize);
+        this.tag.setDouble("gravityVecX", ValkyrienWarfareMod.gravity.X);
+        this.tag.setDouble("gravityVecY", ValkyrienWarfareMod.gravity.Y);
+        this.tag.setDouble("gravityVecZ", ValkyrienWarfareMod.gravity.Z);
+        this.tag.setDouble("physicsSpeed", ValkyrienWarfareMod.physSpeed);
+        this.tag.save();
     }
 
     public void registerCapibilities() {

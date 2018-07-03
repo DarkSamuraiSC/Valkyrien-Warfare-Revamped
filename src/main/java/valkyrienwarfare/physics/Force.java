@@ -24,7 +24,7 @@ public class Force extends Vector {
 
     public Force(double x, double y, double z, boolean isInLocalCoords) {
         super(x, y, z);
-        inLocal = isInLocalCoords;
+        this.inLocal = isInLocalCoords;
     }
 
 }

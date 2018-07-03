@@ -39,36 +39,36 @@ public class ThrustModulatorGui extends GuiScreen {
     private final List<GuiTextField> textFields;
 
     public ThrustModulatorGui(EntityPlayer player, TileEntityThrustModulator entity) {
-        mc = Minecraft.getMinecraft();
-        tileEnt = entity;
-        textFields = new ArrayList<GuiTextField>();
+        this.mc = Minecraft.getMinecraft();
+        this.tileEnt = entity;
+        this.textFields = new ArrayList<>();
     }
 
     public void updateTextFields() {
-        textFields.get(0).setText("" + tileEnt.idealYHeight); // Top button
-        textFields.get(1).setText("" + tileEnt.maximumYVelocity); // Middle button
+        this.textFields.get(0).setText("" + this.tileEnt.idealYHeight); // Top button
+        this.textFields.get(1).setText("" + this.tileEnt.maximumYVelocity); // Middle button
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         boolean prevFocused = false;
         boolean postFocused = false;
-        for (GuiTextField text : textFields) {
+        for (GuiTextField text : this.textFields) {
             prevFocused = text.isFocused() || prevFocused;
             text.mouseClicked(mouseX, mouseY, mouseButton);
             postFocused = text.isFocused() || postFocused;
         }
         if (prevFocused && !postFocused) {
-            updateServer();
+            this.updateServer();
         }
     }
 
     public void updateServer() {
-        if (tileEnt != null && NumberUtils.isCreatable(textFields.get(0).getText())
-                && NumberUtils.isCreatable(textFields.get(1).getText())) {
-            float data = Float.parseFloat(textFields.get(0).getText());
-            float data2 = Float.parseFloat(textFields.get(1).getText());
-            ThrustModulatorGuiInputMessage toSend = new ThrustModulatorGuiInputMessage(tileEnt.getPos(), data, data2);
+        if (this.tileEnt != null && NumberUtils.isCreatable(this.textFields.get(0).getText())
+                && NumberUtils.isCreatable(this.textFields.get(1).getText())) {
+            float data = Float.parseFloat(this.textFields.get(0).getText());
+            float data2 = Float.parseFloat(this.textFields.get(1).getText());
+            ThrustModulatorGuiInputMessage toSend = new ThrustModulatorGuiInputMessage(this.tileEnt.getPos(), data, data2);
             ValkyrienWarfareControl.controlNetwork.sendToServer(toSend);
         }
     }
@@ -76,11 +76,11 @@ public class ThrustModulatorGui extends GuiScreen {
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         boolean typed = false;
-        for (GuiTextField text : textFields) {
+        for (GuiTextField text : this.textFields) {
             typed = typed || text.textboxKeyTyped(typedChar, keyCode);
         }
         if (!typed) {
-            updateServer();
+            this.updateServer();
             super.keyTyped(typedChar, keyCode);
         }
     }
@@ -88,7 +88,7 @@ public class ThrustModulatorGui extends GuiScreen {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        for (GuiTextField text : textFields) {
+        for (GuiTextField text : this.textFields) {
             text.updateCursorCounter();
         }
     }
@@ -96,43 +96,43 @@ public class ThrustModulatorGui extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
-        textFields.clear();
+        this.textFields.clear();
         int fieldWidth = 40;
         int fieldHeight = 20;
-        GuiTextField top = new GuiTextField(0, fontRenderer, (width - fieldWidth) / 2 - 57,
-                (height - fieldHeight) / 2 - 77, fieldWidth, fieldHeight);
-        GuiTextField mid = new GuiTextField(0, fontRenderer, (width - fieldWidth) / 2 - 57,
-                (height - fieldHeight) / 2 - 49, fieldWidth, fieldHeight);
+        GuiTextField top = new GuiTextField(0, this.fontRenderer, (this.width - fieldWidth) / 2 - 57,
+                (this.height - fieldHeight) / 2 - 77, fieldWidth, fieldHeight);
+        GuiTextField mid = new GuiTextField(0, this.fontRenderer, (this.width - fieldWidth) / 2 - 57,
+                (this.height - fieldHeight) / 2 - 49, fieldWidth, fieldHeight);
         top.setEnableBackgroundDrawing(false);
         mid.setEnableBackgroundDrawing(false);
-        textFields.add(top);
-        textFields.add(mid);
-        updateTextFields();
+        this.textFields.add(top);
+        this.textFields.add(mid);
+        this.updateTextFields();
         // buttonList.add(new GuiButton(1, width/2-100, height/2-24, "Bastard button"));
     }
 
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-        updateServer();
+        this.updateServer();
         Keyboard.enableRepeatEvents(false);
     }
 
     @Override
     public void drawScreen(int par1, int par2, float par3) {
         super.drawScreen(par1, par2, par3);
-        mc.getTextureManager().bindTexture(BACKGROUND);
+        this.mc.getTextureManager().bindTexture(BACKGROUND);
 
         int textureWidth = 239;
         int textureHeight = 232;
 
-        drawTexturedModalRect((width - textureWidth) / 2, (height - textureHeight) / 2, 7, 7, textureWidth,
+        this.drawTexturedModalRect((this.width - textureWidth) / 2, (this.height - textureHeight) / 2, 7, 7, textureWidth,
                 textureHeight);
 
         for (int j = 0; j < this.labelList.size(); ++j) {
             this.labelList.get(j).drawLabel(this.mc, par1, par2);
         }
-        for (GuiTextField text : textFields) {
+        for (GuiTextField text : this.textFields) {
             text.drawTextBox();
         }
     }

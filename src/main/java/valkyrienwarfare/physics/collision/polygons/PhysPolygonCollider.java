@@ -29,26 +29,26 @@ public class PhysPolygonCollider {
     public Polygon block;
 
     public PhysPolygonCollider(Polygon movable, Polygon stationary, Vector[] axes) {
-        potentialSeperatingAxes = axes;
-        entity = movable;
-        block = stationary;
-        processData();
+        this.potentialSeperatingAxes = axes;
+        this.entity = movable;
+        this.block = stationary;
+        this.processData();
     }
 
     // TODO: Fix this, processes the penetration distances backwards from their reality
     public void processData() {
-        collisions = new PhysCollisionObject[potentialSeperatingAxes.length];
-        for (int i = 0; i < potentialSeperatingAxes.length && !seperated; i++) {
-            collisions[i] = new PhysCollisionObject(entity, block, potentialSeperatingAxes[i]);
-            seperated = collisions[i].seperated;
+        this.collisions = new PhysCollisionObject[this.potentialSeperatingAxes.length];
+        for (int i = 0; i < this.potentialSeperatingAxes.length && !this.seperated; i++) {
+            this.collisions[i] = new PhysCollisionObject(this.entity, this.block, this.potentialSeperatingAxes[i]);
+            this.seperated = this.collisions[i].seperated;
         }
-        if (!seperated) {
-            minDistance = 420;
-            for (int i = 0; i < potentialSeperatingAxes.length; i++) {
+        if (!this.seperated) {
+            this.minDistance = 420;
+            for (int i = 0; i < this.potentialSeperatingAxes.length; i++) {
                 // Take the collision response closest to 0
-                if (Math.abs(collisions[i].penetrationDistance) < minDistance) {
-                    minDistanceIndex = i;
-                    minDistance = Math.abs(collisions[i].penetrationDistance);
+                if (Math.abs(this.collisions[i].penetrationDistance) < this.minDistance) {
+                    this.minDistanceIndex = i;
+                    this.minDistance = Math.abs(this.collisions[i].penetrationDistance);
                 }
             }
         }

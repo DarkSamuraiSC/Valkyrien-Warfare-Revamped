@@ -59,7 +59,7 @@ public class VWThread extends Thread {
         this.hostWorld = host;
         this.physicsTicksCount = 0;
         this.threadRunning = true;
-        this.latestPhysicsTickTimes = new ConcurrentLinkedQueue<Long>();
+        this.latestPhysicsTickTimes = new ConcurrentLinkedQueue<>();
         ValkyrienWarfareMod.VW_LOGGER.fine(this.getName() + " thread created.");
     }
 
@@ -77,7 +77,7 @@ public class VWThread extends Thread {
     public void run() {
         // Used to make up for any lost time when we tick
         long lostTickTime = 0;
-        while (threadRunning) {
+        while (this.threadRunning) {
             long startOfPhysicsTickTimeNano = System.nanoTime();
             // Limit the tick smoothing to just one second (1000ms), if lostTickTime becomes
             // too large then physics would move too quickly after the lag source was
@@ -86,7 +86,7 @@ public class VWThread extends Thread {
                 lostTickTime %= MAX_LOST_TIME_NS;
             }
             // Run the physics code
-            runGameLoop();
+            this.runGameLoop();
             long endOfPhysicsTickTimeNano = System.nanoTime();
             long deltaPhysicsTickTimeNano = endOfPhysicsTickTimeNano - startOfPhysicsTickTimeNano;
 
@@ -115,10 +115,10 @@ public class VWThread extends Thread {
             long deltaTickTimeFullNano = endOfTickTimeFullNano - startOfPhysicsTickTimeNano;
 
             // Update the average tick time here:
-            latestPhysicsTickTimes.add(deltaTickTimeFullNano);
-            if (latestPhysicsTickTimes.size() > TICK_TIME_QUEUE) {
+            this.latestPhysicsTickTimes.add(deltaTickTimeFullNano);
+            if (this.latestPhysicsTickTimes.size() > TICK_TIME_QUEUE) {
                 // Remove the head of this queue.
-                latestPhysicsTickTimes.poll();
+                this.latestPhysicsTickTimes.poll();
             }
         }
         // If we get to this point of run(), then we are about to return and this thread
@@ -127,15 +127,15 @@ public class VWThread extends Thread {
     }
 
     private void runGameLoop() {
-        MinecraftServer mcServer = hostWorld.getMinecraftServer();
+        MinecraftServer mcServer = this.hostWorld.getMinecraftServer();
         if (mcServer.isServerRunning()) {
             if (mcServer.isDedicatedServer()) {
                 // Always tick the physics
-                physicsTick();
+                this.physicsTick();
             } else {
                 // Only tick the physics if the game isn't paused
                 if (!isSinglePlayerPaused()) {
-                    physicsTick();
+                    this.physicsTick();
                 }
             }
         }
@@ -145,17 +145,17 @@ public class VWThread extends Thread {
     // values.
     private void physicsTick() {
         // TODO: Temporary fix:
-        WorldPhysObjectManager manager = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getManagerForWorld(hostWorld);
+        WorldPhysObjectManager manager = ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getManagerForWorld(this.hostWorld);
         List<PhysicsWrapperEntity> physicsEntities = manager.getTickablePhysicsEntities();
-        List<PhysicsWrapperEntity> shipsWithPhysics = new ArrayList<PhysicsWrapperEntity>();
+        List<PhysicsWrapperEntity> shipsWithPhysics = new ArrayList<>();
         for (PhysicsWrapperEntity wrapper : physicsEntities) {
             if (wrapper.getPhysicsObject().isPhysicsEnabled()) {
                 shipsWithPhysics.add(wrapper);
             }
             wrapper.getPhysicsObject().advanceConsecutivePhysicsTicksCounter();
         }
-        tickThePhysicsAndCollision(shipsWithPhysics);
-        tickSendUpdatesToPlayers(physicsEntities);
+        this.tickThePhysicsAndCollision(shipsWithPhysics);
+        this.tickSendUpdatesToPlayers(physicsEntities);
     }
 
     /**
@@ -166,7 +166,7 @@ public class VWThread extends Thread {
     private void tickThePhysicsAndCollision(List<PhysicsWrapperEntity> shipsWithPhysics) {
         double newPhysSpeed = ValkyrienWarfareMod.physSpeed;
         Vector newGravity = ValkyrienWarfareMod.gravity;
-        List<ShipCollisionTask> collisionTasks = new ArrayList<ShipCollisionTask>(shipsWithPhysics.size() * 2);
+        List<ShipCollisionTask> collisionTasks = new ArrayList<>(shipsWithPhysics.size() * 2);
         for (PhysicsWrapperEntity wrapper : shipsWithPhysics) {
             if (!wrapper.firstUpdate) {
                 // Update the physics simulation
@@ -211,9 +211,9 @@ public class VWThread extends Thread {
 
     private void tickSendUpdatesToPlayers(List<PhysicsWrapperEntity> ships) {
         for (PhysicsWrapperEntity wrapper : ships) {
-            wrapper.getPhysicsObject().getShipTransformationManager().sendPositionToPlayers(physicsTicksCount);
+            wrapper.getPhysicsObject().getShipTransformationManager().sendPositionToPlayers(this.physicsTicksCount);
         }
-        physicsTicksCount++;
+        this.physicsTicksCount++;
     }
 
     /**
@@ -223,16 +223,16 @@ public class VWThread extends Thread {
      */
     public void kill() {
         ValkyrienWarfareMod.VW_LOGGER.fine(super.getName() + " marked for death.");
-        threadRunning = false;
+        this.threadRunning = false;
     }
 
     /**
      * @return The average runtime of the last 100 physics ticks in nanoseconds.
      */
     public long getAveragePhysicsTickTimeNano() {
-        if (latestPhysicsTickTimes.size() >= TICK_TIME_QUEUE) {
+        if (this.latestPhysicsTickTimes.size() >= TICK_TIME_QUEUE) {
             long average = 0;
-            for (Long tickTime : latestPhysicsTickTimes) {
+            for (Long tickTime : this.latestPhysicsTickTimes) {
                 average += tickTime;
             }
             return average / TICK_TIME_QUEUE;

@@ -37,41 +37,41 @@ public class EntityPolygonCollider {
     private boolean originallySeperated;
 
     public EntityPolygonCollider(EntityPolygon movable, Polygon stationary, Vector[] axes, Vector entityVel) {
-        collisionAxes = axes;
-        entity = movable;
-        block = stationary;
-        entityVelocity = entityVel;
-        collisions = new EntityCollisionObject[collisionAxes.length];
-        processData();
+        this.collisionAxes = axes;
+        this.entity = movable;
+        this.block = stationary;
+        this.entityVelocity = entityVel;
+        this.collisions = new EntityCollisionObject[this.collisionAxes.length];
+        this.processData();
     }
 
     public void processData() {
-        seperated = false;
-        for (int i = 0; i < collisions.length; i++) {
-            if (!seperated) {
-                collisions[i] = new EntityCollisionObject(entity, block, collisionAxes[i], entityVelocity);
-                if (collisions[i].arePolygonsSeperated()) {
-                    seperated = true;
+        this.seperated = false;
+        for (int i = 0; i < this.collisions.length; i++) {
+            if (!this.seperated) {
+                this.collisions[i] = new EntityCollisionObject(this.entity, this.block, this.collisionAxes[i], this.entityVelocity);
+                if (this.collisions[i].arePolygonsSeperated()) {
+                    this.seperated = true;
                     break;
                 }
-                if (!collisions[i].werePolygonsInitiallyColliding()) {
-                    originallySeperated = true;
+                if (!this.collisions[i].werePolygonsInitiallyColliding()) {
+                    this.originallySeperated = true;
                 }
             }
         }
-        if (!seperated) {
-            minDistance = 420;
-            for (int i = 0; i < collisions.length; i++) {
-                if (originallySeperated) {
-                    if (Math.abs((collisions[i].getCollisionPenetrationDistance() - collisions[i].getVelDot()) / collisions[i].getVelDot()) < minDistance && !collisions[i].werePolygonsInitiallyColliding()) {
-                        minDistanceIndex = i;
-                        minDistance = Math.abs((collisions[i].getCollisionPenetrationDistance() - collisions[i].getVelDot()) / collisions[i].getVelDot());
+        if (!this.seperated) {
+            this.minDistance = 420;
+            for (int i = 0; i < this.collisions.length; i++) {
+                if (this.originallySeperated) {
+                    if (Math.abs((this.collisions[i].getCollisionPenetrationDistance() - this.collisions[i].getVelDot()) / this.collisions[i].getVelDot()) < this.minDistance && !this.collisions[i].werePolygonsInitiallyColliding()) {
+                        this.minDistanceIndex = i;
+                        this.minDistance = Math.abs((this.collisions[i].getCollisionPenetrationDistance() - this.collisions[i].getVelDot()) / this.collisions[i].getVelDot());
                     }
                 } else {
                     // This is wrong
-                    if (Math.abs(collisions[i].getCollisionPenetrationDistance()) < minDistance) {
-                        minDistanceIndex = i;
-                        minDistance = Math.abs(collisions[i].getCollisionPenetrationDistance());
+                    if (Math.abs(this.collisions[i].getCollisionPenetrationDistance()) < this.minDistance) {
+                        this.minDistanceIndex = i;
+                        this.minDistance = Math.abs(this.collisions[i].getCollisionPenetrationDistance());
                     }
                 }
             }
@@ -79,19 +79,19 @@ public class EntityPolygonCollider {
     }
 
     public EntityCollisionObject[] getCollisions() {
-        return collisions;
+        return this.collisions;
     }
 
     public int getMinDistanceIndex() {
-        return minDistanceIndex;
+        return this.minDistanceIndex;
     }
 
     public boolean arePolygonsSeperated() {
-        return seperated;
+        return this.seperated;
     }
 
     public Vector[] getCollisionAxes() {
-        return collisionAxes;
+        return this.collisionAxes;
     }
 
 }

@@ -38,7 +38,7 @@ public class ValkyrienWarfareOC extends Module {
     public ValkyrienWarfareOC() {
         super("VW_OpenComputers", new CommonProxyOC(), "valkyrienwarfareoc");
         if (ValkyrienWarfareMod.INSTANCE.isRunningOnClient()) {
-            setClientProxy(new ClientProxyOC());
+            this.setClientProxy(new ClientProxyOC());
         }
 
         INSTANCE = this;
@@ -66,14 +66,14 @@ public class ValkyrienWarfareOC extends Module {
 
     @Override
     public void registerBlocks(RegistryEvent.Register<Block> event) {
-        gpsBlock = new GPSBlock().setUnlocalizedName("gpsblock").setRegistryName(getModID(), "gpsblock").setCreativeTab(ValkyrienWarfareMod.vwTab);
+        this.gpsBlock = new GPSBlock().setUnlocalizedName("gpsblock").setRegistryName(this.getModID(), "gpsblock").setCreativeTab(ValkyrienWarfareMod.vwTab);
 
-        event.getRegistry().register(gpsBlock);
+        event.getRegistry().register(this.gpsBlock);
     }
 
     @Override
     public void registerItems(RegistryEvent.Register<Item> event) {
-        registerItemBlock(event, gpsBlock);
+        registerItemBlock(event, this.gpsBlock);
     }
 
     @Override

@@ -60,9 +60,9 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent e) {
         super.init(e);
         MinecraftForge.EVENT_BUS.register(new EventsClient());
-        MinecraftForge.EVENT_BUS.register(keyEvents);
-        registerBlockItem(ValkyrienWarfareMod.physicsInfuser);
-        registerBlockItem(ValkyrienWarfareMod.physicsInfuserCreative);
+        MinecraftForge.EVENT_BUS.register(this.keyEvents);
+        this.registerBlockItem(ValkyrienWarfareMod.physicsInfuser);
+        this.registerBlockItem(ValkyrienWarfareMod.physicsInfuserCreative);
 
         for (Module addon : ValkyrienWarfareMod.addons) {
             ModuleProxy proxy = addon.getClientProxy();
@@ -103,9 +103,9 @@ public class ClientProxy extends CommonProxy {
         double moddedX = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks;
         double moddedY = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks;
         double moddedZ = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks;
-        double p0 = Minecraft.getMinecraft().player.lastTickPosX + (Minecraft.getMinecraft().player.posX - Minecraft.getMinecraft().player.lastTickPosX) * (double) partialTicks;
-        double p1 = Minecraft.getMinecraft().player.lastTickPosY + (Minecraft.getMinecraft().player.posY - Minecraft.getMinecraft().player.lastTickPosY) * (double) partialTicks;
-        double p2 = Minecraft.getMinecraft().player.lastTickPosZ + (Minecraft.getMinecraft().player.posZ - Minecraft.getMinecraft().player.lastTickPosZ) * (double) partialTicks;
+        double p0 = Minecraft.getMinecraft().player.lastTickPosX + (Minecraft.getMinecraft().player.posX - Minecraft.getMinecraft().player.lastTickPosX) * partialTicks;
+        double p1 = Minecraft.getMinecraft().player.lastTickPosY + (Minecraft.getMinecraft().player.posY - Minecraft.getMinecraft().player.lastTickPosY) * partialTicks;
+        double p2 = Minecraft.getMinecraft().player.lastTickPosZ + (Minecraft.getMinecraft().player.posZ - Minecraft.getMinecraft().player.lastTickPosZ) * partialTicks;
 
         Quaternion smoothRotation = entity.getPhysicsObject().getShipRenderer().getSmoothRotationQuat(partialTicks);
         double[] radians = smoothRotation.toRadians();

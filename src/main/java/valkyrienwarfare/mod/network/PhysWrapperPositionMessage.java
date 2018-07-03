@@ -72,66 +72,66 @@ public class PhysWrapperPositionMessage implements IMessage {
     }
 
     public PhysWrapperPositionMessage(PhysicsObject toRunLocally) {
-        setPosX(toRunLocally.getWrapperEntity().posX);
-        setPosY(toRunLocally.getWrapperEntity().posY);
-        setPosZ(toRunLocally.getWrapperEntity().posZ);
+        this.setPosX(toRunLocally.getWrapperEntity().posX);
+        this.setPosY(toRunLocally.getWrapperEntity().posY);
+        this.setPosZ(toRunLocally.getWrapperEntity().posZ);
 
-        setPitch(toRunLocally.getWrapperEntity().getPitch());
-        setYaw(toRunLocally.getWrapperEntity().getYaw());
-        setRoll(toRunLocally.getWrapperEntity().getRoll());
+        this.setPitch(toRunLocally.getWrapperEntity().getPitch());
+        this.setYaw(toRunLocally.getWrapperEntity().getYaw());
+        this.setRoll(toRunLocally.getWrapperEntity().getRoll());
 
-        setCenterOfMass(toRunLocally.getCenterCoord());
-        setShipBB(toRunLocally.getShipBoundingBox());
+        this.setCenterOfMass(toRunLocally.getCenterCoord());
+        this.setShipBB(toRunLocally.getShipBoundingBox());
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        setEntityID(buf.readInt());
-        setRelativeTick(buf.readInt());
+        this.setEntityID(buf.readInt());
+        this.setRelativeTick(buf.readInt());
 
-        setPosX(buf.readDouble());
-        setPosY(buf.readDouble());
-        setPosZ(buf.readDouble());
+        this.setPosX(buf.readDouble());
+        this.setPosY(buf.readDouble());
+        this.setPosZ(buf.readDouble());
 
-        setPitch(buf.readDouble());
-        setYaw(buf.readDouble());
-        setRoll(buf.readDouble());
+        this.setPitch(buf.readDouble());
+        this.setYaw(buf.readDouble());
+        this.setRoll(buf.readDouble());
 
-        setCenterOfMass(new Vector(buf.readDouble(), buf.readDouble(), buf.readDouble()));
-        setShipBB(new AxisAlignedBB(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble(),
+        this.setCenterOfMass(new Vector(buf.readDouble(), buf.readDouble(), buf.readDouble()));
+        this.setShipBB(new AxisAlignedBB(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble(),
                 buf.readDouble(), buf.readDouble()));
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(getEntityID());
-        buf.writeInt(getRelativeTick());
+        buf.writeInt(this.getEntityID());
+        buf.writeInt(this.getRelativeTick());
 
-        buf.writeDouble(getPosX());
-        buf.writeDouble(getPosY());
-        buf.writeDouble(getPosZ());
+        buf.writeDouble(this.getPosX());
+        buf.writeDouble(this.getPosY());
+        buf.writeDouble(this.getPosZ());
 
-        buf.writeDouble(getPitch());
-        buf.writeDouble(getYaw());
-        buf.writeDouble(getRoll());
+        buf.writeDouble(this.getPitch());
+        buf.writeDouble(this.getYaw());
+        buf.writeDouble(this.getRoll());
 
-        buf.writeDouble(getCenterOfMass().X);
-        buf.writeDouble(getCenterOfMass().Y);
-        buf.writeDouble(getCenterOfMass().Z);
+        buf.writeDouble(this.getCenterOfMass().X);
+        buf.writeDouble(this.getCenterOfMass().Y);
+        buf.writeDouble(this.getCenterOfMass().Z);
 
-        buf.writeDouble(getShipBB().minX);
-        buf.writeDouble(getShipBB().minY);
-        buf.writeDouble(getShipBB().minZ);
-        buf.writeDouble(getShipBB().maxX);
-        buf.writeDouble(getShipBB().maxY);
-        buf.writeDouble(getShipBB().maxZ);
+        buf.writeDouble(this.getShipBB().minX);
+        buf.writeDouble(this.getShipBB().minY);
+        buf.writeDouble(this.getShipBB().minZ);
+        buf.writeDouble(this.getShipBB().maxX);
+        buf.writeDouble(this.getShipBB().maxY);
+        buf.writeDouble(this.getShipBB().maxZ);
     }
 
     /**
      * @return the posX
      */
     public double getPosX() {
-        return posX;
+        return this.posX;
     }
 
     /**
@@ -145,7 +145,7 @@ public class PhysWrapperPositionMessage implements IMessage {
      * @return the posY
      */
     public double getPosY() {
-        return posY;
+        return this.posY;
     }
 
     /**
@@ -159,7 +159,7 @@ public class PhysWrapperPositionMessage implements IMessage {
      * @return the posZ
      */
     public double getPosZ() {
-        return posZ;
+        return this.posZ;
     }
 
     /**
@@ -173,7 +173,7 @@ public class PhysWrapperPositionMessage implements IMessage {
      * @return the pitch
      */
     public double getPitch() {
-        return pitch;
+        return this.pitch;
     }
 
     /**
@@ -187,7 +187,7 @@ public class PhysWrapperPositionMessage implements IMessage {
      * @return the yaw
      */
     public double getYaw() {
-        return yaw;
+        return this.yaw;
     }
 
     /**
@@ -201,7 +201,7 @@ public class PhysWrapperPositionMessage implements IMessage {
      * @return the roll
      */
     public double getRoll() {
-        return roll;
+        return this.roll;
     }
 
     /**
@@ -215,7 +215,7 @@ public class PhysWrapperPositionMessage implements IMessage {
      * @return the centerOfMass
      */
     public Vector getCenterOfMass() {
-        return centerOfMass;
+        return this.centerOfMass;
     }
 
     /**
@@ -229,7 +229,7 @@ public class PhysWrapperPositionMessage implements IMessage {
      * @return the relativeTick
      */
     public int getRelativeTick() {
-        return relativeTick;
+        return this.relativeTick;
     }
 
     /**
@@ -243,7 +243,7 @@ public class PhysWrapperPositionMessage implements IMessage {
      * @return the shipBB
      */
     public AxisAlignedBB getShipBB() {
-        return shipBB;
+        return this.shipBB;
     }
 
     /**
@@ -257,7 +257,7 @@ public class PhysWrapperPositionMessage implements IMessage {
      * @return the entityID
      */
     public int getEntityID() {
-        return entityID;
+        return this.entityID;
     }
 
     /**

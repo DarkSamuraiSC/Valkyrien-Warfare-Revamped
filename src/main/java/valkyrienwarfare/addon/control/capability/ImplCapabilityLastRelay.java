@@ -24,17 +24,17 @@ public class ImplCapabilityLastRelay implements ICapabilityLastRelay {
 
     @Override
     public BlockPos getLastRelay() {
-        return lastRelay;
+        return this.lastRelay;
     }
 
     @Override
     public void setLastRelay(BlockPos pos) {
-        lastRelay = pos;
+        this.lastRelay = pos;
     }
 
     @Override
     public boolean hasLastRelay() {
-        return lastRelay != null;
+        return this.lastRelay != null;
     }
 
 }
