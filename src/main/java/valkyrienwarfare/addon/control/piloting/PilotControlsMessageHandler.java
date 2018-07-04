@@ -29,7 +29,7 @@ public class PilotControlsMessageHandler implements IMessageHandler<PilotControl
 
     @Override
     public IMessage onMessage(PilotControlsMessage message, MessageContext ctx) {
-        IThreadListener mainThread = ctx.getServerHandler().serverController;
+        IThreadListener mainThread = ctx.getServerHandler().server;
         mainThread.addScheduledTask(() -> {
             World worldObj = ctx.getServerHandler().player.world;
             if (ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getManagerForWorld(worldObj) != null) {
@@ -45,5 +45,4 @@ public class PilotControlsMessageHandler implements IMessageHandler<PilotControl
 
         return null;
     }
-
 }

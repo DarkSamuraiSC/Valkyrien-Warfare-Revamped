@@ -41,7 +41,7 @@ public class SubspacedEntityRecordHandler implements IMessageHandler<SubspacedEn
             world = this.getClientWorld();
         } else {
             // Otherwise we are receiving this on the server
-            threadScheduler = ctx.getServerHandler().serverController;
+            threadScheduler = ctx.getServerHandler().server;
             world = ctx.getServerHandler().player.world;
         }
         World worldFinal = world;

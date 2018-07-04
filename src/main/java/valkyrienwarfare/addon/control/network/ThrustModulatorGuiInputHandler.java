@@ -27,7 +27,7 @@ public class ThrustModulatorGuiInputHandler implements IMessageHandler<ThrustMod
 
     @Override
     public IMessage onMessage(ThrustModulatorGuiInputMessage message, MessageContext ctx) {
-        IThreadListener mainThread = ctx.getServerHandler().serverController;
+        IThreadListener mainThread = ctx.getServerHandler().server;
         mainThread.addScheduledTask(() -> {
             TileEntity tileEnt = ctx.getServerHandler().player.world.getTileEntity(message.tileEntityPos);
             if (tileEnt != null) {

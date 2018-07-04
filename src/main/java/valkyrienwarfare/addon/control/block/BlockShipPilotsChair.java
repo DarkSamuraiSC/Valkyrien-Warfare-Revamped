@@ -95,7 +95,7 @@ public class BlockShipPilotsChair extends BlockPilotableBasic {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> itemInformation, ITooltipFlag advanced) {
-        itemInformation.add(TextFormatting.ITALIC + TextFormatting.BLUE + "Use to mount and control Ships!");
+        itemInformation.add(TextFormatting.ITALIC + "" + TextFormatting.BLUE + "Use to mount and control Ships!");
         itemInformation.add(TextFormatting.BOLD + String.valueOf(TextFormatting.BOLD) + TextFormatting.RED + "Can only be placed on a Ship");
     }
 
