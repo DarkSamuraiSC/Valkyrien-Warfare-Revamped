@@ -50,7 +50,7 @@ public class ItemAirshipClaimer extends Item {
         int dim = object.getWrapperEntity().dimension;
         ForgePlayer player = ClaimedChunks.instance.universe.getPlayer(object.getOwner());
         if (player == null) {
-            throw new IllegalStateException("Unable to claim chunks for unknown player: " + object.getOwner().getName() + " (" + object.getOwner().getId().toString() + ")");
+            throw new IllegalStateException("Unable to claim chunks for unknown player: " + object.getOwner().getName() + " (" + object.getOwner().getId() + ")");
         }
         Chunk[][] chunks2d = object.getClaimedChunks();
         boolean[][] occupied2d = object.getOwnedChunks().getChunkOccupiedInLocal();
@@ -75,7 +75,7 @@ public class ItemAirshipClaimer extends Item {
     public void handleClaim(@NonNull PhysicsObject object, int relX, int relZ) {
         ForgePlayer player = ClaimedChunks.instance.universe.getPlayer(object.getOwner());
         if (player == null) {
-            throw new IllegalStateException("Unable to claim chunks for unknown player: " + object.getOwner().getName() + " (" + object.getOwner().getId().toString() + ")");
+            throw new IllegalStateException("Unable to claim chunks for unknown player: " + object.getOwner().getName() + " (" + object.getOwner().getId() + ")");
         }
         Chunk chunk = object.getClaimedChunks()[relX][relZ];
         ClaimResult result = ClaimedChunks.instance.claimChunk(player, new ChunkDimPos(chunk.x, chunk.z, object.getWrapperEntity().dimension));
@@ -115,7 +115,7 @@ public class ItemAirshipClaimer extends Item {
                 ChunkDimPos dimPos = new ChunkDimPos(claim.getCenterX(), claim.getCenterZ(), player.dimension);
                 ForgeTeam team = ClaimedChunks.instance.getChunkTeam(dimPos);
                 if (team != null) {
-                    player.sendMessage(new TextComponentString("Ship already claimed by: " + team.getName()));
+                    player.sendMessage(new TextComponentString("Ship already claimed by: ").appendSibling(team.getTitle()));
                     return EnumActionResult.FAIL;
                 }
             }
