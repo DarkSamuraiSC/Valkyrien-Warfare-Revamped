@@ -31,8 +31,6 @@ import valkyrienwarfare.physics.management.PhysicsObject;
  */
 @VWAddon(dependsOn = "ftbutilities")
 public class ValkyrienWarfareFTBUtil extends Module {
-    private static boolean LOADED;
-
     private static ValkyrienWarfareFTBUtil instance;
 
     public ItemAirshipClaimer airshipClaimer;

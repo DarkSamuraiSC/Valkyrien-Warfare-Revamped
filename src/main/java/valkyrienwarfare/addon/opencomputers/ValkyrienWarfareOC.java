@@ -30,7 +30,7 @@ import valkyrienwarfare.addon.opencomputers.tileentity.GPSTileEntity;
 import valkyrienwarfare.api.addons.Module;
 import valkyrienwarfare.api.addons.VWAddon;
 
-@VWAddon
+@VWAddon(dependsOn = "opencomputers")
 public class ValkyrienWarfareOC extends Module {
     public static ValkyrienWarfareOC INSTANCE;
     public Block gpsBlock;

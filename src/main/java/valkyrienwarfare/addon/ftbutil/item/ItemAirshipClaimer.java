@@ -42,10 +42,14 @@ import valkyrienwarfare.physics.management.PhysicsWrapperEntity;
  * @author DaPorkchop_
  */
 public class ItemAirshipClaimer extends Item {
-
     public void initialClaim(PhysicsObject object) {
-        //unclaim all existing chunks (this shouldn't ever do anything, but you never know)
-        this.handleUnclaim(object);
+        {
+            GameProfile profile = object.getOwner();
+            //unclaim all existing chunks (this shouldn't ever do anything, but you never know)
+            this.handleUnclaim(object);
+            object.setOwner(profile);
+        }
+
         int dim = object.getWrapperEntity().dimension;
         ForgePlayer player = ClaimedChunks.instance.universe.getPlayer(object.getOwner());
         if (player == null) {
@@ -63,7 +67,6 @@ public class ItemAirshipClaimer extends Item {
                     if (result != ClaimResult.SUCCESS) {
                         this.handleUnclaim(object);
                         player.entityPlayer.sendMessage(new TextComponentString("Unable to claim chunks! Error at (" + chunk.x + ", " + chunk.z + "): " + result.name()));
-                        object.setOwner(null);
                         return;
                     }
                 }
@@ -93,6 +96,7 @@ public class ItemAirshipClaimer extends Item {
                 ClaimedChunks.instance.unclaimChunk(new ChunkDimPos(x, z, dim));
             }
         }
+        object.setOwner(null);
     }
 
     @Override
