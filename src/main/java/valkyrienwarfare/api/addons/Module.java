@@ -16,7 +16,6 @@
 
 package valkyrienwarfare.api.addons;
 
-import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -32,7 +31,6 @@ import valkyrienwarfare.ValkyrienWarfareMod;
 import java.util.UUID;
 
 public abstract class Module {
-    @Getter
     private final String name;
     private final ModuleProxy common;
     private final String modid;
@@ -146,5 +144,9 @@ public abstract class Module {
 
     public final String getModID() {
         return this.modid;
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

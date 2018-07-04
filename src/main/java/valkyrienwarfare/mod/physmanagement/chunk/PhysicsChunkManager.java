@@ -16,8 +16,6 @@
 
 package valkyrienwarfare.mod.physmanagement.chunk;
 
-import lombok.Getter;
-import lombok.NonNull;
 import net.minecraft.world.World;
 
 /**
@@ -26,14 +24,12 @@ import net.minecraft.world.World;
  *
  * @author thebest108
  */
-@Getter
 public class PhysicsChunkManager {
     private static final int xChunkStartingPos = -1870000;
     private static final int zChunkStartingPos = -1869950;
     /**
      * the widest area that a ship is allowed to take up
      */
-    @Getter
     private static final int maxChunkRadius = 12;
     /**
      * the + 1 is for padding, to reduce the risk of ships interacting with each other
@@ -59,6 +55,10 @@ public class PhysicsChunkManager {
         return chunkZ < (27000000 >> 16) - 1024;
         //we prevent players from going beyond 27 million, plus 1024
         //to play it safe. in all honesty there'll probably never be this many ships in a world, but hey :P
+    }
+
+    public static int getMaxChunkRadius() {
+        return PhysicsChunkManager.maxChunkRadius;
     }
 
     /**
@@ -101,9 +101,17 @@ public class PhysicsChunkManager {
         this.data = ChunkClaimWorldData.get(this.worldObj);
     }
 
-    public void markChunksAvailable(@NonNull VWChunkClaim claim) {
+    public void markChunksAvailable(VWChunkClaim claim) {
         long chunkKey = (claim.getCenterZ() - zChunkStartingPos) * maxSetsPerRow + (claim.getCenterX() - xChunkStartingPos);
         this.data.getAvailableChunkKeys().add(chunkKey);
         this.data.markDirty();
+    }
+
+    public World getWorldObj() {
+        return this.worldObj;
+    }
+
+    public ChunkClaimWorldData getData() {
+        return this.data;
     }
 }

@@ -16,8 +16,6 @@
 
 package valkyrienwarfare.addon.ftbutil;
 
-import lombok.Getter;
-import lombok.NonNull;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
@@ -35,10 +33,8 @@ import valkyrienwarfare.physics.management.PhysicsObject;
 public class ValkyrienWarfareFTBUtil extends Module {
     private static boolean LOADED;
 
-    @Getter
     private static ValkyrienWarfareFTBUtil instance;
 
-    @Getter
     private ItemAirshipClaimer airshipClaimer;
 
     public ValkyrienWarfareFTBUtil() {
@@ -47,6 +43,10 @@ public class ValkyrienWarfareFTBUtil extends Module {
             throw new IllegalStateException("Instance already set!");
         }
         instance = this;
+    }
+
+    public static ValkyrienWarfareFTBUtil getInstance() {
+        return ValkyrienWarfareFTBUtil.instance;
     }
 
     @Override
@@ -65,21 +65,21 @@ public class ValkyrienWarfareFTBUtil extends Module {
     protected void postInit(FMLStateEvent event) {
     }
 
-    public static void initialClaim(@NonNull PhysicsObject object) {
+    public static void initialClaim(PhysicsObject object) {
         if (!LOADED) {
             return;
         }
         instance.airshipClaimer.initialClaim(object);
     }
 
-    public static void handleClaim(@NonNull PhysicsObject object, int relX, int relZ) {
+    public static void handleClaim(PhysicsObject object, int relX, int relZ) {
         if (!LOADED || object.getOwner() == null) {
             return;
         }
         instance.airshipClaimer.handleClaim(object, relX, relZ);
     }
 
-    public static void handleUnclaim(@NonNull PhysicsObject object) {
+    public static void handleUnclaim(PhysicsObject object) {
         if (!LOADED) {
             return;
         }
@@ -94,5 +94,9 @@ public class ValkyrienWarfareFTBUtil extends Module {
         } else {
             System.out.println("FTB Utilities not found, skipping integration!");
         }
+    }
+
+    public ItemAirshipClaimer getAirshipClaimer() {
+        return this.airshipClaimer;
     }
 }

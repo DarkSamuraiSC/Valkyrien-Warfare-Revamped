@@ -22,7 +22,6 @@ import com.feed_the_beast.ftblib.lib.math.ChunkDimPos;
 import com.feed_the_beast.ftbutilities.data.ClaimResult;
 import com.feed_the_beast.ftbutilities.data.ClaimedChunks;
 import com.mojang.authlib.GameProfile;
-import lombok.NonNull;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumActionResult;
@@ -44,7 +43,7 @@ import valkyrienwarfare.physics.management.PhysicsWrapperEntity;
  */
 public class ItemAirshipClaimer extends Item {
 
-    public void initialClaim(@NonNull PhysicsObject object) {
+    public void initialClaim(PhysicsObject object) {
         //unclaim all existing chunks (this shouldn't ever do anything, but you never know)
         this.handleUnclaim(object);
         int dim = object.getWrapperEntity().dimension;
@@ -72,7 +71,7 @@ public class ItemAirshipClaimer extends Item {
         }
     }
 
-    public void handleClaim(@NonNull PhysicsObject object, int relX, int relZ) {
+    public void handleClaim(PhysicsObject object, int relX, int relZ) {
         ForgePlayer player = ClaimedChunks.instance.universe.getPlayer(object.getOwner());
         if (player == null) {
             throw new IllegalStateException("Unable to claim chunks for unknown player: " + object.getOwner().getName() + " (" + object.getOwner().getId() + ')');
@@ -84,7 +83,7 @@ public class ItemAirshipClaimer extends Item {
         }
     }
 
-    public void handleUnclaim(@NonNull PhysicsObject object) {
+    public void handleUnclaim(PhysicsObject object) {
         int dim = object.getWrapperEntity().dimension;
         VWChunkClaim claim = object.getOwnedChunks();
         int minX = claim.getMinX();

@@ -22,10 +22,6 @@ import gnu.trove.iterator.TIntIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import io.netty.buffer.ByteBuf;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -93,7 +89,6 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author thebest108
  */
-@Getter
 public class PhysicsObject implements ISubspaceProvider {
 
     public static final int MIN_TICKS_EXISTED_BEFORE_PHYSICS = 5;
@@ -104,27 +99,19 @@ public class PhysicsObject implements ISubspaceProvider {
     private final List<Entity> queuedEntitiesToMount;
     // Used when rendering to avoid horrible floating point errors, just a random
     // blockpos inside the ship space.
-    @Setter
     private BlockPos refrenceBlockPos;
-    @Setter
     private Vector centerCoord;
-    @Setter(AccessLevel.PRIVATE)
     private ShipTransformationManager shipTransformationManager;
-    @Setter
     private PhysicsCalculations physicsProcessor;
     private final Set<INodeController> physicsControllers;
     private final Set<INodeController> physicsControllersImmutable;
-    @Setter
     private int detectorID;
     // The closest Chunks to the Ship cached in here
-    @Setter
     private ChunkCache cachedSurroundingChunks;
     // TODO: Make for re-organizing these to make Ship sizes Dynamic
-    @Setter
     private VWChunkClaim ownedChunks;
     // Used for faster memory access to the Chunks this object 'owns'
     private Chunk[][] claimedChunks;
-    @Setter
     private VWChunkCache chunkCache;
     // Some badly written mods use these Maps to determine who to send packets to,
     // so we need to manually fill them with nearby players
@@ -132,23 +119,19 @@ public class PhysicsObject implements ISubspaceProvider {
     // Compatibility for ships made before the update
     private boolean claimedChunksInMap;
     private boolean isNameCustom;
-    @Setter
     private AxisAlignedBB shipBoundingBox;
     private TIntObjectMap<Vector> entityLocalPositions;
-    @Setter
     private ShipType shipType;
     private volatile int gameConsecutiveTicks;
     private volatile int physicsConsecutiveTicks;
     private final ISubspace shipSubspace;
     // Has to be concurrent, only exists properly on the server. Do not use this for
     // anything client side!
-    @Setter
     private Set<BlockPos> blockPositions;
     private boolean isPhysicsEnabled;
-    @Setter
     private GameProfile owner;
 
-    public PhysicsObject(@NonNull PhysicsWrapperEntity host) {
+    public PhysicsObject(PhysicsWrapperEntity host) {
         this.wrapper = host;
         if (host.world.isRemote) {
             this.shipRenderer = new PhysObjectRenderManager(this);
@@ -1001,4 +984,151 @@ public class PhysicsObject implements ISubspaceProvider {
         return this.physicsControllersImmutable;
     }
 
+    public PhysicsWrapperEntity getWrapper() {
+        return this.wrapper;
+    }
+
+    public List<EntityPlayerMP> getWatchingPlayers() {
+        return this.watchingPlayers;
+    }
+
+    public PhysObjectRenderManager getShipRenderer() {
+        return this.shipRenderer;
+    }
+
+    public List<Entity> getQueuedEntitiesToMount() {
+        return this.queuedEntitiesToMount;
+    }
+
+    public BlockPos getRefrenceBlockPos() {
+        return this.refrenceBlockPos;
+    }
+
+    public Vector getCenterCoord() {
+        return this.centerCoord;
+    }
+
+    public ShipTransformationManager getShipTransformationManager() {
+        return this.shipTransformationManager;
+    }
+
+    public PhysicsCalculations getPhysicsProcessor() {
+        return this.physicsProcessor;
+    }
+
+    public Set<INodeController> getPhysicsControllers() {
+        return this.physicsControllers;
+    }
+
+    public Set<INodeController> getPhysicsControllersImmutable() {
+        return this.physicsControllersImmutable;
+    }
+
+    public int getDetectorID() {
+        return this.detectorID;
+    }
+
+    public ChunkCache getCachedSurroundingChunks() {
+        return this.cachedSurroundingChunks;
+    }
+
+    public VWChunkClaim getOwnedChunks() {
+        return this.ownedChunks;
+    }
+
+    public Chunk[][] getClaimedChunks() {
+        return this.claimedChunks;
+    }
+
+    public VWChunkCache getChunkCache() {
+        return this.chunkCache;
+    }
+
+    public PlayerChunkMapEntry[][] getClaimedChunksEntries() {
+        return this.claimedChunksEntries;
+    }
+
+    public boolean isClaimedChunksInMap() {
+        return this.claimedChunksInMap;
+    }
+
+    public AxisAlignedBB getShipBoundingBox() {
+        return this.shipBoundingBox;
+    }
+
+    public TIntObjectMap<Vector> getEntityLocalPositions() {
+        return this.entityLocalPositions;
+    }
+
+    public ShipType getShipType() {
+        return this.shipType;
+    }
+
+    public int getGameConsecutiveTicks() {
+        return this.gameConsecutiveTicks;
+    }
+
+    public int getPhysicsConsecutiveTicks() {
+        return this.physicsConsecutiveTicks;
+    }
+
+    public ISubspace getShipSubspace() {
+        return this.shipSubspace;
+    }
+
+    public Set<BlockPos> getBlockPositions() {
+        return this.blockPositions;
+    }
+
+    public GameProfile getOwner() {
+        return this.owner;
+    }
+
+    public void setRefrenceBlockPos(BlockPos refrenceBlockPos) {
+        this.refrenceBlockPos = refrenceBlockPos;
+    }
+
+    public void setCenterCoord(Vector centerCoord) {
+        this.centerCoord = centerCoord;
+    }
+
+    private void setShipTransformationManager(ShipTransformationManager shipTransformationManager) {
+        this.shipTransformationManager = shipTransformationManager;
+    }
+
+    public void setPhysicsProcessor(PhysicsCalculations physicsProcessor) {
+        this.physicsProcessor = physicsProcessor;
+    }
+
+    public void setDetectorID(int detectorID) {
+        this.detectorID = detectorID;
+    }
+
+    public void setCachedSurroundingChunks(ChunkCache cachedSurroundingChunks) {
+        this.cachedSurroundingChunks = cachedSurroundingChunks;
+    }
+
+    public void setOwnedChunks(VWChunkClaim ownedChunks) {
+        this.ownedChunks = ownedChunks;
+    }
+
+    public void setChunkCache(VWChunkCache chunkCache) {
+        this.chunkCache = chunkCache;
+    }
+
+    public void setShipBoundingBox(AxisAlignedBB shipBoundingBox) {
+        this.shipBoundingBox = shipBoundingBox;
+    }
+
+    public void setShipType(ShipType shipType) {
+        this.shipType = shipType;
+    }
+
+    public void setBlockPositions(Set<BlockPos> blockPositions) {
+        this.blockPositions = blockPositions;
+    }
+
+    public void setOwner(GameProfile owner) {
+        this.owner = owner;
+    }
 }

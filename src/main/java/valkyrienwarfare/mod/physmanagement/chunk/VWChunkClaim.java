@@ -16,8 +16,6 @@
 
 package valkyrienwarfare.mod.physmanagement.chunk;
 
-import lombok.Getter;
-import lombok.NonNull;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import valkyrienwarfare.addon.ftbutil.ValkyrienWarfareFTBUtil;
@@ -28,7 +26,6 @@ import valkyrienwarfare.physics.management.PhysicsObject;
  *
  * @author thebest108
  */
-@Getter
 public class VWChunkClaim {
 
     private final int centerX;
@@ -65,7 +62,7 @@ public class VWChunkClaim {
         return inX && inZ;
     }
 
-    public void markChunkOccupied(int x, int z, @NonNull PhysicsObject object) {
+    public void markChunkOccupied(int x, int z, PhysicsObject object) {
         if (!this.isChunkOccupied(x, z)) {
             ValkyrienWarfareFTBUtil.handleClaim(object, x, z);
             this.chunkOccupiedInLocal[x][z] = true;
@@ -128,5 +125,21 @@ public class VWChunkClaim {
 
     public int getChunkLengthZ() {
         return this.getMaxZ() - this.getMinZ() + 1;
+    }
+
+    public int getCenterX() {
+        return this.centerX;
+    }
+
+    public int getCenterZ() {
+        return this.centerZ;
+    }
+
+    public int getRadius() {
+        return this.radius;
+    }
+
+    public boolean[][] getChunkOccupiedInLocal() {
+        return this.chunkOccupiedInLocal;
     }
 }

@@ -16,7 +16,6 @@
 
 package valkyrienwarfare.mod.physmanagement.chunk;
 
-import lombok.Getter;
 import net.daporkchop.lib.encoding.ToBytes;
 import net.daporkchop.lib.primitive.list.LongList;
 import net.daporkchop.lib.primitive.list.array.LongArrayList;
@@ -27,7 +26,6 @@ import net.minecraft.world.storage.WorldSavedData;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-@Getter
 public class ChunkClaimWorldData extends WorldSavedData {
 
     private static final String CHUNK_POS_DATA_KEY = "ChunkKeys";
@@ -71,5 +69,13 @@ public class ChunkClaimWorldData extends WorldSavedData {
         }
         nbt.setByteArray("availableChunkKeys_v2", ToBytes.toBytes(data));
         return nbt;
+    }
+
+    public LongList getAvailableChunkKeys() {
+        return this.availableChunkKeys;
+    }
+
+    public AtomicLong getChunkKey() {
+        return this.chunkKey;
     }
 }

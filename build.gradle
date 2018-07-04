@@ -33,10 +33,6 @@ buildscript {
     }
 }
 
-plugins {
-    id 'io.franzbecker.gradle-lombok' version '1.14'
-}
-
 ext.configFile = file "project.properties"
 apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: 'org.spongepowered.mixin'
@@ -97,6 +93,11 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    priority
+    sourceSets.main.compileClasspath = configurations.priority + sourceSets.main.compileClasspath
+}
+
 dependencies {
     // mixin needs to be distributed with the mod, very important
     compile("org.spongepowered:mixin:0.7.5-SNAPSHOT") {
@@ -112,6 +113,9 @@ dependencies {
 	compile 'valkyrienwarfare:api:1.0'
     compile 'ftb-utilities:FTBUtilities:5.2.0.28'
     compile 'ftblib:FTBLib:5.2.0.23'
+
+    //this fixes a strange bug at launch that i don't understand
+    priority 'org.apache.logging.log4j:log4j-api:2.8.1'
 }
 
 processResources {
