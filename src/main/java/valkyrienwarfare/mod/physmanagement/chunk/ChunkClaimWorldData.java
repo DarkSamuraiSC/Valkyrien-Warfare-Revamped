@@ -32,8 +32,12 @@ public class ChunkClaimWorldData extends WorldSavedData {
     private final LongList availableChunkKeys = new LongArrayList();
     private final AtomicLong chunkKey = new AtomicLong(0L);
 
-    public ChunkClaimWorldData() {
-        super(CHUNK_POS_DATA_KEY);
+    public ChunkClaimWorldData()    {
+        this(CHUNK_POS_DATA_KEY);
+    }
+
+    public ChunkClaimWorldData(String name) {
+        super(name);
         this.markDirty();
     }
 

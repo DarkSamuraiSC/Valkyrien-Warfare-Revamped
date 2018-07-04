@@ -59,7 +59,7 @@ public abstract class MixinNetHandlerPlayServer {
     public EntityPlayerMP player;
     @Shadow
     @Final
-    public MinecraftServer serverController;
+    public MinecraftServer server;
     @Shadow
     public int networkTickCount;
     @Shadow
@@ -108,7 +108,7 @@ public abstract class MixinNetHandlerPlayServer {
 
     // @Inject(method = "processPlayer", at = @At("HEAD"))
     private void preProcessPlayer(CPacketPlayer packetIn, CallbackInfo info) {
-        WorldServer worldserver = this.serverController.getWorld(this.player.dimension);
+        WorldServer worldserver = this.server.getWorld(this.player.dimension);
         if (worldserver.isCallingFromMinecraftThread()) {
             PhysicsWrapperEntity worldBelow = IDraggable.class.cast(this.player).getForcedSubspaceBelowFeet();
             if (worldBelow != null) {
@@ -181,7 +181,7 @@ public abstract class MixinNetHandlerPlayServer {
      * if (isMovePlayerPacketInvalid(packetIn)) { this.disconnect(new
      * TextComponentTranslation("multiplayer.disconnect.invalid_player_movement",
      * new Object[0])); } else { WorldServer worldserver =
-     * this.serverController.getWorld(this.player.dimension);
+     * this.server.getWorld(this.player.dimension);
      *
      * if (!this.player.queuedEndExit) { if (this.networkTickCount == 0) {
      * this.captureCurrentPosition(); }
@@ -197,7 +197,7 @@ public abstract class MixinNetHandlerPlayServer {
      * this.player.setPositionAndRotation(this.player.posX, this.player.posY,
      * this.player.posZ, packetIn.getYaw(this.player.rotationYaw),
      * packetIn.getPitch(this.player.rotationPitch));
-     * this.serverController.getPlayerList().serverUpdateMovingPlayer(this.player);
+     * this.server.getPlayerList().serverUpdateMovingPlayer(this.player);
      * } else {
      *
      * PhysicsWrapperEntity worldBelow =
@@ -278,8 +278,8 @@ public abstract class MixinNetHandlerPlayServer {
      * this.player.isElytraFlying() ? 300.0F : 100.0F;
      *
      * if (false && d11 - d10 > (double)(f2 * (float)i) &&
-     * (!this.serverController.isSinglePlayer() ||
-     * !this.serverController.getServerOwner().equals(this.player.getName()))) {
+     * (!this.server.isSinglePlayer() ||
+     * !this.server.getServerOwner().equals(this.player.getName()))) {
      * LOGGER.warn("{} moved too quickly! {},{},{}", this.player.getName(),
      * Double.valueOf(d7), Double.valueOf(d8), Double.valueOf(d9));
      * this.setPlayerLocation(this.player.posX, this.player.posY, this.player.posZ,
@@ -319,14 +319,14 @@ public abstract class MixinNetHandlerPlayServer {
      * return; } }
      *
      * this.floating = d12 >= -0.03125D; this.floating &=
-     * !this.serverController.isFlightAllowed() &&
+     * !this.server.isFlightAllowed() &&
      * !this.player.capabilities.allowFlying; this.floating &=
      * !this.player.isPotionActive(MobEffects.LEVITATION) &&
      * !this.player.isElytraFlying() &&
      * !worldserver.checkBlockCollision(this.player.getEntityBoundingBox().grow(0.
      * 0625D).expand(0.0D, -0.55D, 0.0D)); this.player.onGround =
      * packetIn.isOnGround();
-     * this.serverController.getPlayerList().serverUpdateMovingPlayer(this.player);
+     * this.server.getPlayerList().serverUpdateMovingPlayer(this.player);
      * this.player.handleFalling(this.player.posY - d3, packetIn.isOnGround());
      * this.lastGoodX = this.player.posX; this.lastGoodY = this.player.posY;
      * this.lastGoodZ = this.player.posZ; } } } } } }
@@ -342,7 +342,7 @@ public abstract class MixinNetHandlerPlayServer {
     /*
      * @Inject(method = "processPlayer", at = @At("HEAD")) private void
      * preProcessPlayer(CPacketPlayer packetIn, CallbackInfo info) { WorldServer
-     * worldserver = this.serverController.getWorld(this.player.dimension);
+     * worldserver = this.server.getWorld(this.player.dimension);
      * IThreadListener listener = worldserver; if
      * (listener.isCallingFromMinecraftThread()) { PhysicsWrapperEntity worldBelow =
      * IDraggable.class.cast(this.player).getForcedSubspaceBelowFeet(); if

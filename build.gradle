@@ -93,29 +93,23 @@ repositories {
     mavenCentral()
 }
 
-configurations {
-    priority
-    sourceSets.main.compileClasspath = configurations.priority + sourceSets.main.compileClasspath
-}
-
 dependencies {
-    // mixin needs to be distributed with the mod, very important
-    compile("org.spongepowered:mixin:0.7.5-SNAPSHOT") {
+    compile ('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
         exclude module: "launchwrapper"
+        transitive = false
     }
 	// We want to prevent any conflicts with SpongeForge
-	compileOnly("org.spongepowered:spongeforge:1.12.2-2611-7.1.0-BETA-3002:dev")
-    compileOnly "li.cil.oc:OpenComputers:MC1.12.1-1.7.1.+:api"
+	compileOnly ('org.spongepowered:spongecommon:7.1.0-SNAPSHOT:dev')   {
+        transitive = false
+    }
+    compileOnly 'li.cil.oc:OpenComputers:MC1.12.1-1.7.1.+:api'
+    compileOnly 'ftb-utilities:FTBUtilities:5.2.0.28'
+    compileOnly 'ftblib:FTBLib:5.2.0.23'
 	// Porky datastructures
-    compile 'net.daporkchop.lib:primitive:0.0.5'
+    compile 'net.daporkchop.lib:primitive:0.0.6'
     compile 'net.daporkchop.lib:encoding:0.0.7'
 	compile 'gigaherz.graph:GraphLib:1.4.0'
 	compile 'valkyrienwarfare:api:1.0'
-    compile 'ftb-utilities:FTBUtilities:5.2.0.28'
-    compile 'ftblib:FTBLib:5.2.0.23'
-
-    //this fixes a strange bug at launch that i don't understand
-    priority 'org.apache.logging.log4j:log4j-api:2.8.1'
 }
 
 processResources {

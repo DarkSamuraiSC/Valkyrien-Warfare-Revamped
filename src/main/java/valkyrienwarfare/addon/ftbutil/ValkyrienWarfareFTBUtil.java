@@ -25,17 +25,19 @@ import net.minecraftforge.fml.common.event.FMLStateEvent;
 import valkyrienwarfare.ValkyrienWarfareMod;
 import valkyrienwarfare.addon.ftbutil.item.ItemAirshipClaimer;
 import valkyrienwarfare.api.addons.Module;
+import valkyrienwarfare.api.addons.VWAddon;
 import valkyrienwarfare.physics.management.PhysicsObject;
 
 /**
  * @author DaPorkchop_
  */
+@VWAddon(dependsOn = "ftbutilities")
 public class ValkyrienWarfareFTBUtil extends Module {
     private static boolean LOADED;
 
     private static ValkyrienWarfareFTBUtil instance;
 
-    private ItemAirshipClaimer airshipClaimer;
+    public ItemAirshipClaimer airshipClaimer;
 
     public ValkyrienWarfareFTBUtil() {
         super("valkyrienwarfareftb", null, null, null);
@@ -90,13 +92,9 @@ public class ValkyrienWarfareFTBUtil extends Module {
     public void registerItems(RegistryEvent.Register<Item> event) {
         if (Loader.isModLoaded("ftbutilities")) {
             LOADED = true;
-            event.getRegistry().register(this.airshipClaimer = (ItemAirshipClaimer) new ItemAirshipClaimer().setUnlocalizedName("airshipclaimer").setRegistryName(new ResourceLocation(this.getModID(), "airshipclaimer")).setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(16));
+            event.getRegistry().register(this.airshipClaimer = (ItemAirshipClaimer) new ItemAirshipClaimer().setUnlocalizedName("airshipclaimer").setRegistryName(this.getModID(), "airshipclaimer").setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(16));
         } else {
             System.out.println("FTB Utilities not found, skipping integration!");
         }
-    }
-
-    public ItemAirshipClaimer getAirshipClaimer() {
-        return this.airshipClaimer;
     }
 }
