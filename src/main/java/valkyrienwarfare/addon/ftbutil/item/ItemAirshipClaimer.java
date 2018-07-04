@@ -105,22 +105,53 @@ public class ItemAirshipClaimer extends Item {
                 return EnumActionResult.FAIL;
             }
             PhysicsObject object = entity.getPhysicsObject();
-            if (object.getOwner() != null) {
-                player.sendMessage(new TextComponentString("Ship already claimed by: " + object.getOwner().getName()));
-                return EnumActionResult.FAIL;
-            }
             VWChunkClaim claim = object.getOwnedChunks();
             {
-                ChunkDimPos dimPos = new ChunkDimPos(claim.getCenterX(), claim.getCenterZ(), player.dimension);
-                ForgeTeam team = ClaimedChunks.instance.getChunkTeam(dimPos);
+                ForgeTeam team = null;
+                boolean unclaim = false;
+                if (object.getOwner() != null) {
+                    ForgePlayer currentOwner = ClaimedChunks.instance.universe.getPlayer(object.getOwner());
+                    team = currentOwner.hasTeam() ? currentOwner.team : null;
+                }
+                if (team == null) {
+                    ChunkDimPos dimPos = new ChunkDimPos(claim.getCenterX(), claim.getCenterZ(), player.dimension);
+                    team = ClaimedChunks.instance.getChunkTeam(dimPos);
+                }
+                TEAM:
                 if (team != null) {
+                    if (this.isHighRankedMember(player.gameProfile, team)) {
+                        unclaim = true;
+                        break TEAM;
+                    }
                     player.sendMessage(new TextComponentString("Ship already claimed by: ").appendSibling(team.getTitle()));
                     return EnumActionResult.FAIL;
                 }
+
+                if (unclaim) {
+                    //unclaim ship
+                    this.handleUnclaim(object);
+                    object.setOwner(null);
+                    player.sendMessage(new TextComponentString("Ship unclaimed!"));
+                    return EnumActionResult.SUCCESS;
+                }
             }
+
             object.setOwner(new GameProfile(player.gameProfile.getId(), player.gameProfile.getName()));
             this.initialClaim(object);
-            return null;
+            player.sendMessage(new TextComponentString("Claimed ship successfully!"));
+            return EnumActionResult.SUCCESS;
+        }
+    }
+
+    private boolean isHighRankedMember(GameProfile profile, ForgeTeam team) {
+        ForgePlayer player = ClaimedChunks.instance.universe.getPlayer(profile);
+        switch (team.getHighestStatus(player)) {
+            case MEMBER:
+            case MOD:
+            case OWNER:
+                return true;
+            default:
+                return false;
         }
     }
 }

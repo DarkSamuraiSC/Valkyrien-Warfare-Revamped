@@ -17,10 +17,8 @@
 package valkyrienwarfare.addon.ftbutil;
 
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLStateEvent;
 import valkyrienwarfare.ValkyrienWarfareMod;
 import valkyrienwarfare.addon.ftbutil.item.ItemAirshipClaimer;
@@ -51,6 +49,27 @@ public class ValkyrienWarfareFTBUtil extends Module {
         return ValkyrienWarfareFTBUtil.instance;
     }
 
+    public static void initialClaim(PhysicsObject object) {
+        if (instance == null) {
+            return;
+        }
+        instance.airshipClaimer.initialClaim(object);
+    }
+
+    public static void handleClaim(PhysicsObject object, int relX, int relZ) {
+        if (instance == null || object.getOwner() == null) {
+            return;
+        }
+        instance.airshipClaimer.handleClaim(object, relX, relZ);
+    }
+
+    public static void handleUnclaim(PhysicsObject object) {
+        if (instance == null) {
+            return;
+        }
+        instance.airshipClaimer.handleUnclaim(object);
+    }
+
     @Override
     public void applyConfig(Configuration config) {
     }
@@ -67,34 +86,8 @@ public class ValkyrienWarfareFTBUtil extends Module {
     protected void postInit(FMLStateEvent event) {
     }
 
-    public static void initialClaim(PhysicsObject object) {
-        if (!LOADED) {
-            return;
-        }
-        instance.airshipClaimer.initialClaim(object);
-    }
-
-    public static void handleClaim(PhysicsObject object, int relX, int relZ) {
-        if (!LOADED || object.getOwner() == null) {
-            return;
-        }
-        instance.airshipClaimer.handleClaim(object, relX, relZ);
-    }
-
-    public static void handleUnclaim(PhysicsObject object) {
-        if (!LOADED) {
-            return;
-        }
-        instance.airshipClaimer.handleUnclaim(object);
-    }
-
     @Override
     public void registerItems(RegistryEvent.Register<Item> event) {
-        if (Loader.isModLoaded("ftbutilities")) {
-            LOADED = true;
-            event.getRegistry().register(this.airshipClaimer = (ItemAirshipClaimer) new ItemAirshipClaimer().setUnlocalizedName("airshipclaimer").setRegistryName(this.getModID(), "airshipclaimer").setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(16));
-        } else {
-            System.out.println("FTB Utilities not found, skipping integration!");
-        }
+        event.getRegistry().register(this.airshipClaimer = (ItemAirshipClaimer) new ItemAirshipClaimer().setUnlocalizedName("airshipclaimer").setRegistryName(this.getModID(), "airshipclaimer").setCreativeTab(ValkyrienWarfareMod.vwTab).setMaxStackSize(16));
     }
 }

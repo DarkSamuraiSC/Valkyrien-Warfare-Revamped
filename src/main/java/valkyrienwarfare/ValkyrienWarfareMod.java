@@ -35,6 +35,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -52,9 +53,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-import valkyrienwarfare.addon.control.ValkyrienWarfareControl;
-import valkyrienwarfare.addon.opencomputers.ValkyrienWarfareOC;
-import valkyrienwarfare.addon.world.ValkyrienWarfareWorld;
 import valkyrienwarfare.api.IPhysicsEntityManager;
 import valkyrienwarfare.api.RealPhysicsEntityManager;
 import valkyrienwarfare.api.addons.Module;
@@ -235,17 +233,6 @@ public class ValkyrienWarfareMod {
         ArrayList<String> allAddons = new ArrayList<>();
         boolean isAddonBugFixed = true;
 
-        if (!isAddonBugFixed) {
-            // ValkyrienWarfareCombat combatModule = new ValkyrienWarfareCombat();
-            ValkyrienWarfareControl controlModule = new ValkyrienWarfareControl();
-            ValkyrienWarfareWorld worldModule = new ValkyrienWarfareWorld();
-            ValkyrienWarfareOC opencomputersModule = new ValkyrienWarfareOC();
-            // registerAddon(combatModule);
-            registerAddon(controlModule);
-            registerAddon(worldModule);
-            registerAddon(opencomputersModule);
-        }
-
         if (!MixinLoaderForge.isObfuscatedEnvironment) { // if in dev, read default addons from gradle output folder
             File f = ValkyrienWarfareMod.getWorkingFolder();
             File defaultAddons;
@@ -315,6 +302,18 @@ public class ValkyrienWarfareMod {
             try {
                 Class<?> abstractclass = Class.forName(className);
                 if (abstractclass.isAnnotationPresent(VWAddon.class)) {
+                    String depends = abstractclass.getAnnotation(VWAddon.class).dependsOn();
+                    if (depends.isEmpty()) {
+                        System.out.println(abstractclass.getCanonicalName() + " does not have mod dependency");
+                    } else {
+                        if (Loader.isModLoaded(depends)) {
+                            System.out.println("Mod " + depends + " found (required by: " + abstractclass.getCanonicalName() + ')');
+                        } else {
+                            System.out.println("Mod " + depends + " not found (required by: " + abstractclass.getCanonicalName() + ')');
+                            System.out.println(abstractclass.getCanonicalName() + " will not be loaded.");
+                            continue;
+                        }
+                    }
                     for (Module registered : addons) {
                         if (registered.getClass().getCanonicalName().equals(abstractclass.getCanonicalName())) {
                             System.out.println(
