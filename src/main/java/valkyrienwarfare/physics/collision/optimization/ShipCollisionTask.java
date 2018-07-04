@@ -144,7 +144,7 @@ public class ShipCollisionTask implements Callable<Void> {
     }
 
     public void checkPosition(int x, int y, int z, int positionHash) {
-        final Chunk chunkIn = this.toTask.getParent().getChunkCache().getChunkAt(x >> 4, z >> 4);
+        Chunk chunkIn = this.toTask.getParent().getChunkCache().getChunkAt(x >> 4, z >> 4);
         y = Math.max(0, Math.min(y, 255));
 
         ExtendedBlockStorage storage = chunkIn.storageArrays[y >> 4];

@@ -59,9 +59,9 @@ public class PhysicsCalculations {
     public Vector gameTickCenterOfMass;
     public Vector linearMomentum;
     public Vector angularVelocity;
-    public boolean actAsArchimedes = false;
+    private final Vector torque;
     private Vector physCenterOfMass;
-    private Vector torque;
+    public boolean actAsArchimedes;
     private double gameTickMass;
     // TODO: Get this in one day
     // private double physMass;
@@ -362,9 +362,7 @@ public class PhysicsCalculations {
         if (PhysicsSettings.doPhysicsBlocks && this.parent.areShipChunksFullyLoaded()) {
             // We want to loop through all the physics nodes in a sorted order. Priority Queue handles that.
             Queue<INodeController> nodesPriorityQueue = new PriorityQueue<>();
-            for (INodeController processor : this.parent.getPhysicsControllersInShip()) {
-                nodesPriorityQueue.add(processor);
-            }
+            nodesPriorityQueue.addAll(this.parent.getPhysicsControllersInShip());
 
             while (nodesPriorityQueue.size() > 0) {
                 INodeController controller = nodesPriorityQueue.poll();

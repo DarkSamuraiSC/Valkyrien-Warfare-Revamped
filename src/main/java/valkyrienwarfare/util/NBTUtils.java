@@ -38,21 +38,21 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class NBTUtils {
 
-    public static final void writeBlockPosToNBT(String name, BlockPos pos, NBTTagCompound compound) {
-        compound.setInteger(name + "X", pos.getX());
-        compound.setInteger(name + "Y", pos.getY());
-        compound.setInteger(name + "Z", pos.getZ());
+    public static void writeBlockPosToNBT(String name, BlockPos pos, NBTTagCompound compound) {
+        compound.setInteger(name + 'X', pos.getX());
+        compound.setInteger(name + 'Y', pos.getY());
+        compound.setInteger(name + 'Z', pos.getZ());
     }
 
-    public static final BlockPos readBlockPosFromNBT(String name, NBTTagCompound compound) {
-        int x = compound.getInteger(name + "X");
-        int y = compound.getInteger(name + "Y");
-        int z = compound.getInteger(name + "Z");
+    public static BlockPos readBlockPosFromNBT(String name, NBTTagCompound compound) {
+        int x = compound.getInteger(name + 'X');
+        int y = compound.getInteger(name + 'Y');
+        int z = compound.getInteger(name + 'Z');
         return new BlockPos(x, y, z);
     }
 
-    public static final void writeBlockPosArrayListToNBT(String name, ArrayList<BlockPos> posArray,
-                                                         NBTTagCompound compound) {
+    public static void writeBlockPosArrayListToNBT(String name, ArrayList<BlockPos> posArray,
+                                                   NBTTagCompound compound) {
         int[] xArray = new int[posArray.size()];
         int[] yArray = new int[posArray.size()];
         int[] zArray = new int[posArray.size()];
@@ -67,7 +67,7 @@ public class NBTUtils {
         compound.setIntArray(name + "zArray", zArray);
     }
 
-    public static final ArrayList<BlockPos> readBlockPosArrayListFromNBT(String name, NBTTagCompound compound) {
+    public static ArrayList<BlockPos> readBlockPosArrayListFromNBT(String name, NBTTagCompound compound) {
         int[] xArray = compound.getIntArray(name + "xArray");
         int[] yArray = compound.getIntArray(name + "yArray");
         int[] zArray = compound.getIntArray(name + "zArray");
@@ -79,13 +79,13 @@ public class NBTUtils {
         return posArray;
     }
 
-    public static final void write3x3MatrixToNBT(String name, double[] matrix, NBTTagCompound compound) {
+    public static void write3x3MatrixToNBT(String name, double[] matrix, NBTTagCompound compound) {
         for (int i = 0; i < 9; i++) {
             compound.setDouble(name + i, matrix[i]);
         }
     }
 
-    public static final double[] read3x3MatrixFromNBT(String name, NBTTagCompound compound) {
+    public static double[] read3x3MatrixFromNBT(String name, NBTTagCompound compound) {
         double[] matrix = new double[9];
         for (int i = 0; i < 9; i++) {
             matrix[i] = compound.getDouble(name + i);
@@ -93,22 +93,22 @@ public class NBTUtils {
         return matrix;
     }
 
-    public static final void writeVectorToNBT(String name, Vector vector, NBTTagCompound compound) {
-        compound.setDouble(name + "X", vector.X);
-        compound.setDouble(name + "Y", vector.Y);
-        compound.setDouble(name + "Z", vector.Z);
+    public static void writeVectorToNBT(String name, Vector vector, NBTTagCompound compound) {
+        compound.setDouble(name + 'X', vector.X);
+        compound.setDouble(name + 'Y', vector.Y);
+        compound.setDouble(name + 'Z', vector.Z);
     }
 
-    public static final Vector readVectorFromNBT(String name, NBTTagCompound compound) {
+    public static Vector readVectorFromNBT(String name, NBTTagCompound compound) {
         Vector vector = new Vector();
-        vector.X = compound.getDouble(name + "X");
-        vector.Y = compound.getDouble(name + "Y");
-        vector.Z = compound.getDouble(name + "Z");
+        vector.X = compound.getDouble(name + 'X');
+        vector.Y = compound.getDouble(name + 'Y');
+        vector.Z = compound.getDouble(name + 'Z');
         return vector;
     }
 
-    public static final void writeEntityPositionMapToNBT(String name, TIntObjectMap<Vector> entityLocalPositions,
-                                                         NBTTagCompound compound) {
+    public static void writeEntityPositionMapToNBT(String name, TIntObjectMap<Vector> entityLocalPositions,
+                                                   NBTTagCompound compound) {
         int[] ids = new int[entityLocalPositions.size()];
         double[] x = new double[entityLocalPositions.size()];
         double[] y = new double[entityLocalPositions.size()];
@@ -130,7 +130,7 @@ public class NBTUtils {
         compound.setByteArray(name + "valZ", toByteArray(z));
     }
 
-    public static final TIntObjectMap<Vector> readEntityPositionMap(String name, NBTTagCompound compound) {
+    public static TIntObjectMap<Vector> readEntityPositionMap(String name, NBTTagCompound compound) {
         int[] entityIds = compound.getIntArray(name + "keys");
 
         double[] entityX = toDoubleArray(compound.getByteArray(name + "valX"));
@@ -183,10 +183,9 @@ public class NBTUtils {
     }
 
     public static AxisAlignedBB readAABBFromNBT(String name, NBTTagCompound compound) {
-        AxisAlignedBB aabb = new AxisAlignedBB(compound.getDouble(name + "minX"), compound.getDouble(name + "minY"),
+        return new AxisAlignedBB(compound.getDouble(name + "minX"), compound.getDouble(name + "minY"),
                 compound.getDouble(name + "minZ"), compound.getDouble(name + "maxX"), compound.getDouble(name + "maxY"),
                 compound.getDouble(name + "maxZ"));
-        return aabb;
     }
 
     public static void writeShipTransformToNBT(String name, ShipTransform shipTransform, NBTTagCompound compound) {

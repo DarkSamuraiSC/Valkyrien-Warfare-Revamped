@@ -60,7 +60,7 @@ public class VWCommandHelp extends CommandBase {
             }
 
             sender.sendMessage(new TextComponentString("To see avaliable subcommands, type /command help"));
-        } else if (args.length == 1 && args[0].equals("tps")) {
+        } else if (args.length == 1 && "tps".equals(args[0])) {
             World world = sender.getEntityWorld();
             VWThread worldPhysicsThread = VWThreadManager.getVWThreadForWorld(world);
             if (worldPhysicsThread != null) {

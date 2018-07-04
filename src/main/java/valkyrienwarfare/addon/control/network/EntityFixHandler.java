@@ -26,18 +26,15 @@ import valkyrienwarfare.physics.management.PhysicsWrapperEntity;
 public class EntityFixHandler implements IMessageHandler<EntityFixMessage, IMessage> {
 
     @Override
-    public IMessage onMessage(final EntityFixMessage message, MessageContext ctx) {
+    public IMessage onMessage(EntityFixMessage message, MessageContext ctx) {
         IThreadListener mainThread = Minecraft.getMinecraft();
-        mainThread.addScheduledTask(new Runnable() {
-            @Override
-            public void run() {
-                PhysicsWrapperEntity toFixOn = (PhysicsWrapperEntity) Minecraft.getMinecraft().world.getEntityByID(message.shipId);
-                if (toFixOn != null) {
-                    if (message.isFixing) {
-                        toFixOn.getPhysicsObject().fixEntityUUID(message.entityUUID, message.localPosition);
-                    } else {
-                        toFixOn.getPhysicsObject().removeEntityUUID(message.entityUUID);
-                    }
+        mainThread.addScheduledTask(() -> {
+            PhysicsWrapperEntity toFixOn = (PhysicsWrapperEntity) Minecraft.getMinecraft().world.getEntityByID(message.shipId);
+            if (toFixOn != null) {
+                if (message.isFixing) {
+                    toFixOn.getPhysicsObject().fixEntityUUID(message.entityUUID, message.localPosition);
+                } else {
+                    toFixOn.getPhysicsObject().removeEntityUUID(message.entityUUID);
                 }
             }
         });

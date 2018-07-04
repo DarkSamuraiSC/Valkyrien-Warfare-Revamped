@@ -42,19 +42,15 @@ public class PhysObjectRenderManager {
     // Ship's centerBlockPos
     public BlockPos offsetPos;
     public double curPartialTick;
-    private int glCallListSolid;
-    private int glCallListTranslucent;
-    private int glCallListCutout;
-    private int glCallListCutoutMipped;
-    private PhysicsObject parent;
+    private final PhysicsObject parent;
     private PhysRenderChunk[][] renderChunks;
 
     public PhysObjectRenderManager(PhysicsObject toRender) {
         this.parent = toRender;
-        this.glCallListSolid = -1;
-        this.glCallListTranslucent = -1;
-        this.glCallListCutout = -1;
-        this.glCallListCutoutMipped = -1;
+        int glCallListSolid = -1;
+        int glCallListTranslucent = -1;
+        int glCallListCutout = -1;
+        int glCallListCutoutMipped = -1;
         this.offsetPos = null;
         this.curPartialTick = 0;
         this.renderChunks = null;

@@ -95,9 +95,8 @@ public class Vector {
     }
 
     public static Vector[] generateAxisAlignedNorms() {
-        Vector[] norms = new Vector[]{new Vector(1.0D, 0.0D, 0.0D), new Vector(0.0D, 1.0D, 0.0D),
+        return new Vector[]{new Vector(1.0D, 0.0D, 0.0D), new Vector(0.0D, 1.0D, 0.0D),
                 new Vector(0.0D, 0.0D, 1.0D)};
-        return norms;
     }
 
     public static void writeToBuffer(Vector vector, ByteBuf buffer) {
@@ -216,14 +215,12 @@ public class Vector {
 
     @Override
     public String toString() {
-        String coords = new String("<" + this.X + ", " + this.Y + ", " + this.Z + ">");
-        return coords;
+        return new String("<" + this.X + ", " + this.Y + ", " + this.Z + ">");
     }
 
     public String toRoundedString() {
-        String coords = new String("<" + Math.round(this.X * 100.0) / 100.0 + ", " + Math.round(this.Y * 100.0) / 100.0 + ", "
+        return new String("<" + Math.round(this.X * 100.0) / 100.0 + ", " + Math.round(this.Y * 100.0) / 100.0 + ", "
                 + Math.round(this.Z * 100.0) / 100.0 + ">");
-        return coords;
     }
 
     public Vector crossAndUnit(Vector v) {

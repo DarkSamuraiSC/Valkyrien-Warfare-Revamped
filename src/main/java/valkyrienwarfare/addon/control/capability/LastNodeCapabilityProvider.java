@@ -24,7 +24,7 @@ import valkyrienwarfare.addon.control.ValkyrienWarfareControl;
 
 public class LastNodeCapabilityProvider implements ICapabilitySerializable<NBTTagIntArray> {
 
-    private ICapabilityLastRelay inst = ValkyrienWarfareControl.lastRelayCapability.getDefaultInstance();
+    private final ICapabilityLastRelay inst = ValkyrienWarfareControl.lastRelayCapability.getDefaultInstance();
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {

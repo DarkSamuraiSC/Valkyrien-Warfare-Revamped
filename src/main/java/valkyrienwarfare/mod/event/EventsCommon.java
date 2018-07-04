@@ -161,11 +161,7 @@ public class EventsCommon {
         if (!event.player.world.isRemote && event.player != null) {
             EntityPlayerMP p = (EntityPlayerMP) event.player;
 
-            Double[] pos = lastPositions.get(p);
-            if (pos == null) {
-                pos = new Double[3];
-                lastPositions.put(p, pos);
-            }
+            Double[] pos = lastPositions.computeIfAbsent(p, k -> new Double[3]);
             try {
                 if (pos[0] != p.posX || pos[2] != p.posZ) { // Player has moved
                     if (Math.abs(p.posX) > 27000000 || Math.abs(p.posZ) > 27000000) { // Player is outside of world
@@ -279,7 +275,7 @@ public class EventsCommon {
             EntityPlayerMP player = (EntityPlayerMP) event.player;
             lastPositions.put(player, new Double[]{0D, 256D, 0D});
 
-            if (player.getName().equals("Drake_Eldridge") || player.getDisplayName().equals("Drake_Eldridge")) {
+            if ("Drake_Eldridge".equals(player.getName()) || "Drake_Eldridge".equals(player.getDisplayName())) {
                 WorldServer server = (WorldServer) event.player.world;
 
                 if (Math.random() < .01D) {

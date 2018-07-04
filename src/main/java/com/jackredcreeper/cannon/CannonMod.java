@@ -32,6 +32,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import valkyrienwarfare.api.addons.Module;
 import valkyrienwarfare.api.addons.VWAddon;
 
+@SuppressWarnings("unused")
 @VWAddon
 public class CannonMod extends Module {
     public static CannonMod instance;

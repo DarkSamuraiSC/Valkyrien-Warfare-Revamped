@@ -33,8 +33,7 @@ public class VWMath {
     public static final int AABB_MERGE_PASSES = 5;
 
     public static double getPitchFromVectorImmutable(VectorImmutable vec) {
-        double pitchFromRotVec = -Math.asin(vec.getY()) * 180 / Math.PI;
-        return pitchFromRotVec;
+        return -Math.asin(vec.getY()) * 180 / Math.PI;
     }
 
     public static double getYawFromVectorImmutable(VectorImmutable vec, double rotPitch) {
@@ -70,7 +69,7 @@ public class VWMath {
     }
 
     public static Vector getBodyPosWithOrientation(BlockPos pos, Vector centerOfMass, double[] rotationTransform) {
-        final Vector inBody = new Vector(pos.getX() + .5D - centerOfMass.X, pos.getY() + .5D - centerOfMass.Y, pos.getZ() + .5D - centerOfMass.Z);
+        Vector inBody = new Vector(pos.getX() + .5D - centerOfMass.X, pos.getY() + .5D - centerOfMass.Y, pos.getZ() + .5D - centerOfMass.Z);
         RotationMatrices.doRotationOnly(rotationTransform, inBody);
         return inBody;
     }

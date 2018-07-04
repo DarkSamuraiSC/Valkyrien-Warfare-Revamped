@@ -38,13 +38,13 @@ public class ItemExplosiveArrow extends ItemArrow {
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> itemInformation, ITooltipFlag advanced) {
         itemInformation.add(TextFormatting.BLUE + "Creates a WAY bigger explosion than it should.");
-        itemInformation.add(TextFormatting.ITALIC + "" + TextFormatting.RED + TextFormatting.ITALIC + "Unfinished until v_0.91_alpha");
+        itemInformation.add(TextFormatting.ITALIC + String.valueOf(TextFormatting.RED) + TextFormatting.ITALIC + "Unfinished until v_0.91_alpha");
     }
 
     @Override
     public EntityArrow createArrow(World worldIn, ItemStack stack, EntityLivingBase shooter) {
         EntityTippedArrow entitytippedarrow = new EntityTippedArrow(worldIn, shooter) {
-            private boolean doExpl = true;
+            private final boolean doExpl = true;
 
             @Override
             public void onUpdate() {

@@ -28,10 +28,10 @@ public class ExplosionHandler {
 
 
     @SubscribeEvent
-    public void expDet(ExplosionEvent.Detonate event) {
+    public static void expDet(ExplosionEvent.Detonate event) {
 
         for (int k2 = 0; k2 < event.getAffectedEntities().size(); ++k2) {
-            Entity entity = (Entity) event.getAffectedEntities().get(k2);
+            Entity entity = event.getAffectedEntities().get(k2);
             if (entity instanceof EntityGrapeshot | entity instanceof EntitySolidball |
                     entity instanceof EntityCannonball | entity instanceof EntityExplosiveball) {
 

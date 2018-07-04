@@ -16,7 +16,14 @@
 
 package valkyrienwarfare.deprecated_api;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 
 public class DataTag implements Serializable {
@@ -53,7 +60,7 @@ public class DataTag implements Serializable {
 
     public DataTag(DataTag tag) {
         FileHelper.createFile(new File(tag.file.getParentFile(), tag.file.getName().replaceAll(".dat", "")).toString(), true);
-        this.file = new File(tag.file.getParentFile(), tag.file.getName().replaceAll(".dat", "") + "/" + tag.file.getName().replaceAll(".dat", "") + " tag - " + tag.tags.size() + ".dat");
+        this.file = new File(tag.file.getParentFile(), tag.file.getName().replaceAll(".dat", "") + '/' + tag.file.getName().replaceAll(".dat", "") + " tag - " + tag.tags.size() + ".dat");
         this.set();
         this.init();
     }
@@ -281,15 +288,15 @@ public class DataTag implements Serializable {
     }
 
     public int getInteger(String name) {
-        return this.ints.containsKey(name) ? this.ints.get(name) : 0;
+        return this.ints.getOrDefault(name, 0);
     }
 
     public String getString(String name) {
-        return this.strings.containsKey(name) ? this.strings.get(name) : "";
+        return this.strings.getOrDefault(name, "");
     }
 
     public boolean getBoolean(String name) {
-        return this.booleans.containsKey(name) ? this.booleans.get(name) : false;
+        return this.booleans.getOrDefault(name, false);
     }
 
     public byte getByte(String name) {
@@ -297,7 +304,7 @@ public class DataTag implements Serializable {
     }
 
     public float getFloat(String name) {
-        return this.floats.containsKey(name) ? this.floats.get(name) : 0.0F;
+        return this.floats.getOrDefault(name, 0.0F);
     }
 
     public short getShort(String name) {
@@ -305,11 +312,11 @@ public class DataTag implements Serializable {
     }
 
     public double getDouble(String name) {
-        return this.doubles.containsKey(name) ? this.doubles.get(name) : 0.0D;
+        return this.doubles.getOrDefault(name, 0.0D);
     }
 
     public long getLong(String name) {
-        return this.longs.containsKey(name) ? this.longs.get(name) : 0L;
+        return this.longs.getOrDefault(name, 0L);
     }
 
     public DataTag getTag(String name) {
@@ -317,43 +324,43 @@ public class DataTag implements Serializable {
     }
 
     public Serializable getSerializable(String name) {
-        return this.objs.containsKey(name) ? this.objs.get(name) : null;
+        return this.objs.getOrDefault(name, null);
     }
 
     public int[] getIntegerArray(String name) {
-        return this.intArrays.containsKey(name) ? this.intArrays.get(name) : null;
+        return this.intArrays.getOrDefault(name, null);
     }
 
     public String[] getStringArray(String name) {
-        return this.stringArrays.containsKey(name) ? this.stringArrays.get(name) : null;
+        return this.stringArrays.getOrDefault(name, null);
     }
 
     public boolean[] getBooleanArray(String name) {
-        return this.booleanArrays.containsKey(name) ? this.booleanArrays.get(name) : null;
+        return this.booleanArrays.getOrDefault(name, null);
     }
 
     public byte[] getByteArray(String name) {
-        return this.byteArrays.containsKey(name) ? this.byteArrays.get(name) : null;
+        return this.byteArrays.getOrDefault(name, null);
     }
 
     public float[] getFloatArray(String name) {
-        return this.floatArrays.containsKey(name) ? this.floatArrays.get(name) : null;
+        return this.floatArrays.getOrDefault(name, null);
     }
 
     public short[] getShortArray(String name) {
-        return this.shortArrays.containsKey(name) ? this.shortArrays.get(name) : null;
+        return this.shortArrays.getOrDefault(name, null);
     }
 
     public double[] getDoubleArray(String name) {
-        return this.doubleArrays.containsKey(name) ? this.doubleArrays.get(name) : null;
+        return this.doubleArrays.getOrDefault(name, null);
     }
 
     public long[] getLongArray(String name) {
-        return this.longArrays.containsKey(name) ? this.longArrays.get(name) : null;
+        return this.longArrays.getOrDefault(name, null);
     }
 
     public Serializable[] getSerializableArray(String name) {
-        return this.objArrays.containsKey(name) ? this.objArrays.get(name) : null;
+        return this.objArrays.getOrDefault(name, null);
     }
 
     private DataTag load() {

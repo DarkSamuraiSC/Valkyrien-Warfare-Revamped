@@ -45,7 +45,12 @@ import valkyrienwarfare.physics.collision.polygons.Polygon;
 import valkyrienwarfare.physics.collision.polygons.PolygonCollisionPointFinder;
 import valkyrienwarfare.physics.management.PhysicsObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Queue;
+import java.util.Random;
 import java.util.function.Consumer;
 
 /**
@@ -84,7 +89,6 @@ public class WorldPhysicsCollider {
     private final Random rand;
     private final Collection<ShipCollisionTask> tasks;
     private final PhysicsCalculations calculator;
-    private final World worldObj;
     private final PhysicsObject parent;
     private final TIntList cachedPotentialHits;
     private final TIntArrayList cachedHitsToRemove;
@@ -96,7 +100,7 @@ public class WorldPhysicsCollider {
     public WorldPhysicsCollider(PhysicsCalculations calculations) {
         this.calculator = calculations;
         this.parent = calculations.getParent();
-        this.worldObj = this.parent.getWorldObj();
+        World worldObj = this.parent.getWorldObj();
         this.cachedPotentialHits = TCollections.synchronizedList(new TIntArrayList());
         this.cachedHitsToRemove = new TIntArrayList();
         this.rand = new Random();
@@ -169,8 +173,8 @@ public class WorldPhysicsCollider {
     // TODO: Optimize from here, this is taking 10x the processing time of updating
     // collision cache!
     private void processPotentialCollisionsAccurately() {
-        final MutableBlockPos localCollisionPos = new MutableBlockPos();
-        final Vector inWorld = new Vector();
+        MutableBlockPos localCollisionPos = new MutableBlockPos();
+        Vector inWorld = new Vector();
 
         TIntIterator cachedHitsIterator = this.cachedPotentialHits.iterator();
         while (cachedHitsIterator.hasNext()) {
@@ -211,7 +215,7 @@ public class WorldPhysicsCollider {
                 for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
                     for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
                         if (this.parent.ownsChunk(chunkX, chunkZ)) {
-                            final Chunk chunkIn = this.parent.getChunkCache().getChunkAt(chunkX, chunkZ);
+                            Chunk chunkIn = this.parent.getChunkCache().getChunkAt(chunkX, chunkZ);
 
                             int minXToCheck = chunkX << 4;
                             int maxXToCheck = minXToCheck + 15;
@@ -237,7 +241,7 @@ public class WorldPhysicsCollider {
                                     for (int x = minXToCheck; x <= maxXToCheck; x++) {
                                         for (int z = minZToCheck; z <= maxZToCheck; z++) {
                                             for (int y = minYToCheck; y <= maxYToCheck; y++) {
-                                                final IBlockState state = storage.get(x & 15, y & 15, z & 15);
+                                                IBlockState state = storage.get(x & 15, y & 15, z & 15);
                                                 if (state.getMaterial().isSolid()) {
 
                                                     // Inject the multithreaded code here
@@ -350,7 +354,7 @@ public class WorldPhysicsCollider {
                 / (this.calculator.getInvMass() + secondCross.dot(axis));
 
         // Below this speed our collision coefficient of restitution is zero.
-        final double slopR = .5D;
+        double slopR = .5D;
         double collisionSpeed = Math.abs(velocityAtPointOfCollision.dot(axis));
         if (collisionSpeed > slopR) {
             impulseMagnitude *= (1 + COEFFICIENT_OF_RESTITUTION);
@@ -455,12 +459,12 @@ public class WorldPhysicsCollider {
         // calculator.linearMomentum.Z * calculator.getInvMass())
         // .grow(AABB_EXPANSION);
         // Use the physics tick collision box instead of the game tick collision box.
-        final AxisAlignedBB collisionBB = currentPhysicsTransform.getShipBoundingBox().grow(AABB_EXPANSION).expand(
+        AxisAlignedBB collisionBB = currentPhysicsTransform.getShipBoundingBox().grow(AABB_EXPANSION).expand(
                 this.calculator.linearMomentum.X * this.calculator.getInvMass() * this.calculator.getPhysicsTimeDeltaPerPhysTick() * 5,
                 this.calculator.linearMomentum.Y * this.calculator.getInvMass() * this.calculator.getPhysicsTimeDeltaPerPhysTick() * 5,
                 this.calculator.linearMomentum.Z * this.calculator.getInvMass() * this.calculator.getPhysicsTimeDeltaPerPhysTick()
                         * 5);
-        final AxisAlignedBB shipBB = currentPhysicsTransform.getShipBoundingBox();
+        AxisAlignedBB shipBB = currentPhysicsTransform.getShipBoundingBox();
         this.ticksSinceCacheUpdate = 0D;
         // This is being used to occasionally offset the collision cache update, in the
         // hopes this will prevent multiple ships from all updating
@@ -818,8 +822,8 @@ public class WorldPhysicsCollider {
         }
     }
 
-    private boolean checkForCollisionFast(final Chunk chunk, final int localX, final int localY, final int localZ,
-                                          final int x, final int y, final int z) {
+    private boolean checkForCollisionFast(Chunk chunk, int localX, int localY, int localZ,
+                                          int x, int y, int z) {
         if (chunk.storageArrays[localY >> 4] != null) {
             IBitOctreeProvider provider = (IBitOctreeProvider) chunk.storageArrays[localY >> 4].getData();
             IBitOctree octreeInLocal = provider.getBitOctree();

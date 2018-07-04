@@ -17,7 +17,6 @@
 package valkyrienwarfare.mod.command;
 
 import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -41,14 +40,14 @@ public class AirshipMapCommand extends CommandBase {
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         String term = args[0];
 
-        if (term.equals("tpto")) {
+        if ("tpto".equals(term)) {
             String shipName = args[1];
             if (args.length > 2) {
                 for (int i = 2; i < args.length; i++) {
-                    shipName += " " + args[i];
+                    shipName += ' ' + args[i];
                 }
             }
             Entity player = sender.getCommandSenderEntity();
@@ -77,7 +76,7 @@ public class AirshipMapCommand extends CommandBase {
             }
         }
 
-        if (term.equals("help")) {
+        if ("help".equals(term)) {
             sender.sendMessage(new TextComponentString("tpto"));
         }
     }

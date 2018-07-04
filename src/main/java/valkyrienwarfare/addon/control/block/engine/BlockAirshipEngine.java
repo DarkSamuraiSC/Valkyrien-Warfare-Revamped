@@ -65,8 +65,7 @@ public abstract class BlockAirshipEngine extends Block implements IBlockForcePro
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        int i = state.getValue(FACING).getIndex();
-        return i;
+        return state.getValue(FACING).getIndex();
     }
 
     @Override

@@ -34,11 +34,10 @@ public class ShipTransformationBuffer {
     public static final int TRANSFORMS_SMOOTHED = 5;
     public static final double TRANFORMATION_DELAY = .5D;
     private final LinkedList<ShipTransformationPacketHolder> transformations;
-    private final BezierWeightGenerator weightGenerator;
 
     public ShipTransformationBuffer() {
         this.transformations = new LinkedList<>();
-        this.weightGenerator = new BezierWeightGenerator(TRANSFORMS_SMOOTHED);
+        BezierWeightGenerator weightGenerator = new BezierWeightGenerator(TRANSFORMS_SMOOTHED);
     }
 
     public void pushMessage(PhysWrapperPositionMessage toPush) {

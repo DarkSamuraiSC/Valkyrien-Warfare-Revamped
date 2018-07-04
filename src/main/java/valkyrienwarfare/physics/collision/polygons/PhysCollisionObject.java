@@ -25,11 +25,9 @@ public class PhysCollisionObject {
     public final Polygon movable, fixed;
     public double penetrationDistance;
     public boolean seperated;
-    private double[] playerMinMax;
     private double[] blockMinMax;
     private double movMaxFixMin;
     private double movMinFixMax;
-    private Vector firstContactPoint;
 
     public PhysCollisionObject(Polygon movable_, Polygon stationary, Vector axes) {
         this.collision_normal = axes;
@@ -39,28 +37,29 @@ public class PhysCollisionObject {
     }
 
     public void generateCollision() {
-        this.playerMinMax = VWMath.getMinMaxOfArray(this.movable.getProjectionOnVector(this.collision_normal));
+        double[] playerMinMax = VWMath.getMinMaxOfArray(this.movable.getProjectionOnVector(this.collision_normal));
         this.blockMinMax = VWMath.getMinMaxOfArray(this.fixed.getProjectionOnVector(this.collision_normal));
-        this.movMaxFixMin = this.playerMinMax[0] - this.blockMinMax[1];
-        this.movMinFixMax = this.playerMinMax[1] - this.blockMinMax[0];
+        this.movMaxFixMin = playerMinMax[0] - this.blockMinMax[1];
+        this.movMinFixMax = playerMinMax[1] - this.blockMinMax[0];
         if (this.movMaxFixMin > 0 || this.movMinFixMax < 0) {
             this.seperated = true;
             this.penetrationDistance = 0.0D;
             return;
         }
         // Set the penetration to be the smaller distance
+        Vector firstContactPoint;
         if (Math.abs(this.movMaxFixMin) > Math.abs(this.movMinFixMax)) {
             this.penetrationDistance = this.movMinFixMax;
             for (Vector v : this.movable.getVertices()) {
-                if (v.dot(this.collision_normal) == this.playerMinMax[1]) {
-                    this.firstContactPoint = v;
+                if (v.dot(this.collision_normal) == playerMinMax[1]) {
+                    firstContactPoint = v;
                 }
             }
         } else {
             this.penetrationDistance = this.movMaxFixMin;
             for (Vector v : this.movable.getVertices()) {
-                if (v.dot(this.collision_normal) == this.playerMinMax[0]) {
-                    this.firstContactPoint = v;
+                if (v.dot(this.collision_normal) == playerMinMax[0]) {
+                    firstContactPoint = v;
                 }
             }
         }

@@ -44,7 +44,7 @@ public class VWThread extends Thread {
     // The number of physics ticks to be considered in the average tick time.
     private final static long TICK_TIME_QUEUE = 100;
     // Used to give each VW thread a unique name
-    private static int threadID = 0;
+    private static int threadID;
     private final World hostWorld;
     private final Queue<Long> latestPhysicsTickTimes;
     // The ships we will be ticking physics for every tick, and sending those

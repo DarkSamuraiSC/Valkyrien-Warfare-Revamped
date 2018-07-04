@@ -50,7 +50,7 @@ public class ItemAirshipClaimer extends Item {
         int dim = object.getWrapperEntity().dimension;
         ForgePlayer player = ClaimedChunks.instance.universe.getPlayer(object.getOwner());
         if (player == null) {
-            throw new IllegalStateException("Unable to claim chunks for unknown player: " + object.getOwner().getName() + " (" + object.getOwner().getId() + ")");
+            throw new IllegalStateException("Unable to claim chunks for unknown player: " + object.getOwner().getName() + " (" + object.getOwner().getId() + ')');
         }
         Chunk[][] chunks2d = object.getClaimedChunks();
         boolean[][] occupied2d = object.getOwnedChunks().getChunkOccupiedInLocal();
@@ -75,7 +75,7 @@ public class ItemAirshipClaimer extends Item {
     public void handleClaim(@NonNull PhysicsObject object, int relX, int relZ) {
         ForgePlayer player = ClaimedChunks.instance.universe.getPlayer(object.getOwner());
         if (player == null) {
-            throw new IllegalStateException("Unable to claim chunks for unknown player: " + object.getOwner().getName() + " (" + object.getOwner().getId() + ")");
+            throw new IllegalStateException("Unable to claim chunks for unknown player: " + object.getOwner().getName() + " (" + object.getOwner().getId() + ')');
         }
         Chunk chunk = object.getClaimedChunks()[relX][relZ];
         ClaimResult result = ClaimedChunks.instance.claimChunk(player, new ChunkDimPos(chunk.x, chunk.z, object.getWrapperEntity().dimension));

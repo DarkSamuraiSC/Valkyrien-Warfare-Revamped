@@ -29,7 +29,7 @@ public class ItemEtheriumCrystal extends Item {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> itemInformation, ITooltipFlag advanced) {
-        itemInformation.add(TextFormatting.ITALIC + "" + TextFormatting.RED + TextFormatting.ITALIC + "Unfinished until v_0.91_alpha");
+        itemInformation.add(TextFormatting.ITALIC + String.valueOf(TextFormatting.RED) + TextFormatting.ITALIC + "Unfinished until v_0.91_alpha");
     }
 
 }

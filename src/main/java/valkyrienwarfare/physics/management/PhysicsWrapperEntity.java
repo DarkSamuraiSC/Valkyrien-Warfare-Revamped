@@ -59,7 +59,7 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
     public PhysicsWrapperEntity(World worldIn) {
         super(worldIn);
         this.physicsObject = new PhysicsObject(this);
-        this.dataManager.register(IS_NAME_CUSTOM, Boolean.valueOf(false));
+        this.dataManager.register(IS_NAME_CUSTOM, Boolean.FALSE);
     }
 
     public PhysicsWrapperEntity(World worldIn, double x, double y, double z, @Nullable EntityPlayer creator,
@@ -76,7 +76,7 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
         IAirshipCounterCapability counter = creator.getCapability(ValkyrienWarfareMod.airshipCounter, null);
         counter.onCreate();
 
-        this.setCustomNameTagInitial(creator.getName() + ":" + counter.getAirshipCountEver());
+        this.setCustomNameTagInitial(creator.getName() + ':' + counter.getAirshipCountEver());
         ShipNameUUIDData.get(worldIn).placeShipInRegistry(this, this.getCustomNameTag());
     }
 
@@ -92,7 +92,7 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
 
         this.physicsObject.processChunkClaims(schematic);
 
-        this.setCustomNameTagInitial("ShipRandom" + ":" + Math.random() * 10000000);
+        this.setCustomNameTagInitial("ShipRandom" + ':' + Math.random() * 10000000);
         ShipNameUUIDData.get(worldIn).placeShipInRegistry(this, this.getCustomNameTag());
     }
 
@@ -148,7 +148,7 @@ public class PhysicsWrapperEntity extends Entity implements IEntityAdditionalSpa
     @Override
     public void setCustomNameTag(String name) {
         if (!this.world.isRemote) {
-            if (this.getCustomNameTag() != null && !this.getCustomNameTag().equals("")) {
+            if (this.getCustomNameTag() != null && !this.getCustomNameTag().isEmpty()) {
                 // Update the name registry
                 boolean didRenameSuccessful = ShipNameUUIDData.get(this.world).renameShipInRegsitry(this, name,
                         this.getCustomNameTag());

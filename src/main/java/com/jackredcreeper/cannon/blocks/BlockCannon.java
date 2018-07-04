@@ -32,7 +32,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -66,7 +70,7 @@ public class BlockCannon extends BlockDirectional implements ITileEntityProvider
     public void addInformation(ItemStack stack, @Nullable World player, List<String> itemInformation, ITooltipFlag advanced) {
         itemInformation.add(TextFormatting.BLUE + "Cannon block used to fire explosive projectiles.");
 
-        itemInformation.add(TextFormatting.ITALIC + "" + TextFormatting.GRAY + TextFormatting.ITALIC + "Can fire cannon balls, explosive balls, grapeshot, and solid ball ammo types.");
+        itemInformation.add(TextFormatting.ITALIC + String.valueOf(TextFormatting.GRAY) + TextFormatting.ITALIC + "Can fire cannon balls, explosive balls, grapeshot, and solid ball ammo types.");
     }
 
     @Override

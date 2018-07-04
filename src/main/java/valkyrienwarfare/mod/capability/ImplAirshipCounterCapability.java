@@ -18,8 +18,8 @@ package valkyrienwarfare.mod.capability;
 
 public class ImplAirshipCounterCapability implements IAirshipCounterCapability {
 
-    protected int airshipCount = 0;
-    protected int airshipCountEver = 0;
+    protected int airshipCount;
+    protected int airshipCountEver;
 
     @Override
     public int getAirshipCount() {

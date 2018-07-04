@@ -17,6 +17,7 @@
 package valkyrienwarfare.addon.control.controlsystems.controlgui;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,8 +46,8 @@ public class ThrustModulatorGui extends GuiScreen {
     }
 
     public void updateTextFields() {
-        this.textFields.get(0).setText("" + this.tileEnt.idealYHeight); // Top button
-        this.textFields.get(1).setText("" + this.tileEnt.maximumYVelocity); // Middle button
+        this.textFields.get(0).setText(String.valueOf(this.tileEnt.idealYHeight)); // Top button
+        this.textFields.get(1).setText(String.valueOf(this.tileEnt.maximumYVelocity)); // Middle button
     }
 
     @Override
@@ -129,8 +130,8 @@ public class ThrustModulatorGui extends GuiScreen {
         this.drawTexturedModalRect((this.width - textureWidth) / 2, (this.height - textureHeight) / 2, 7, 7, textureWidth,
                 textureHeight);
 
-        for (int j = 0; j < this.labelList.size(); ++j) {
-            this.labelList.get(j).drawLabel(this.mc, par1, par2);
+        for (GuiLabel aLabelList : this.labelList) {
+            aLabelList.drawLabel(this.mc, par1, par2);
         }
         for (GuiTextField text : this.textFields) {
             text.drawTextBox();

@@ -46,60 +46,60 @@ public class PhysWrapperPositionMessage implements IMessage {
     }
 
     public PhysWrapperPositionMessage(PhysicsShipTransform transformData, int entityID, int relativeTick) {
-        this.setEntityID(entityID);
-        this.setRelativeTick(relativeTick);
-        this.setShipBB(transformData.getShipBoundingBox());
-        this.setPosX(transformData.getPosX());
-        this.setPosY(transformData.getPosY());
-        this.setPosZ(transformData.getPosZ());
-        this.setPitch(transformData.getPitch());
-        this.setYaw(transformData.getYaw());
-        this.setRoll(transformData.getRoll());
-        this.setCenterOfMass(transformData.getCenterOfMass());
+        this.entityID = entityID;
+        this.relativeTick = relativeTick;
+        this.shipBB = transformData.getShipBoundingBox();
+        this.posX = transformData.getPosX();
+        this.posY = transformData.getPosY();
+        this.posZ = transformData.getPosZ();
+        this.pitch = transformData.getPitch();
+        this.yaw = transformData.getYaw();
+        this.roll = transformData.getRoll();
+        this.centerOfMass = transformData.getCenterOfMass();
     }
 
     public PhysWrapperPositionMessage(PhysicsWrapperEntity toSend, int relativeTick) {
-        this.setEntityID(toSend.getEntityId());
-        this.setRelativeTick(relativeTick);
-        this.setShipBB(toSend.getPhysicsObject().getShipBoundingBox());
-        this.setPosX(toSend.posX);
-        this.setPosY(toSend.posY);
-        this.setPosZ(toSend.posZ);
-        this.setPitch(toSend.getPitch());
-        this.setYaw(toSend.getYaw());
-        this.setRoll(toSend.getRoll());
-        this.setCenterOfMass(toSend.getPhysicsObject().getCenterCoord());
+        this.entityID = toSend.getEntityId();
+        this.relativeTick = relativeTick;
+        this.shipBB = toSend.getPhysicsObject().getShipBoundingBox();
+        this.posX = toSend.posX;
+        this.posY = toSend.posY;
+        this.posZ = toSend.posZ;
+        this.pitch = toSend.getPitch();
+        this.yaw = toSend.getYaw();
+        this.roll = toSend.getRoll();
+        this.centerOfMass = toSend.getPhysicsObject().getCenterCoord();
     }
 
     public PhysWrapperPositionMessage(PhysicsObject toRunLocally) {
-        this.setPosX(toRunLocally.getWrapperEntity().posX);
-        this.setPosY(toRunLocally.getWrapperEntity().posY);
-        this.setPosZ(toRunLocally.getWrapperEntity().posZ);
+        this.posX = toRunLocally.getWrapperEntity().posX;
+        this.posY = toRunLocally.getWrapperEntity().posY;
+        this.posZ = toRunLocally.getWrapperEntity().posZ;
 
-        this.setPitch(toRunLocally.getWrapperEntity().getPitch());
-        this.setYaw(toRunLocally.getWrapperEntity().getYaw());
-        this.setRoll(toRunLocally.getWrapperEntity().getRoll());
+        this.pitch = toRunLocally.getWrapperEntity().getPitch();
+        this.yaw = toRunLocally.getWrapperEntity().getYaw();
+        this.roll = toRunLocally.getWrapperEntity().getRoll();
 
-        this.setCenterOfMass(toRunLocally.getCenterCoord());
-        this.setShipBB(toRunLocally.getShipBoundingBox());
+        this.centerOfMass = toRunLocally.getCenterCoord();
+        this.shipBB = toRunLocally.getShipBoundingBox();
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        this.setEntityID(buf.readInt());
-        this.setRelativeTick(buf.readInt());
+        this.entityID = buf.readInt();
+        this.relativeTick = buf.readInt();
 
-        this.setPosX(buf.readDouble());
-        this.setPosY(buf.readDouble());
-        this.setPosZ(buf.readDouble());
+        this.posX = buf.readDouble();
+        this.posY = buf.readDouble();
+        this.posZ = buf.readDouble();
 
-        this.setPitch(buf.readDouble());
-        this.setYaw(buf.readDouble());
-        this.setRoll(buf.readDouble());
+        this.pitch = buf.readDouble();
+        this.yaw = buf.readDouble();
+        this.roll = buf.readDouble();
 
-        this.setCenterOfMass(new Vector(buf.readDouble(), buf.readDouble(), buf.readDouble()));
-        this.setShipBB(new AxisAlignedBB(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble(),
-                buf.readDouble(), buf.readDouble()));
+        this.centerOfMass = new Vector(buf.readDouble(), buf.readDouble(), buf.readDouble());
+        this.shipBB = new AxisAlignedBB(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble(),
+                buf.readDouble(), buf.readDouble());
     }
 
     @Override

@@ -85,8 +85,8 @@ public class Polygon {
     }
 
     public void transform(ShipTransform transformation, TransformType transformType) {
-        for (int i = 0; i < this.vertices.length; i++) {
-            transformation.transform(this.vertices[i], transformType);
+        for (Vector vertice : this.vertices) {
+            transformation.transform(vertice, transformType);
         }
         for (Vector normal : this.normals) {
             transformation.rotate(normal, transformType);

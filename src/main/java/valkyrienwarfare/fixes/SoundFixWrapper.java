@@ -29,11 +29,10 @@ public class SoundFixWrapper implements ISound {
 
     final Vector soundLocation;
     private final ISound wrappedSound;
-    private final PhysicsWrapperEntity wrapper;
 
     public SoundFixWrapper(ISound wrappedSound, PhysicsWrapperEntity wrapper, Vector soundLocation) {
         this.wrappedSound = wrappedSound;
-        this.wrapper = wrapper;
+        PhysicsWrapperEntity wrapper1 = wrapper;
         this.soundLocation = soundLocation;
     }
 

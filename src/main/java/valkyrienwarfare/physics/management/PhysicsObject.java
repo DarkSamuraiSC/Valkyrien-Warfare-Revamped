@@ -60,7 +60,11 @@ import valkyrienwarfare.math.Quaternion;
 import valkyrienwarfare.math.Vector;
 import valkyrienwarfare.mod.BlockPhysicsRegistration;
 import valkyrienwarfare.mod.client.render.PhysObjectRenderManager;
-import valkyrienwarfare.mod.coordinates.*;
+import valkyrienwarfare.mod.coordinates.ISubspace;
+import valkyrienwarfare.mod.coordinates.ISubspaceProvider;
+import valkyrienwarfare.mod.coordinates.ImplSubspace;
+import valkyrienwarfare.mod.coordinates.ShipTransform;
+import valkyrienwarfare.mod.coordinates.ShipTransformationPacketHolder;
 import valkyrienwarfare.mod.network.PhysWrapperPositionMessage;
 import valkyrienwarfare.mod.physmanagement.chunk.PhysicsChunkManager;
 import valkyrienwarfare.mod.physmanagement.chunk.VWChunkCache;
@@ -73,8 +77,13 @@ import valkyrienwarfare.physics.PhysicsCalculations;
 import valkyrienwarfare.util.NBTUtils;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -144,11 +153,11 @@ public class PhysicsObject implements ISubspaceProvider {
         if (host.world.isRemote) {
             this.shipRenderer = new PhysObjectRenderManager(this);
         }
-        this.setNameCustom(false);
+        this.isNameCustom = false;
         this.claimedChunksInMap = false;
         this.queuedEntitiesToMount = new ArrayList<>();
         this.entityLocalPositions = new TIntObjectHashMap<>();
-        this.setPhysicsEnabled(false);
+        this.isPhysicsEnabled = false;
         // We need safe access to this across multiple threads.
         this.setBlockPositions(ConcurrentHashMap.newKeySet());
         this.shipBoundingBox = Entity.ZERO_AABB;
@@ -316,7 +325,7 @@ public class PhysicsObject implements ISubspaceProvider {
     }
 
     private void assembleShip(EntityPlayer player, SpatialDetector detector, BlockPos centerInWorld) {
-        this.setPhysicsEnabled(true);
+        this.isPhysicsEnabled = true;
         MutableBlockPos pos = new MutableBlockPos();
         TIntIterator iter = detector.foundSet.iterator();
         /*int radiusNeeded = 1;
@@ -759,7 +768,7 @@ public class PhysicsObject implements ISubspaceProvider {
         for (int row = 0; row < this.ownedChunks.getChunkOccupiedInLocal().length; row++) {
             boolean[] curArray = this.ownedChunks.getChunkOccupiedInLocal()[row];
             for (int column = 0; column < curArray.length; column++) {
-                compound.setBoolean("CC:" + row + ":" + column, curArray[column]);
+                compound.setBoolean("CC:" + row + ':' + column, curArray[column]);
             }
         }
         NBTUtils.writeEntityPositionMapToNBT("entityPosHashMap", this.entityLocalPositions, compound);
@@ -800,12 +809,12 @@ public class PhysicsObject implements ISubspaceProvider {
         for (int row = 0; row < this.ownedChunks.getChunkOccupiedInLocal().length; row++) {
             boolean[] curArray = this.ownedChunks.getChunkOccupiedInLocal()[row];
             for (int column = 0; column < curArray.length; column++) {
-                curArray[column] = compound.getBoolean("CC:" + row + ":" + column);
+                curArray[column] = compound.getBoolean("CC:" + row + ':' + column);
             }
         }
 
         String shipTypeName = compound.getString("shipType");
-        if (!shipTypeName.equals("")) {
+        if (!shipTypeName.isEmpty()) {
             this.shipType = ShipType.valueOf(ShipType.class, shipTypeName);
         } else {
             // Assume its an older Ship, and that its fully unlocked
@@ -817,12 +826,12 @@ public class PhysicsObject implements ISubspaceProvider {
         this.physicsProcessor.readFromNBTTag(compound);
 
         this.claimedChunksInMap = compound.getBoolean("claimedChunksInMap");
-        this.setNameCustom(compound.getBoolean("isNameCustom"));
+        this.isNameCustom = compound.getBoolean("isNameCustom");
         this.wrapper.dataManager.set(PhysicsWrapperEntity.IS_NAME_CUSTOM, this.isNameCustom);
 
         this.setShipBoundingBox(NBTUtils.readAABBFromNBT("collision_aabb", compound));
 
-        this.setPhysicsEnabled(compound.getBoolean("doPhysics"));
+        this.isPhysicsEnabled = compound.getBoolean("doPhysics");
 
         if (compound.hasKey("ownerName")) {
             UUID uuid = compound.getUniqueId("ownerUuid");
@@ -867,7 +876,7 @@ public class PhysicsObject implements ISubspaceProvider {
             e.printStackTrace();
         }
 
-        this.setNameCustom(modifiedBuffer.readBoolean());
+        this.isNameCustom = modifiedBuffer.readBoolean();
         this.shipType = modifiedBuffer.readEnumValue(ShipType.class);
     }
 
@@ -983,13 +992,7 @@ public class PhysicsObject implements ISubspaceProvider {
     }
 
     public void onRemoveTileEntity(BlockPos pos) {
-        Iterator<INodeController> controllersIterator = this.physicsControllers.iterator();
-        while (controllersIterator.hasNext()) {
-            INodeController next = controllersIterator.next();
-            if (next.getNodePos().equals(pos)) {
-                controllersIterator.remove();
-            }
-        }
+        this.physicsControllers.removeIf(next -> next.getNodePos().equals(pos));
         // System.out.println(physicsControllers.size());
     }
 

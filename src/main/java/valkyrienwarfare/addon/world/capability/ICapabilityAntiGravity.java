@@ -18,7 +18,7 @@ package valkyrienwarfare.addon.world.capability;
 
 public interface ICapabilityAntiGravity {
 
-    public double getAntiGravity();
+    double getAntiGravity();
 
-    public void setAntiGravity(double antiGravity);
+    void setAntiGravity(double antiGravity);
 }

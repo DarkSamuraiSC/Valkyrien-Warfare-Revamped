@@ -32,7 +32,7 @@ import valkyrienwarfare.physics.management.PhysicsWrapperEntity;
 public class SubspacedEntityRecordHandler implements IMessageHandler<SubspacedEntityRecordMessage, IMessage> {
 
     @Override
-    public IMessage onMessage(final SubspacedEntityRecordMessage message, final MessageContext ctx) {
+    public IMessage onMessage(SubspacedEntityRecordMessage message, MessageContext ctx) {
         IThreadListener threadScheduler = null;
         World world = null;
         if (ctx.side.isClient()) {
@@ -44,7 +44,7 @@ public class SubspacedEntityRecordHandler implements IMessageHandler<SubspacedEn
             threadScheduler = ctx.getServerHandler().serverController;
             world = ctx.getServerHandler().player.world;
         }
-        final World worldFinal = world;
+        World worldFinal = world;
         threadScheduler.addScheduledTask(() -> {
             Entity physicsEntity = worldFinal.getEntityByID(message.physicsObjectWrapperID);
             Entity subspacedEntity = worldFinal.getEntityByID(message.entitySubspacedID);

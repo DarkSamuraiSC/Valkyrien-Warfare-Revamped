@@ -64,8 +64,7 @@ public class BlockShipHelm extends BlockPilotableBasic {
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        int i = state.getValue(FACING).getIndex();
-        return i;
+        return state.getValue(FACING).getIndex();
     }
 
     @Override

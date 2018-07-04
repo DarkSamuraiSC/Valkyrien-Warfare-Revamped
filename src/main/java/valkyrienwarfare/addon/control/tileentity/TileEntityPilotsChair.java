@@ -65,12 +65,12 @@ public class TileEntityPilotsChair extends ImplTileEntityPilotable {
         this.getParentPhysicsEntity().getPhysicsObject().getPhysicsProcessor().actAsArchimedes = false;
     }
 
-    private final void processCalculationsForControlMessageAndApplyCalculations(PhysicsWrapperEntity wrapper, PilotControlsMessage message, IBlockState state) {
+    private void processCalculationsForControlMessageAndApplyCalculations(PhysicsWrapperEntity wrapper, PilotControlsMessage message, IBlockState state) {
         BlockPos chairPosition = this.getPos();
         PhysicsObject controlledShip = wrapper.getPhysicsObject();
 
         double pilotPitch = 0D;
-        double pilotYaw = ((BlockShipPilotsChair) state.getBlock()).getChairYaw(state, chairPosition);
+        double pilotYaw = BlockShipPilotsChair.getChairYaw(state, chairPosition);
         double pilotRoll = 0D;
 
         double[] pilotRotationMatrix = RotationMatrices.getRotationMatrix(pilotPitch, pilotYaw, pilotRoll);

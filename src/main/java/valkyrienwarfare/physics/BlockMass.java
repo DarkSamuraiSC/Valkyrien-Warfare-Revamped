@@ -88,7 +88,7 @@ public class BlockMass {
         } else {
             Double fromMap = this.blockToMass.get(block);
             if (fromMap != null) {
-                return fromMap.doubleValue();
+                return fromMap;
             } else {
                 Double newMass = this.generateMassForBlock(block);
                 this.blockToMass.put(block, newMass);
@@ -98,11 +98,7 @@ public class BlockMass {
     }
 
     public double getMassFromMaterial(Material material) {
-        Double mass = this.materialMass.get(material);
-        if (mass == null) {
-            mass = defaultMass;
-            this.materialMass.put(material, mass);
-        }
+        Double mass = this.materialMass.computeIfAbsent(material, k -> defaultMass);
         return mass;
     }
 

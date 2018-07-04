@@ -27,63 +27,63 @@ public interface IForceTile {
      *
      * @return
      */
-    public Vector getForceOutputNormal();
+    Vector getForceOutputNormal();
 
     /**
      * Returns the current unoriented force output vector of this engine
      *
      * @return
      */
-    public Vector getForceOutputUnoriented(double secondsToApply, PhysicsObject physicsObject);
+    Vector getForceOutputUnoriented(double secondsToApply, PhysicsObject physicsObject);
 
     /**
      * Returns the current oriented force output vector of this engine
      *
      * @return
      */
-    public Vector getForceOutputOriented(double secondsToApply, PhysicsObject physicsObject);
+    Vector getForceOutputOriented(double secondsToApply, PhysicsObject physicsObject);
 
     /**
      * Returns the maximum magnitude of force this engine can provide
      *
      * @return
      */
-    public double getMaxThrust();
+    double getMaxThrust();
 
     /**
      * Returns the thrust value of this ForceTile
      *
      * @return
      */
-    public double getThrustActual();
+    double getThrustActual();
 
     /**
      * Returns the current goal for the thrust
      *
      * @return
      */
-    public double getThrustGoal();
+    double getThrustGoal();
 
     /**
      * Sets the goal for the force output vector to be
      *
      * @param toUse
      */
-    public void setThrustGoal(double newMagnitude);
+    void setThrustGoal(double newMagnitude);
 
     /**
      * Matrix transformation stuff
      *
      * @return
      */
-    public Vector getPositionInLocalSpaceWithOrientation();
+    Vector getPositionInLocalSpaceWithOrientation();
 
     /**
      * Returns the velocity vector this engine is moving to relative to the world
      *
      * @return
      */
-    public Vector getVelocityAtEngineCenter();
+    Vector getVelocityAtEngineCenter();
 
     /**
      * Returns the velocity vector of this engine moving relative to the world,
@@ -91,7 +91,7 @@ public interface IForceTile {
      *
      * @return
      */
-    public Vector getLinearVelocityAtEngineCenter();
+    Vector getLinearVelocityAtEngineCenter();
 
     /**
      * Returns the velocity vector of this engine moving relative to the world,
@@ -99,5 +99,5 @@ public interface IForceTile {
      *
      * @return
      */
-    public Vector getAngularVelocityAtEngineCenter();
+    Vector getAngularVelocityAtEngineCenter();
 }

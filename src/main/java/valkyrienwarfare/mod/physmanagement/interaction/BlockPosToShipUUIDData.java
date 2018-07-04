@@ -38,8 +38,8 @@ public class BlockPosToShipUUIDData extends WorldSavedData {
 
     private static final String key = "BlockPosToShipUUIDData";
     //Not the persistent map, used for performance reasons
-    private TLongObjectMap<UUID> chunkposToShipUUID = new TLongObjectHashMap<>();
-    private Map<UUID, VWChunkClaim> UUIDToChunkSet = new HashMap<>();
+    private final TLongObjectMap<UUID> chunkposToShipUUID = new TLongObjectHashMap<>();
+    private final Map<UUID, VWChunkClaim> UUIDToChunkSet = new HashMap<>();
 
     public BlockPosToShipUUIDData(String name) {
         super(name);

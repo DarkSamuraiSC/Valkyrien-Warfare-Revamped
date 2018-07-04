@@ -59,6 +59,6 @@ public class ClientProxyCombat extends CommonProxyCombat {
 
     private void registerItemModel(Item toRegister) {
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-        renderItem.getItemModelMesher().register(toRegister, 0, new ModelResourceLocation(ValkyrienWarfareCombat.INSTANCE.getModID() + ":" + toRegister.getUnlocalizedName().substring(5), "inventory"));
+        renderItem.getItemModelMesher().register(toRegister, 0, new ModelResourceLocation(ValkyrienWarfareCombat.INSTANCE.getModID() + ':' + toRegister.getUnlocalizedName().substring(5), "inventory"));
     }
 }

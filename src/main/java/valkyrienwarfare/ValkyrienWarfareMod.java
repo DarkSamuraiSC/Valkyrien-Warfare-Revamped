@@ -39,7 +39,15 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLConstructionEvent;
+import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.event.FMLStateEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -75,7 +83,11 @@ import valkyrienwarfare.physics.management.PhysicsWrapperEntity;
 import valkyrienwarfare.util.PhysicsSettings;
 import valkyrienwarfare.util.RealMethods;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -105,7 +117,8 @@ public class ValkyrienWarfareMod {
     @CapabilityInject(IAirshipCounterCapability.class)
     public static final Capability<IAirshipCounterCapability> airshipCounter = null;
     // This service is directly responsible for running collision tasks.
-    public static ExecutorService PHYSICS_THREADS_EXECUTOR = null;
+    public static ExecutorService PHYSICS_THREADS_EXECUTOR;
+    @SuppressWarnings("unused")
     @SidedProxy(clientSide = "valkyrienwarfare.mod.proxy.ClientProxy", serverSide = "valkyrienwarfare.mod.proxy.ServerProxy")
     public static CommonProxy proxy;
     public static File configFile;
@@ -126,12 +139,12 @@ public class ValkyrienWarfareMod {
     public static double shipUpperLimit = 1000D;
     public static double shipLowerLimit = -30D;
     public static int maxAirships = -1;
-    public static boolean accurateRain = false;
-    public static boolean runAirshipPermissions = false;
+    public static boolean accurateRain;
+    public static boolean runAirshipPermissions;
     public static int threadCount = -1;
     public static Logger VW_LOGGER;
-    private static boolean hasAddonRegistrationEnded = false;
-    public DataTag tag = null;
+    private static boolean hasAddonRegistrationEnded;
+    public DataTag tag;
 
     /**
      * Called by the game when loading the configuration file, also called whenever
@@ -196,7 +209,7 @@ public class ValkyrienWarfareMod {
         } else {
             System.out.println("[VW Addon System] Registering addon: " + module.getClass().getCanonicalName());
             for (Module registered : addons) {
-                if (registered.getClass().getCanonicalName().equals(module.getClass().getCanonicalName())) {
+                if (registered.getClass() == module.getClass()) {
                     System.out.println(
                             "Addon " + module.getClass().getCanonicalName() + " already registered, skipping...");
                     return;
@@ -220,7 +233,7 @@ public class ValkyrienWarfareMod {
     public void fmlConstruct(FMLConstructionEvent event) {
         URLClassLoader classLoader = (URLClassLoader) this.getClass().getClassLoader();
         ArrayList<String> allAddons = new ArrayList<>();
-        final boolean isAddonBugFixed = false;
+        boolean isAddonBugFixed = true;
 
         if (!isAddonBugFixed) {
             // ValkyrienWarfareCombat combatModule = new ValkyrienWarfareCombat();
@@ -310,7 +323,7 @@ public class ValkyrienWarfareMod {
                         }
                     }
                     Module module = (Module) abstractclass.newInstance();
-                    // registerAddon(module);
+                    registerAddon(module);
                 } else {
                     System.out.println("Class " + className + " does not have @VWAddon annonation, not loading");
                 }

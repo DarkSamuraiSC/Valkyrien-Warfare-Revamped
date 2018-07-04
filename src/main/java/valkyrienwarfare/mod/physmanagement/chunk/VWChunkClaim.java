@@ -78,7 +78,7 @@ public class VWChunkClaim {
 
     @Override
     public String toString() {
-        return this.centerX + ":" + this.centerZ + ":" + this.radius;
+        return this.centerX + ":" + this.centerZ + ':' + this.radius;
     }
 
     @Override

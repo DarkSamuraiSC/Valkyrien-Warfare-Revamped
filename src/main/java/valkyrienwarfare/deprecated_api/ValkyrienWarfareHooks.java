@@ -30,8 +30,8 @@ import valkyrienwarfare.physics.management.PhysicsWrapperEntity;
 public class ValkyrienWarfareHooks {
 
     // Replaced with an object that does real work in runtime
-    public static DummyMethods methods = null;
-    public static boolean isValkyrienWarfareInstalled = false;
+    public static DummyMethods methods;
+    public static boolean isValkyrienWarfareInstalled;
 
     public static PhysicsWrapperEntity getShipEntityManagingPos(World worldObj, BlockPos pos) {
         return methods.getShipEntityManagingPos(worldObj, pos);

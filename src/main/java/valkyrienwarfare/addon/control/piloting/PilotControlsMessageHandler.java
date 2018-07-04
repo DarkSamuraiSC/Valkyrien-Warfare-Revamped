@@ -28,20 +28,17 @@ import valkyrienwarfare.ValkyrienWarfareMod;
 public class PilotControlsMessageHandler implements IMessageHandler<PilotControlsMessage, IMessage> {
 
     @Override
-    public IMessage onMessage(final PilotControlsMessage message, final MessageContext ctx) {
+    public IMessage onMessage(PilotControlsMessage message, MessageContext ctx) {
         IThreadListener mainThread = ctx.getServerHandler().serverController;
-        mainThread.addScheduledTask(new Runnable() {
-            @Override
-            public void run() {
-                World worldObj = ctx.getServerHandler().player.world;
-                if (ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getManagerForWorld(worldObj) != null) {
+        mainThread.addScheduledTask(() -> {
+            World worldObj = ctx.getServerHandler().player.world;
+            if (ValkyrienWarfareMod.VW_PHYSICS_MANAGER.getManagerForWorld(worldObj) != null) {
 //                	UUID shipId = message.shipFor;
-                    BlockPos posFor = message.controlBlockPos;
-                    TileEntity tile = worldObj.getTileEntity(posFor);
+                BlockPos posFor = message.controlBlockPos;
+                TileEntity tile = worldObj.getTileEntity(posFor);
 
-                    if (tile instanceof ITileEntityPilotable) {
-                        ((ITileEntityPilotable) tile).onPilotControlsMessage(message, ctx.getServerHandler().player);
-                    }
+                if (tile instanceof ITileEntityPilotable) {
+                    ((ITileEntityPilotable) tile).onPilotControlsMessage(message, ctx.getServerHandler().player);
                 }
             }
         });

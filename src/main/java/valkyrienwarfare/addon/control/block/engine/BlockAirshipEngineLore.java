@@ -47,6 +47,6 @@ public abstract class BlockAirshipEngineLore extends BlockAirshipEngine {
     @Override
     public void setEnginePower(double power) {
         super.setEnginePower(power);
-        this.lore = new String[]{"" + TextFormatting.GRAY + TextFormatting.ITALIC + TextFormatting.BOLD + "Force:", "  " + this.getEnginePowerTooltip() + " Newtons"};
+        this.lore = new String[]{String.valueOf(TextFormatting.GRAY) + TextFormatting.ITALIC + TextFormatting.BOLD + "Force:", "  " + this.getEnginePowerTooltip() + " Newtons"};
     }
 }

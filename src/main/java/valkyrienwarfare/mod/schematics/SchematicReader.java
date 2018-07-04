@@ -37,8 +37,7 @@ public class SchematicReader {
 
     public static Schematic get(String schemname) {
         if (schematicCache.containsKey(schemname)) {
-            Schematic tryCached = schematicCache.get(schemname);
-            return tryCached;
+            return schematicCache.get(schemname);
         }
         try {
             InputStream is = ValkyrienWarfareMod.INSTANCE.getClass().getClassLoader().getResourceAsStream("assets/valkyrienwarfareworld/schematics/" + schemname);
@@ -84,7 +83,7 @@ public class SchematicReader {
 
             return toReturn;
         } catch (Exception e) {
-            System.out.println("I can't load schematic, because " + e.toString());
+            System.out.println("I can't load schematic, because " + e);
             schematicCache.put(schemname, null);
             return null;
         }

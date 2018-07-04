@@ -59,15 +59,13 @@ public class MixinMethods {
             dz = endPos.Z - this_.posZ;
         }
 
-        EntityCollisionInjector.IntermediateMovementVariableStorage alteredMovement = EntityCollisionInjector.alterEntityMovement(this_, type, dx, dy, dz);
-
         /*if (alteredMovement == null) {
             args.setAll(type, dx, dy, dz);
         } else {
             args.setAll(type, alteredMovement.dxyz.X, alteredMovement.dxyz.Y, alteredMovement.dxyz.Z);
         }*/
 
-        return alteredMovement;
+        return EntityCollisionInjector.alterEntityMovement(this_, type, dx, dy, dz);
     }
 
     public static RayTraceResult rayTraceBlocksIgnoreShip(World world, Vec3d vec31, Vec3d vec32, boolean stopOnLiquid, boolean ignoreBlockWithoutBoundingBox, boolean returnLastUncollidableBlock, PhysicsWrapperEntity toIgnore) {

@@ -30,18 +30,22 @@ import valkyrienwarfare.addon.control.renderer.BasicNodeTileEntityRenderer;
 import valkyrienwarfare.addon.control.renderer.PropellerEngineTileEntityRenderer;
 import valkyrienwarfare.addon.control.renderer.ShipHelmTileEntityRenderer;
 import valkyrienwarfare.addon.control.renderer.ShipTelegraphTileEntityRenderer;
-import valkyrienwarfare.addon.control.tileentity.*;
+import valkyrienwarfare.addon.control.tileentity.TileEntityNodeRelay;
+import valkyrienwarfare.addon.control.tileentity.TileEntityPropellerEngine;
+import valkyrienwarfare.addon.control.tileentity.TileEntityShipHelm;
+import valkyrienwarfare.addon.control.tileentity.TileEntityShipTelegraph;
+import valkyrienwarfare.addon.control.tileentity.TileEntityThrustModulator;
 
 public class ClientProxyControl extends CommonProxyControl {
 
     private static void registerBlockItem(Block toRegister) {
         Item item = Item.getItemFromBlock(toRegister);
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation(ValkyrienWarfareControl.INSTANCE.getModID() + ":" + item.getUnlocalizedName().substring(5), "inventory"));
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation(ValkyrienWarfareControl.INSTANCE.getModID() + ':' + item.getUnlocalizedName().substring(5), "inventory"));
     }
 
     private static void registerItemModel(Item toRegister) {
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-        renderItem.getItemModelMesher().register(toRegister, 0, new ModelResourceLocation(ValkyrienWarfareControl.INSTANCE.getModID() + ":" + toRegister.getUnlocalizedName().substring(5), "inventory"));
+        renderItem.getItemModelMesher().register(toRegister, 0, new ModelResourceLocation(ValkyrienWarfareControl.INSTANCE.getModID() + ':' + toRegister.getUnlocalizedName().substring(5), "inventory"));
     }
 
     private static void registerBlockItemModels() {

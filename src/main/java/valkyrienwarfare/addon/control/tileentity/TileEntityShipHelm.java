@@ -34,11 +34,11 @@ import valkyrienwarfare.physics.management.PhysicsWrapperEntity;
 
 public class TileEntityShipHelm extends ImplTileEntityPilotable implements ITickable {
 
-    public double compassAngle = 0;
-    public double lastCompassAngle = 0;
+    public double compassAngle;
+    public double lastCompassAngle;
 
-    public double wheelRotation = 0;
-    public double lastWheelRotation = 0;
+    public double wheelRotation;
+    public double lastWheelRotation;
 
     private double nextWheelRotation;
 

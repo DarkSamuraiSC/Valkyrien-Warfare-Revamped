@@ -232,9 +232,8 @@ public class RotationMatrices {
     public static BlockPos applyTransform(double[] M, BlockPos pos) {
         Vector blockPosVec = new Vector(pos.getX() + .5D, pos.getY() + .5D, pos.getZ() + .5D);
         applyTransform(M, blockPosVec);
-        BlockPos newPos = new BlockPos(Math.round(blockPosVec.X - .5D), Math.round(blockPosVec.Y - .5D),
+        return new BlockPos(Math.round(blockPosVec.X - .5D), Math.round(blockPosVec.Y - .5D),
                 Math.round(blockPosVec.Z - .5D));
-        return newPos;
     }
 
     public static Vec3d applyTransform(double[] M, Vec3d vec) {

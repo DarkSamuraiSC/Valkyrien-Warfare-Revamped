@@ -36,7 +36,6 @@ public class VWChunkCache {
     private final boolean[][] isChunkLoaded;
     private final World worldFor;
     private final int minChunkX, minChunkZ, maxChunkX, maxChunkZ;
-    private boolean allLoaded = true;
 
     public VWChunkCache(World world, int mnX, int mnZ, int mxX, int mxZ) {
         this.worldFor = world;
@@ -51,7 +50,7 @@ public class VWChunkCache {
                 this.cachedChunks[x - this.minChunkX][z - this.minChunkZ] = world.getChunkFromChunkCoords(x, z);
                 this.isChunkLoaded[x - this.minChunkX][z - this.minChunkZ] = !this.cachedChunks[x - this.minChunkX][z - this.minChunkZ].isEmpty();
                 if (!this.isChunkLoaded[x - this.minChunkX][z - this.minChunkZ]) {
-                    this.allLoaded = false;
+                    boolean allLoaded = false;
                 }
             }
         }

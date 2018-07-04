@@ -28,17 +28,14 @@ public class ThrustModulatorGuiInputHandler implements IMessageHandler<ThrustMod
     @Override
     public IMessage onMessage(ThrustModulatorGuiInputMessage message, MessageContext ctx) {
         IThreadListener mainThread = ctx.getServerHandler().serverController;
-        mainThread.addScheduledTask(new Runnable() {
-            @Override
-            public void run() {
-                TileEntity tileEnt = ctx.getServerHandler().player.world.getTileEntity(message.tileEntityPos);
-                if (tileEnt != null) {
-                    if (tileEnt instanceof TileEntityThrustModulator) {
-                        ((TileEntityThrustModulator) tileEnt).handleGUIInput(message, ctx);
-                    }
-                } else {
-                    System.out.println("Player: " + ctx.getServerHandler().player.getName() + " sent a broken packet");
+        mainThread.addScheduledTask(() -> {
+            TileEntity tileEnt = ctx.getServerHandler().player.world.getTileEntity(message.tileEntityPos);
+            if (tileEnt != null) {
+                if (tileEnt instanceof TileEntityThrustModulator) {
+                    ((TileEntityThrustModulator) tileEnt).handleGUIInput(message, ctx);
                 }
+            } else {
+                System.out.println("Player: " + ctx.getServerHandler().player.getName() + " sent a broken packet");
             }
         });
         return null;

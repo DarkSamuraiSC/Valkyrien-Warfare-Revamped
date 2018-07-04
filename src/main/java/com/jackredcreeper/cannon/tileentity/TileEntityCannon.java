@@ -37,11 +37,11 @@ import net.minecraft.world.World;
 
 public class TileEntityCannon extends TileEntity {
 
-    int CannonCooldown = 0;
-    int CC = 0;
-    boolean CannonReady = false;
-    float Angle = 0;
-    int Ammo = 0;
+    int CannonCooldown;
+    int CC;
+    boolean CannonReady;
+    float Angle;
+    int Ammo;
 
 
     @Override

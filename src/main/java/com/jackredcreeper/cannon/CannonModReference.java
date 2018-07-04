@@ -34,8 +34,8 @@ public class CannonModReference {
         GRAPESHOT("grapeshot", "itemgrapeshot"),
         SOLIDBALL("solidball", "itemsolidball");
 
-        private String unlocalizedName;
-        private String registryName;
+        private final String unlocalizedName;
+        private final String registryName;
 
         ModItems(String unlocalizedName, String registryName) {
             this.unlocalizedName = unlocalizedName;
@@ -56,8 +56,8 @@ public class CannonModReference {
         CANNON("cannon", "blockcannon"),
         AIRMINE("airmine", "blockairmine");
 
-        private String unlocalizedName;
-        private String registryName;
+        private final String unlocalizedName;
+        private final String registryName;
 
         ModBlocks(String unlocalizedName, String registryName) {
             this.unlocalizedName = unlocalizedName;

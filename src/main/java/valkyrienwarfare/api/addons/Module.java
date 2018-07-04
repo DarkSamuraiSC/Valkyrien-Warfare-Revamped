@@ -34,9 +34,11 @@ import java.util.UUID;
 public abstract class Module {
     @Getter
     private final String name;
-    private boolean donePreInit = false, doneInit = false, donePostInit = false;
-    private ModuleProxy common, client, server; //tODO: call these
-    private String modid;
+    private final ModuleProxy common;
+    private final String modid;
+    private boolean donePreInit, doneInit, donePostInit;
+    private ModuleProxy client;
+    private ModuleProxy server; //tODO: call these
 
     public Module(String name, ModuleProxy common, ModuleProxy client, ModuleProxy server) {
         this(name, common, ValkyrienWarfareMod.MODID);
@@ -48,12 +50,12 @@ public abstract class Module {
         this.modid = modid;
     }
 
-    public static final void registerRecipe(RegistryEvent.Register<IRecipe> event, ItemStack out, Object... in) {
+    public static void registerRecipe(RegistryEvent.Register<IRecipe> event, ItemStack out, Object... in) {
         CraftingHelper.ShapedPrimer primer = CraftingHelper.parseShaped(in);
         event.getRegistry().register(new ShapedRecipes(ValkyrienWarfareMod.MODID, primer.width, primer.height, primer.input, out).setRegistryName(ValkyrienWarfareMod.MODID, UUID.randomUUID().toString()));
     }
 
-    public static final void registerItemBlock(RegistryEvent.Register<Item> event, Block block) {
+    public static void registerItemBlock(RegistryEvent.Register<Item> event, Block block) {
         event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
     }
 

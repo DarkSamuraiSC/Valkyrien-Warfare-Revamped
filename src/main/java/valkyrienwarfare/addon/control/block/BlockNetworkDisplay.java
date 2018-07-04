@@ -61,7 +61,7 @@ public class BlockNetworkDisplay extends Block implements ITileEntityProvider {
                     networkedClassTypeCounts.put(tileClassName, networkedClassTypeCounts.get(tileClassName) + 1);
                 }
                 playerIn.sendMessage(new TextComponentString("Networked objects connected: " + connectedNodes.size()));
-                playerIn.sendMessage(new TextComponentString("Types of objects connected: " + networkedClassTypeCounts.toString()));
+                playerIn.sendMessage(new TextComponentString("Types of objects connected: " + networkedClassTypeCounts));
             }
         }
         return true;

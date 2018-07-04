@@ -34,7 +34,7 @@ public class PilotControlsMessage implements IMessage {
     public static boolean airshipLeft_KeyPressedLast;
     public static boolean airshipRight_KeyPressedLast;
     public static boolean airshipStop_KeyPressedLast;
-    private static UUID defaultUUID = new UUID(0, 0);
+    private static final UUID defaultUUID = new UUID(0, 0);
     public boolean airshipUp_KeyDown;
     public boolean airshipDown_KeyDown;
     public boolean airshipForward_KeyDown;

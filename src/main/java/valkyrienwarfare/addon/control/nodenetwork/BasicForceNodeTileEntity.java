@@ -28,12 +28,8 @@ public abstract class BasicForceNodeTileEntity extends BasicNodeTileEntity imple
 
     protected double maxThrust;
     protected double currentThrust;
-    private Vector forceOutputVector;
     private Vector normalVelocityUnoriented;
     private int ticksSinceLastControlSignal;
-    // Tells if the tile is in Ship Space, if it isn't then it doesn't try to find a
-    // parent Ship object
-    private boolean hasAlreadyCheckedForParent;
 
     /**
      * Only used for the NBT creation, other <init> calls should go through the
@@ -42,9 +38,9 @@ public abstract class BasicForceNodeTileEntity extends BasicNodeTileEntity imple
     public BasicForceNodeTileEntity() {
         this.maxThrust = 5000D;
         this.currentThrust = 0D;
-        this.forceOutputVector = new Vector();
+        Vector forceOutputVector = new Vector();
         this.ticksSinceLastControlSignal = 0;
-        this.hasAlreadyCheckedForParent = false;
+        boolean hasAlreadyCheckedForParent = false;
     }
 
     public BasicForceNodeTileEntity(Vector normalVeclocityUnoriented, boolean isForceOutputOriented, double maxThrust) {
@@ -181,7 +177,7 @@ public abstract class BasicForceNodeTileEntity extends BasicNodeTileEntity imple
         super.update();
         this.ticksSinceLastControlSignal++;
         if (this.ticksSinceLastControlSignal > 5) {
-            this.setThrustGoal(this.currentThrust * .9D);
+            this.currentThrust = this.currentThrust * .9D;
         }
     }
 

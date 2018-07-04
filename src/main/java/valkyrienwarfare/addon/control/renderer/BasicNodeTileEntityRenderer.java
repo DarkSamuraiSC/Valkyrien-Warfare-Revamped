@@ -29,10 +29,8 @@ import valkyrienwarfare.addon.control.nodenetwork.VWNode_TileEntity;
 
 public class BasicNodeTileEntityRenderer extends TileEntitySpecialRenderer {
 
-    private final Class renderedTileEntityClass;
-
     public BasicNodeTileEntityRenderer(Class toRender) {
-        this.renderedTileEntityClass = toRender;
+        Class renderedTileEntityClass = toRender;
     }
 
     @Override
@@ -103,21 +101,15 @@ public class BasicNodeTileEntityRenderer extends TileEntitySpecialRenderer {
 
         double fakeWidth = .5D;
 
-        double d6 = entity1x;
-        double d7 = entity1y;
-        double d8 = entity1z;
-        double d9 = fakeYaw;
-
         d2 = 0;// fakeWidth;;
         d3 = 0;// fakeWidth;
         double d10 = entity2x + d2;
-        double d11 = entity2y;
         double d12 = entity2z + d3;
         x = x + d2;
         z = z + d3;
-        double d13 = ((float) (d6 - d10));
-        double d14 = ((float) (d7 - d11));
-        double d15 = ((float) (d8 - d12));
+        double d13 = ((float) (entity1x - d10));
+        double d14 = ((float) (entity1y - entity2y));
+        double d15 = ((float) (entity1z - d12));
         GlStateManager.disableTexture2D();
         GlStateManager.disableLighting();
         GlStateManager.disableCull();

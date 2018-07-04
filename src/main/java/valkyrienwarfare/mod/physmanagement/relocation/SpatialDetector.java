@@ -46,7 +46,7 @@ public abstract class SpatialDetector {
     public final boolean corners;
     public TIntHashSet nextQueue = new TIntHashSet();
     // public int totalCalls = 0;
-    public boolean cleanHouse = false;
+    public boolean cleanHouse;
 
     public SpatialDetector(BlockPos start, World worldIn, int maximum, boolean checkCorners) {
         this.firstBlock = start;

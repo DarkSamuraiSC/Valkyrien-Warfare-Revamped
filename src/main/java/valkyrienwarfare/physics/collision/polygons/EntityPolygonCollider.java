@@ -31,9 +31,8 @@ public class EntityPolygonCollider {
     private final EntityPolygon entity;
     private final Polygon block;
     private final Vector entityVelocity;
-    private boolean seperated = false;
+    private boolean seperated;
     private int minDistanceIndex;
-    private double minDistance;
     private boolean originallySeperated;
 
     public EntityPolygonCollider(EntityPolygon movable, Polygon stationary, Vector[] axes, Vector entityVel) {
@@ -60,18 +59,18 @@ public class EntityPolygonCollider {
             }
         }
         if (!this.seperated) {
-            this.minDistance = 420;
+            double minDistance = 420;
             for (int i = 0; i < this.collisions.length; i++) {
                 if (this.originallySeperated) {
-                    if (Math.abs((this.collisions[i].getCollisionPenetrationDistance() - this.collisions[i].getVelDot()) / this.collisions[i].getVelDot()) < this.minDistance && !this.collisions[i].werePolygonsInitiallyColliding()) {
+                    if (Math.abs((this.collisions[i].getCollisionPenetrationDistance() - this.collisions[i].getVelDot()) / this.collisions[i].getVelDot()) < minDistance && !this.collisions[i].werePolygonsInitiallyColliding()) {
                         this.minDistanceIndex = i;
-                        this.minDistance = Math.abs((this.collisions[i].getCollisionPenetrationDistance() - this.collisions[i].getVelDot()) / this.collisions[i].getVelDot());
+                        minDistance = Math.abs((this.collisions[i].getCollisionPenetrationDistance() - this.collisions[i].getVelDot()) / this.collisions[i].getVelDot());
                     }
                 } else {
                     // This is wrong
-                    if (Math.abs(this.collisions[i].getCollisionPenetrationDistance()) < this.minDistance) {
+                    if (Math.abs(this.collisions[i].getCollisionPenetrationDistance()) < minDistance) {
                         this.minDistanceIndex = i;
-                        this.minDistance = Math.abs(this.collisions[i].getCollisionPenetrationDistance());
+                        minDistance = Math.abs(this.collisions[i].getCollisionPenetrationDistance());
                     }
                 }
             }

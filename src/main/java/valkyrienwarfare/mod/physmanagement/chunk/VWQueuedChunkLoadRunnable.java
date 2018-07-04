@@ -22,13 +22,12 @@ public class VWQueuedChunkLoadRunnable implements Runnable {
 
     private final int chunkX;
     private final int chunkZ;
-    private final PhysicsObject parent;
     private boolean isChunkLoaded;
 
     public VWQueuedChunkLoadRunnable(int chunkX, int chunkZ, PhysicsObject parent) {
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
-        this.parent = parent;
+        PhysicsObject parent1 = parent;
         this.isChunkLoaded = false;
     }
 

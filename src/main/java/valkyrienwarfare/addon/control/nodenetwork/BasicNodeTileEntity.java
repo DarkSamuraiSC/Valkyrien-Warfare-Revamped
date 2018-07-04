@@ -41,8 +41,7 @@ public abstract class BasicNodeTileEntity extends TileEntity implements IVWNodeP
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
-        SPacketUpdateTileEntity packet = new SPacketUpdateTileEntity(this.pos, 0, this.writeToNBT(new NBTTagCompound()));
-        return packet;
+        return new SPacketUpdateTileEntity(this.pos, 0, this.writeToNBT(new NBTTagCompound()));
     }
 
     @Override
@@ -123,16 +122,11 @@ public abstract class BasicNodeTileEntity extends TileEntity implements IVWNodeP
     public Iterable<IVWNode> getNetworkedConnections() {
         Iterator<GraphObject> objects = this.tileNode.getGraph().getObjects().iterator();
         Iterator<IVWNode> nodes = new IteratorCaster(objects);
-        return new Iterable<IVWNode>() {
-            @Override
-            public Iterator<IVWNode> iterator() {
-                return nodes;
-            }
-        };
+        return () -> nodes;
     }
 
     public static class GraphData implements Mergeable<GraphData> {
-        private static int sUid = 0;
+        private static int sUid;
 
         private final int uid;
 

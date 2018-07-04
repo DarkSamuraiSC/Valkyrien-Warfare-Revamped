@@ -75,7 +75,7 @@ public class ShipTransformationPacketHolder {
 
         // System.out.println(Arrays.toString(weights));
 
-        for (int i = 0; i < transformations.length; i++) {
+        for (ShipTransformationPacketHolder transformation : transformations) {
 
             // quaternions[i] =
         }

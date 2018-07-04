@@ -34,6 +34,6 @@ public class BlockDopedEtherium extends Block {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> itemInformation, ITooltipFlag advanced) {
-        itemInformation.add(TextFormatting.ITALIC + "" + TextFormatting.BLUE + "Creates an upward force in any ship its placed in.");
+        itemInformation.add(TextFormatting.ITALIC + TextFormatting.BLUE + "Creates an upward force in any ship its placed in.");
     }
 }

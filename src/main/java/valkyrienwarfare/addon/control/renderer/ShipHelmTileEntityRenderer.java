@@ -32,10 +32,8 @@ import valkyrienwarfare.mod.client.render.FastBlockModelRenderer;
 
 public class ShipHelmTileEntityRenderer extends TileEntitySpecialRenderer<TileEntityShipHelm> {
 
-    private final Class renderedTileEntityClass;
-
     public ShipHelmTileEntityRenderer(Class toRender) {
-        this.renderedTileEntityClass = toRender;
+        Class renderedTileEntityClass = toRender;
     }
 
     @Override

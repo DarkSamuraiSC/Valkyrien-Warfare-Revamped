@@ -112,12 +112,13 @@ public class ShipTransform {
      */
     @Deprecated
     public double[] getInternalMatrix(TransformType transformType) {
-        if (transformType == TransformType.SUBSPACE_TO_GLOBAL) {
-            return this.subspaceToGlobal;
-        } else if (transformType == TransformType.GLOBAL_TO_SUBSPACE) {
-            return this.globalToSubspace;
-        } else {
-            throw new IllegalArgumentException("Unexpected TransformType Enum " + transformType + "!");
+        switch (transformType) {
+            case SUBSPACE_TO_GLOBAL:
+                return this.subspaceToGlobal;
+            case GLOBAL_TO_SUBSPACE:
+                return this.globalToSubspace;
+            default:
+                throw new IllegalArgumentException("Unexpected TransformType Enum " + transformType + '!');
         }
     }
 

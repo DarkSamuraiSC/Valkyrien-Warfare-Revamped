@@ -20,9 +20,9 @@ import valkyrienwarfare.math.Vector;
 
 public class PhysPolygonCollider {
 
-    public Vector[] potentialSeperatingAxes = null;
-    public boolean seperated = false;
-    public PhysCollisionObject[] collisions = null;
+    public Vector[] potentialSeperatingAxes;
+    public boolean seperated;
+    public PhysCollisionObject[] collisions;
     public int minDistanceIndex;
     public double minDistance;
     public Polygon entity;

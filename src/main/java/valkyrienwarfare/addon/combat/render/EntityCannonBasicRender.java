@@ -49,7 +49,6 @@ public class EntityCannonBasicRender extends Render<EntityCannonBasic> implement
         float paritalTickPitch = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
 
         double renderYaw = -paritalTickYaw + 90f;
-        double renderPitch = paritalTickPitch;
 
         this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -88,7 +87,7 @@ public class EntityCannonBasicRender extends Render<EntityCannonBasic> implement
         GL11.glTranslated(.15D, .5D, 0);
 
         GL11.glRotated(renderYaw - offsetAngle, 0, 1D, 0);
-        GL11.glRotated(renderPitch, 0, 0, 1D);
+        GL11.glRotated((double) paritalTickPitch, 0, 0, 1D);
 
         GL11.glTranslated(-.8D, 0, -0.25);
 

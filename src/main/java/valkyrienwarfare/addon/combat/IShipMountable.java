@@ -20,7 +20,7 @@ import valkyrienwarfare.math.Vector;
 
 public interface IShipMountable {
 
-    public Vector getPositionInLocal();
+    Vector getPositionInLocal();
 
-    public boolean isMounting();
+    boolean isMounting();
 }

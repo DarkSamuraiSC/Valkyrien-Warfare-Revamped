@@ -140,7 +140,7 @@ public class EntityDraggable {
                     }
                 }
                 yawDif %= 360D;
-                final double threshold = .1D;
+                double threshold = .1D;
                 if (Math.abs(yawDif) < threshold) {
                     yawDif = 0D;
                 }

@@ -33,7 +33,7 @@ public class EntityCollisionObject {
     private boolean seperated;
     private double[] playerMinMax;
     private double[] blockMinMax;
-    private Vector entityVelocity;
+    private final Vector entityVelocity;
     private boolean originallyCollided;
     private double velDot;
 

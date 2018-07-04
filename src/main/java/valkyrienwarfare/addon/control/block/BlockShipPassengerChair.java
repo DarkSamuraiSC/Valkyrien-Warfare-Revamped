@@ -49,8 +49,7 @@ public class BlockShipPassengerChair extends Block {
 
     public static double getChairYaw(IBlockState state, BlockPos pos) {
         EnumFacing enumFace = state.getValue(BlockShipPassengerChair.FACING);
-        double chairYaw = -enumFace.getHorizontalAngle() - 90;
-        return chairYaw;
+        return (double) (-enumFace.getHorizontalAngle() - 90);
     }
 
     @Override
@@ -88,8 +87,8 @@ public class BlockShipPassengerChair extends Block {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> itemInformation, ITooltipFlag advanced) {
-        itemInformation.add(TextFormatting.ITALIC + "" + TextFormatting.BLUE + "Use to mount Ships.");
-        itemInformation.add(TextFormatting.BOLD + "" + TextFormatting.BOLD + TextFormatting.RED + "Can only be placed on a Ship");
+        itemInformation.add(TextFormatting.ITALIC + TextFormatting.BLUE + "Use to mount Ships.");
+        itemInformation.add(TextFormatting.BOLD + String.valueOf(TextFormatting.BOLD) + TextFormatting.RED + "Can only be placed on a Ship");
     }
 
     @Override
@@ -135,8 +134,7 @@ public class BlockShipPassengerChair extends Block {
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        int i = state.getValue(FACING).getIndex();
-        return i;
+        return state.getValue(FACING).getIndex();
     }
 
     @Override

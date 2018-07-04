@@ -42,8 +42,8 @@ import javax.annotation.Nullable;
  */
 public abstract class EntityMountingWeaponBase extends Entity implements IEntityAdditionalSpawnData {
 
-    public int currentTicksOperated = 0;
-    public double damage = 0;
+    public int currentTicksOperated;
+    public double damage;
     // Default facing
     private EnumFacing facing = EnumFacing.NORTH;
 
@@ -256,8 +256,7 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
 
     @Nullable
     public Entity getRider() {
-        Entity entity = this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
-        return entity;
+        return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
     }
 
     @Override
@@ -284,7 +283,7 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
                 return false;
             } else {
                 this.markVelocityChanged();
-                this.setDamage(this.damage + amount * 10.0F);
+                this.damage = this.damage + amount * 10.0F;
                 boolean flag = source.getImmediateSource() instanceof EntityPlayer && ((EntityPlayer) source.getImmediateSource()).capabilities.isCreativeMode;
 
                 if (flag || this.damage > this.getMaxDamage()) {
@@ -340,8 +339,7 @@ public abstract class EntityMountingWeaponBase extends Entity implements IEntity
 
     public PhysicsWrapperEntity getParentShip() {
         if (this.ridingEntity instanceof PhysicsWrapperEntity) {
-            PhysicsWrapperEntity wrapper = (PhysicsWrapperEntity) this.ridingEntity;
-            return wrapper;
+            return (PhysicsWrapperEntity) this.ridingEntity;
         }
         return null;
     }

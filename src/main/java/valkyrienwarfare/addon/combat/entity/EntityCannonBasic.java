@@ -33,7 +33,7 @@ public class EntityCannonBasic extends EntityMountingWeaponBase {
 
     int tickDelay = 6;
     // int currentTicksOperated = 0;
-    boolean isCannonLoaded = false;
+    boolean isCannonLoaded;
 
     public EntityCannonBasic(World worldIn) {
         super(worldIn);

@@ -34,7 +34,7 @@ public class BlockPhysicsInfuserCreative extends BlockPhysicsInfuser {
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List itemInformation, boolean par4) {
         itemInformation.add(TextFormatting.BLUE + "Turns any blocks attatched to this one into a brand new Ship, just be careful not to infuse your entire world");
-        itemInformation.add(TextFormatting.RED + "" + TextFormatting.RED + TextFormatting.ITALIC + "Warning, the creative infuser has no block limits, and it will infuse everything it touches! Use with extreme caution.");
+        itemInformation.add(TextFormatting.RED + String.valueOf(TextFormatting.RED) + TextFormatting.ITALIC + "Warning, the creative infuser has no block limits, and it will infuse everything it touches! Use with extreme caution.");
     }
 
 }

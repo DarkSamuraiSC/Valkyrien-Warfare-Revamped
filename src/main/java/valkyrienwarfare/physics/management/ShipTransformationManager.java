@@ -203,12 +203,11 @@ public class ShipTransformationManager {
         // later
         Vector[] normals = new Vector[15];
         Vector[] otherNorms = other.getShipTransformationManager().normals;
-        Vector[] rotatedNorms = normals;
         for (int i = 0; i < 6; i++) {
             if (i < 3) {
                 normals[i] = otherNorms[i];
             } else {
-                normals[i] = rotatedNorms[i - 3];
+                normals[i] = normals[i - 3];
             }
         }
         int cont = 6;

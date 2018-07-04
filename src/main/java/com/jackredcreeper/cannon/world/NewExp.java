@@ -48,24 +48,19 @@ public class NewExp extends Explosion {
     /**
      * whether or not the explosion sets fire to blocks around it
      */
-    private boolean isFlaming;
-    /**
-     * whether or not this explosion spawns smoke particles
-     */
-    private boolean isSmoking;
-    private Random explosionRNG;
-    private World worldObj;
+    private final boolean isFlaming;
+    private final Random explosionRNG;
+    private final World worldObj;
     private double x;
     private double y;
     private double z;
-    private Entity exploder;
-    private float explosionSize;
-    private List<BlockPos> affectedBlockPositions;
-    private Map<EntityPlayer, Vec3d> playerKnockbackMap;
-    private Vec3d position;
-    private float explosionPower;
-    private float explosionDamage;
-    private float explosionBlast;
+    private final Entity exploder;
+    private final float explosionSize;
+    private final List<BlockPos> affectedBlockPositions;
+    private final Map<EntityPlayer, Vec3d> playerKnockbackMap;
+    private final float explosionPower;
+    private final float explosionDamage;
+    private final float explosionBlast;
 
 
     public NewExp(World worldIn, Entity entityIn, double x, double y, double z, float size, float power, float damage, float blast, boolean flaming, boolean smoking) {
@@ -79,12 +74,12 @@ public class NewExp extends Explosion {
         this.explosionPower = power;
         this.explosionDamage = damage;
         this.explosionBlast = blast;
-        x = x;
-        y = y;
-        z = z;
         this.isFlaming = flaming;
-        this.isSmoking = smoking;
-        this.position = new Vec3d(x, y, z);
+        /*
+      whether or not this explosion spawns smoke particles
+     */
+        boolean isSmoking = smoking;
+        Vec3d position = new Vec3d(x, y, z);
 
     }
 
@@ -159,9 +154,7 @@ public class NewExp extends Explosion {
         net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.worldObj, this, list, f3);
         Vec3d vec3d = new Vec3d(this.x, this.y, this.z);
 
-        for (int k2 = 0; k2 < list.size(); ++k2) {
-            Entity entity = list.get(k2);
-
+        for (Entity entity : list) {
             if (!entity.isImmuneToExplosions()) {
                 double d12 = entity.getDistance(this.x, this.y, this.z) / f3;
 

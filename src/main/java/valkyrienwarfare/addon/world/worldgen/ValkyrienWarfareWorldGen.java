@@ -33,7 +33,7 @@ import java.util.Random;
  */
 public class ValkyrienWarfareWorldGen implements IWorldGenerator {
 
-    public WorldGenMinable genEtheriumOre = null;
+    public WorldGenMinable genEtheriumOre;
 
     public ValkyrienWarfareWorldGen() {
     }

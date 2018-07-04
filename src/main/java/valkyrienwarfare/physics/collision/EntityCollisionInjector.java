@@ -99,9 +99,8 @@ public class EntityCollisionInjector {
                         boolean isStep = isLiving && entity.onGround;
                         if (response.Y >= 0
                                 && VWMath.canStandOnNormal(fast.getCollisionAxes()[fast.getMinDistanceIndex()])) {
-                            Vector slowButStopped = new Vector(0, -fast.getCollisions()[fast.getMinDistanceIndex()].getCollisionPenetrationDistance() / fast.getCollisionAxes()[fast.getMinDistanceIndex()].Y, 0);
 
-                            response = slowButStopped;
+                            response = new Vector(0, -fast.getCollisions()[fast.getMinDistanceIndex()].getCollisionPenetrationDistance() / fast.getCollisionAxes()[fast.getMinDistanceIndex()].Y, 0);
                         }
                         if (isStep) {
                             EntityLivingBase living = (EntityLivingBase) entity;

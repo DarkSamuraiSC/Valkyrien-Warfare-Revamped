@@ -48,7 +48,7 @@ public class BlockCreativeEtherCompressor extends BlockEtherCompressorLore {
     public void addInformation(ItemStack stack, @Nullable World player, List<String> itemInformation, ITooltipFlag advanced) {
         super.addInformation(stack, player, itemInformation, advanced);
 
-        itemInformation.add(TextFormatting.BOLD + "" + TextFormatting.RED + TextFormatting.ITALIC + "Warning! Glitchy!");
-        itemInformation.add(TextFormatting.BOLD + "" + TextFormatting.RED + TextFormatting.ITALIC + "Can cause crashes, lag and/or ships dissapearing.");
+        itemInformation.add(TextFormatting.BOLD + String.valueOf(TextFormatting.RED) + TextFormatting.ITALIC + "Warning! Glitchy!");
+        itemInformation.add(TextFormatting.BOLD + String.valueOf(TextFormatting.RED) + TextFormatting.ITALIC + "Can cause crashes, lag and/or ships dissapearing.");
     }
 }

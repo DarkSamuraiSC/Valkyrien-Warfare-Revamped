@@ -45,7 +45,7 @@ public class PhysicsChunkManager {
      * before starting a new row
      */
     private static final long maxSetsPerRow = (-xChunkStartingPos) * 2L / distanceBetweenSets; //287692
-    private World worldObj;
+    private final World worldObj;
     private ChunkClaimWorldData data;
 
     public PhysicsChunkManager(World worldFor) {

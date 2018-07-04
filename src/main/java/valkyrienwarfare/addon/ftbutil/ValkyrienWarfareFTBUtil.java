@@ -33,7 +33,7 @@ import valkyrienwarfare.physics.management.PhysicsObject;
  * @author DaPorkchop_
  */
 public class ValkyrienWarfareFTBUtil extends Module {
-    private static boolean LOADED = false;
+    private static boolean LOADED;
 
     @Getter
     private static ValkyrienWarfareFTBUtil instance;
